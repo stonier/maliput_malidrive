@@ -1,0 +1,7 @@
+# -*- yaml -*-
+---
+xodr_file: src/malidrive/resources/figure8_trafficlights/figure8_trafficlights.xodr
+max_length: 25
+waypoints:
+  - [10.394, 1.179, 0]
+  - [1.332, 11.777, 0]

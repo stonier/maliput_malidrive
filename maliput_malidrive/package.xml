@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>maliput_malidrive</name>
+  <version>1.0.0</version>
+  <description>maliput_malidrive backend</description>
+  <license file="LICENSE">Proprietary</license>
+  <maintainer email="andrew.best@tri.global">Andrew Best</maintainer>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>ament_cmake_doxygen</build_depend>
+
+  <depend>drake_vendor</depend>
+  <depend>fmt</depend>
+  <depend>maliput</depend>
+  <depend>PROJ4</depend>
+  <depend>tinyxml2</depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_clang_format</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

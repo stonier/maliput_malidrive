@@ -1,0 +1,99 @@
+# -*- yaml -*-
+---
+RoadRulebook:
+  RightOfWayRules:
+    - ID: WestApproach
+      States:
+        Go: []
+        Stop: []
+      Zone:
+      - Lane: "1_0_1"
+      ZoneType: StopAllowed
+    - ID: EastApproach
+      States:
+        Go: []
+        Stop: []
+      Zone:
+      - Lane: "0_0_-1"
+      ZoneType: StopAllowed
+  DirectionUsageRules: []
+
+
+TrafficLights:
+- ID: EastFacing
+  Pose:
+    orientation_road_network: [0., 0, -1, 0]  # RPY = (0, 0, PI)
+    position_road_network: [46.0, -5.0, 2.0]
+  BulbGroups:
+   - ID: EastFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Green
+       Type: Round
+       States: [On, Off]
+     - ID: YellowLeftArrowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, -0.3937, -0.3937]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Yellow
+       Type: Arrow
+       ArrowOrientation: 3.14  # Points left.
+       States: [Off, Blinking]
+
+PhaseRings:
+- ID: TIntersectionPhaseRing
+  Rules: [EastApproach, WestApproach]
+  Phases:
+  - ID: AllGo
+    RightOfWayRuleStates: {EastApproach: Go, WestApproach: Go}
+    TrafficLightStates:
+      EastFacing:
+          EastFacingBulbs: {RedBulb: Off, YellowBulb: Off, GreenBulb: On}
+  - ID: AllStop
+    RightOfWayRuleStates: {EastApproach: Stop, WestApproach: Stop}
+    TrafficLightStates:
+      EastFacing:
+          EastFacingBulbs: {RedBulb: On, YellowBulb: Off, GreenBulb: Off}
+  PhaseTransitionGraph:
+    AllGo:
+    - ID: AllStop
+      duration_until: 45
+    AllStop:
+    - ID: AllGo
+
+Intersections:
+- ID: TIntersection
+  PhaseRing: TIntersectionPhaseRing
+  InitialPhase: AllGo
