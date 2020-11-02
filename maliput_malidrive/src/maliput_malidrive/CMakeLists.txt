@@ -9,3 +9,4 @@ include(${PROJECT_SOURCE_DIR}/cmake/MaliputMalidriveFlags.cmake)
 ##############################################################################
 
 add_subdirectory(common)
+add_subdirectory(test_utilities)
