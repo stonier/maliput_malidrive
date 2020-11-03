@@ -53,7 +53,6 @@ add_if_not_in_var() {
 }
 # Path to various resources used by shell/python scripts and demos
 #   e.g. configuration files, protos, road geometries
-add_if_not_in_var LSAN_OPTIONS $LSAN_OPTIONS:suppressions=@PROJECT_SOURCE_DIR@/tools/lsan.supp
 add_if_not_in_var MALIPUT_MALIDRIVE_RESOURCE_ROOT $AMENT_CURRENT_PREFIX/share/maliput_malidrive
 
 # Extra paths to executables
