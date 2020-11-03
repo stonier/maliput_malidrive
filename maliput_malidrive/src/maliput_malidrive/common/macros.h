@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "maliput/common/assertion_error.h"
 #include "maliput/common/maliput_abort.h"
 #include "maliput/common/maliput_copyable.h"
 #include "maliput/common/maliput_throw.h"
@@ -18,9 +19,14 @@
 
 /// @def MALIDRIVE_IS_IN_RANGE
 /// Throws if `value` is within [`min_value`; `max_value`]. It forwards the call
-/// to MALIPUT_THROW_UNLESS().
-#define MALIDRIVE_IS_IN_RANGE(value, min_value, max_value) \
-  MALIPUT_THROW_UNLESS(value >= min_value && value <= max_value)
+/// to MALIDRIVE_VALIDATE() with a customized string stating the error.
+#define MALIDRIVE_IS_IN_RANGE(value, min_value, max_value)                                       \
+  do {                                                                                           \
+    MALIDRIVE_VALIDATE(value >= min_value, maliput::common::assertion_error,                     \
+                       std::to_string(value) + " is less than " + std::to_string(min_value));    \
+    MALIDRIVE_VALIDATE(value <= max_value, maliput::common::assertion_error,                     \
+                       std::to_string(value) + " is greater than " + std::to_string(max_value)); \
+  } while (0)
 
 /// @def MALIDRIVE_THROW_UNLESS
 /// Used to declare a conditional throw.
@@ -28,7 +34,11 @@
 
 /// @def MALIDRIVE_THROW_MESSAGE
 /// Throws with `msg`.
-#define MALIDRIVE_THROW_MESSAGE(msg) MALIPUT_THROW_MESSAGE(msg)
+#define MALIDRIVE_THROW_MESSAGE(msg)                                              \
+  do {                                                                            \
+    const std::string message(msg);                                               \
+    MALIDRIVE_VALIDATE(false, maliput::common::assertion_error, message.c_str()); \
+  } while (0)
 
 /// @def MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN
 /// Deletes the special member functions for copy-construction, copy-assignment,
