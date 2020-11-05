@@ -38,5 +38,13 @@ GTEST_TEST(MalidriveInternalMacros, ValidateTest) {
   EXPECT_NO_THROW({ MALIDRIVE_VALIDATE(true, OxymoronException, "Exception message goes here."); });
 }
 
+// TODO(francocipollone): This test should be improved in order to correctly verify the generated log message.
+//
+GTEST_TEST(MalidriveInternalMacros, TraceTest) {
+  const double dumb_d{27.12};
+  const std::string dumb_str{"MALIDRIVE_TRACE test: "};
+  EXPECT_NO_THROW(MALIDRIVE_TRACE(dumb_str + std::to_string(dumb_d)));
+}
+
 }  // namespace test
 }  // namespace malidrive

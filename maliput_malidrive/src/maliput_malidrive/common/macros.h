@@ -4,6 +4,7 @@
 #include <string>
 
 #include "maliput/common/assertion_error.h"
+#include "maliput/common/logger.h"
 #include "maliput/common/maliput_abort.h"
 #include "maliput/common/maliput_copyable.h"
 #include "maliput/common/maliput_throw.h"
@@ -95,4 +96,13 @@
       errmsg.append(": ").append(message);                                   \
       throw exctype(errmsg);                                                 \
     }                                                                        \
+  } while (0)
+
+/// @def MALIDRIVE_TRACE
+/// Rely on maliput::log->trace(). Used to trace log `msg` and add
+/// information of file, line and function.
+#define MALIDRIVE_TRACE(msg)                                                           \
+  do {                                                                                 \
+    const std::string message(msg);                                                    \
+    maliput::log()->trace("[\"{}\":{}:{}] {}", __FILE__, __LINE__, __func__, message); \
   } while (0)
