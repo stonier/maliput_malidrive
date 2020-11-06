@@ -1,8 +1,8 @@
 // Copyright 2020 Toyota Research Institute
 #pragma once
 
-#include "malidrive/road_curve/function.h"
 #include "maliput_malidrive/common/macros.h"
+#include "maliput_malidrive/road_curve/function.h"
 
 namespace malidrive {
 namespace road_curve {
