@@ -19,5 +19,9 @@ static constexpr double kSpeedTolerance{1e-4};             // [m/s]
 static constexpr double kDefaultMinSpeedLimit{0.};         // [m/s]
 static constexpr double kDefaultMaxSpeedLimit{40. / 3.6};  // [m/s] --> 40km/h
 
+/// TODO(#701): Remove the following two constants once #701 is merged.
+static constexpr double kExplorationRadius{1.};  // [m]
+static constexpr int kNumIterations{200};        // [u]
+
 }  // namespace constants
 }  // namespace malidrive
