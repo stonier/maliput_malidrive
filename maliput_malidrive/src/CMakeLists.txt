@@ -3,3 +3,4 @@
 ##############################################################################
 
 add_subdirectory(maliput_malidrive)
+add_subdirectory(utility)
