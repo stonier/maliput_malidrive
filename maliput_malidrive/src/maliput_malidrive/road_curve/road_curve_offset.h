@@ -7,7 +7,7 @@
 #include "drake/systems/analysis/scalar_initial_value_problem.h"
 
 #include "maliput_malidrive/common/macros.h"
-#include "maliput_malidrive/road_curve/malidrive_road_curve.h"
+#include "maliput_malidrive/road_curve/road_curve.h"
 
 namespace malidrive {
 namespace road_curve {

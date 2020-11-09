@@ -16,10 +16,10 @@ set(UNIT_TEST_ROAD_CURVE_SOURCES
   ground_curve_test.cc
   lane_offset_function_test.cc
   line_ground_curve_test.cc
-  malidrive_road_curve_test.cc
   open_range_validator_test.cc
   piecewise_function_test.cc
   piecewise_ground_curve_test.cc
+  road_curve_test.cc
   road_curve_offset_test.cc
   scaled_domain_function_test.cc
 )

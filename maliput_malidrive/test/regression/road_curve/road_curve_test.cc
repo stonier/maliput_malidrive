@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/road_curve/malidrive_road_curve.h"
+#include "maliput_malidrive/road_curve/road_curve.h"
 
 #include <array>
 #include <memory>
