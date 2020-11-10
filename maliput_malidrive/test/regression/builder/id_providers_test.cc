@@ -1,5 +1,5 @@
 // Copyright 2019 Toyota Research Institute
-#include "malidrive/internal/id_providers.h"
+#include "maliput_malidrive/builder/id_providers.h"
 
 #include <gtest/gtest.h>
 
@@ -12,7 +12,7 @@ using maliput::api::rules::Rule;
 using maliput::api::rules::SpeedLimitRule;
 
 namespace malidrive {
-namespace internal {
+namespace builder {
 namespace tests {
 
 class IdProviderTest : public ::testing::Test {
@@ -75,5 +75,5 @@ GTEST_TEST(UniqueIntegerProviderTest, NewIdTest) {
 }
 
 }  // namespace tests
-}  // namespace internal
+}  // namespace builder
 }  // namespace malidrive

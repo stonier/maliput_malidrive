@@ -47,6 +47,7 @@ macro(maliput_malidrive_build_tests)
 
     # Kind of an ugly catch-all bucket
     target_link_libraries(${BINARY_NAME}
+        base
         builder
         common
         drake::drake
