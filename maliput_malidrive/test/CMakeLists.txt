@@ -58,6 +58,8 @@ macro(maliput_malidrive_build_tests)
         maliput::maliput_test_utilities
         pthread
         road_curve
+        utility
+        xodr
     )
 
     # Remove a warning in GTest.

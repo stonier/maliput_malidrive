@@ -4,6 +4,7 @@
 
 add_subdirectory(common)
 add_subdirectory(road_curve)
+add_subdirectory(xodr)
 
 ##############################################################################
 # Tests
