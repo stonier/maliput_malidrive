@@ -1,3 +1,4 @@
+// Copyright 2020 Toyota Research Institute
 #include "maliput_malidrive/builder/simplify_geometries.h"
 
 #include <algorithm>

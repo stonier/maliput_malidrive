@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
+#include "maliput_malidrive/builder/builder_tools.h"
 
 #include <map>
 
@@ -7,7 +7,7 @@
 
 #include "maliput/api/lane.h"
 #include "maliput/common/logger.h"
-#include "maliput_malidrive/base/malidrive_road_geometry.h"
+#include "maliput_malidrive/base/road_geometry.h"
 #include "maliput_malidrive/builder/id_providers.h"
 #include "maliput_malidrive/constants.h"
 #include "maliput_malidrive/xodr/db_manager.h"
@@ -312,10 +312,10 @@ std::vector<rules::XodrSpeedProperties> GetLaneSpeedProperties(const xodr::Lane&
   return speed_data;
 }
 
-const xodr::RoadHeader& GetXodrRoadFromMalidriveLane(const MalidriveLane* lane) {
+const xodr::RoadHeader& GetXodrRoadFromMalidriveLane(const Lane* lane) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const xodr::DBManager* manager =
-      static_cast<const malidrive::MalidriveRoadGeometry*>(lane->segment()->junction()->road_geometry())->get_manager();
+      static_cast<const malidrive::RoadGeometry*>(lane->segment()->junction()->road_geometry())->get_manager();
   MALIDRIVE_THROW_UNLESS(manager != nullptr);
 
   const auto& road_headers = manager->GetRoadHeaders();
@@ -329,7 +329,7 @@ const xodr::RoadHeader& GetXodrRoadFromMalidriveLane(const MalidriveLane* lane) 
   return road_headers.at(road_id);
 }
 
-const xodr::Lane& GetXodrLaneFromMalidriveLane(const MalidriveLane* lane) {
+const xodr::Lane& GetXodrLaneFromMalidriveLane(const Lane* lane) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const xodr::RoadHeader& road_header = GetXodrRoadFromMalidriveLane(lane);
   const double s_half{(lane->get_track_s_end() - lane->get_track_s_start()) / 2 + lane->get_track_s_start()};
@@ -346,14 +346,14 @@ const xodr::Lane& GetXodrLaneFromMalidriveLane(const MalidriveLane* lane) {
   return *lane_it;
 }
 
-std::string GetDirectionUsageRuleStateType(const MalidriveLane* lane) {
+std::string GetDirectionUsageRuleStateType(const Lane* lane) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const xodr::Lane& xodr_lane = GetXodrLaneFromMalidriveLane(lane);
   const LaneTravelDirection travel_dir(xodr_lane.user_data);
   return travel_dir.GetMaliputTravelDir();
 }
 
-std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const MalidriveLane* lane) {
+std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const Lane* lane) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const xodr::Lane& xodr_lane = GetXodrLaneFromMalidriveLane(lane);
   const double s_track_start{lane->get_track_s_start()};
@@ -385,7 +385,7 @@ std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const MalidriveLane*
   return speed_data;
 }
 
-std::pair<std::string, std::optional<std::string>> VehicleUsageAndExclusiveRuleStateValues(const MalidriveLane* lane) {
+std::pair<std::string, std::optional<std::string>> VehicleUsageAndExclusiveRuleStateValues(const Lane* lane) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const xodr::Lane& xodr_lane = GetXodrLaneFromMalidriveLane(lane);
   return std::make_pair(VehicleUsageValueForXodrLane(xodr_lane), VehicleExclusiveValueForXodrLane(xodr_lane));

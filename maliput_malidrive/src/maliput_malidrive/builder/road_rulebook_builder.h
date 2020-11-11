@@ -8,7 +8,7 @@
 #include "maliput/api/rules/road_rulebook.h"
 #include "maliput/base/manual_rulebook.h"
 #include "maliput/base/rule_registry.h"
-#include "maliput_malidrive/base/malidrive_lane.h"
+#include "maliput_malidrive/base/lane.h"
 #include "maliput_malidrive/builder/rule_tools.h"
 #include "maliput_malidrive/common/macros.h"
 
@@ -16,10 +16,10 @@ namespace malidrive {
 namespace builder {
 
 /// Functor to build a RoadRulebook.
-class MalidriveRoadRuleBookBuilder {
+class RoadRuleBookBuilder {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveRoadRuleBookBuilder)
-  MalidriveRoadRuleBookBuilder() = delete;
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(RoadRuleBookBuilder)
+  RoadRuleBookBuilder() = delete;
 
   /// Constructs a RoadRuleBook.
   ///
@@ -28,11 +28,10 @@ class MalidriveRoadRuleBookBuilder {
   /// @param direction_usage_rules is a vector of DirectionUsageRules.
   /// @param speed_limit_rules is a vector of SpeedLimitRules.
   /// @throw maliput::assertion_error When `rg` or `rule_registry` are nullptr.
-  MalidriveRoadRuleBookBuilder(const maliput::api::RoadGeometry* rg,
-                               const maliput::api::rules::RuleRegistry* rule_registry,
-                               const std::optional<std::string>& road_rulebook_file_path,
-                               const std::vector<maliput::api::rules::DirectionUsageRule>& direction_usage_rules,
-                               const std::vector<maliput::api::rules::SpeedLimitRule>& speed_limit_rules);
+  RoadRuleBookBuilder(const maliput::api::RoadGeometry* rg, const maliput::api::rules::RuleRegistry* rule_registry,
+                      const std::optional<std::string>& road_rulebook_file_path,
+                      const std::vector<maliput::api::rules::DirectionUsageRule>& direction_usage_rules,
+                      const std::vector<maliput::api::rules::SpeedLimitRule>& speed_limit_rules);
 
   /// Builds a ManualRulebook.
   ///
@@ -43,7 +42,7 @@ class MalidriveRoadRuleBookBuilder {
  private:
   // @returns A LaneSRoute that covers `lane.`
   // @throws maliput::common::assertion_error When `lane` is nullptr.
-  maliput::api::LaneSRoute CreateLaneSRouteFor(const MalidriveLane* lane) const;
+  maliput::api::LaneSRoute CreateLaneSRouteFor(const Lane* lane) const;
 
   // Creates vehicle usage and vehicle exclusive rules for all Lanes in the
   // RoadGeometry.
@@ -91,7 +90,7 @@ class MalidriveRoadRuleBookBuilder {
   const std::optional<std::string> road_rulebook_file_path_{};
   std::vector<maliput::api::rules::DirectionUsageRule> direction_usage_rules_;
   std::vector<maliput::api::rules::SpeedLimitRule> speed_limit_rules_;
-  std::function<std::pair<std::string, std::optional<std::string>>(const MalidriveLane*)>
+  std::function<std::pair<std::string, std::optional<std::string>>(const Lane*)>
       extract_vehicle_usage_and_vehicle_exclusive_from_lane_;
 };
 

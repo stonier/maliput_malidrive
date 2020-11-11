@@ -2,21 +2,21 @@
 # Malidrive builder
 ##############################################################################
 add_library(builder
+  builder_tools.cc
   determine_tolerance.cc
+  direction_usage_builder.cc
+  discrete_value_rule_state_provider_builder.cc
   id_providers.cc
-  malidrive_builder_tools.cc
-  malidrive_direction_usage_builder.cc
-  malidrive_discrete_value_rule_state_provider_builder.cc
-  malidrive_range_value_rule_state_provider_builder.cc
-  malidrive_road_geometry_builder.cc
-  malidrive_road_network_builder.cc
-  malidrive_rule_registry_builder.cc
-  malidrive_road_rulebook_builder.cc
-  malidrive_speed_limit_builder.cc
+  range_value_rule_state_provider_builder.cc
   road_curve_factory.cc
+  road_geometry_builder.cc
   road_geometry_builder_base.cc
+  road_network_builder.cc
+  rule_registry_builder.cc
+  road_rulebook_builder.cc
   rule_tools.cc
   simplify_geometries.cc
+  speed_limit_builder.cc
 )
 
 set_target_properties(builder PROPERTIES OUTPUT_NAME builder)
@@ -56,9 +56,9 @@ install(TARGETS builder
 install(
   FILES
     id_providers.h
-    malidrive_builder_tools.h
-    malidrive_road_network_builder.h
-    malidrive_road_geometry_builder.h
+    builder_tools.h
+    road_network_builder.h
+    road_geometry_builder.h
     road_curve_factory.h
     road_geometry_builder_base.h
     road_geometry_configuration.h

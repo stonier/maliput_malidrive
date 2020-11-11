@@ -1,21 +1,21 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/base/malidrive_lane.h"
+#include "maliput_malidrive/base/lane.h"
 
 #include <cmath>
 
 #include "maliput/common/logger.h"
 #include "maliput/math/saturate.h"
-#include "maliput_malidrive/base/malidrive_road_geometry.h"
+#include "maliput_malidrive/base/road_geometry.h"
 #include "maliput_malidrive/road_curve/open_range_validator.h"
 
 namespace malidrive {
 
 using maliput::math::Vector3;
 
-MalidriveLane::MalidriveLane(const maliput::api::LaneId& id, int xodr_track, int xodr_lane_id,
-                             const maliput::api::HBounds& elevation_bounds, const road_curve::RoadCurve* road_curve,
-                             std::unique_ptr<road_curve::Function> lane_width,
-                             std::unique_ptr<road_curve::Function> lane_offset, double p0, double p1)
+Lane::Lane(const maliput::api::LaneId& id, int xodr_track, int xodr_lane_id,
+           const maliput::api::HBounds& elevation_bounds, const road_curve::RoadCurve* road_curve,
+           std::unique_ptr<road_curve::Function> lane_width, std::unique_ptr<road_curve::Function> lane_offset,
+           double p0, double p1)
     : maliput::geometry_base::Lane(id),
       xodr_track_(xodr_track),
       xodr_lane_id_(xodr_lane_id),
@@ -75,13 +75,13 @@ MalidriveLane::MalidriveLane(const maliput::api::LaneId& id, int xodr_track, int
   // @}
 }
 
-maliput::api::RBounds MalidriveLane::do_lane_bounds(double s) const {
+maliput::api::RBounds Lane::do_lane_bounds(double s) const {
   const double p = p_from_s_(s_range_validation_(s));
   const double width = lane_width_->f(p);
   return {-width / 2., width / 2.};
 }
 
-maliput::api::RBounds MalidriveLane::do_segment_bounds(double s) const {
+maliput::api::RBounds Lane::do_segment_bounds(double s) const {
   s = s_range_validation_(s);
   // TODO(agalbachicar):  Once geometry restrictions are released, we should map
   //                      this lane s coordinate into adjacent lanes' s
@@ -109,7 +109,7 @@ maliput::api::RBounds MalidriveLane::do_segment_bounds(double s) const {
           width * (static_cast<double>(left_lanes_count) + 0.5)};
 }
 
-maliput::api::GeoPosition MalidriveLane::DoToGeoPosition(const maliput::api::LanePosition& lane_pos) const {
+maliput::api::GeoPosition Lane::DoToGeoPosition(const maliput::api::LanePosition& lane_pos) const {
   const double p = p_from_s_(s_range_validation_(lane_pos.s()));
   const Vector3 inertial_position = road_curve_->W({p, to_reference_r(p, lane_pos.r()), lane_pos.h()});
   const maliput::api::GeoPosition xodr_inertial_pos(inertial_position.x(), inertial_position.y(),
@@ -117,7 +117,7 @@ maliput::api::GeoPosition MalidriveLane::DoToGeoPosition(const maliput::api::Lan
   return get_world_to_opendrive_transform().OpenDriveToWorld(xodr_inertial_pos);
 }
 
-Vector3 MalidriveLane::InertialFrameToLaneFrame(const Vector3& xyz) const {
+Vector3 Lane::InertialFrameToLaneFrame(const Vector3& xyz) const {
   // Gets initial estimate of `p` from the RoadCurve.
   double p{road_curve_->WInverse(xyz).x()};
   // Delta p, to be reduced iteratively.
@@ -158,7 +158,7 @@ Vector3 MalidriveLane::InertialFrameToLaneFrame(const Vector3& xyz) const {
   return {p, r_hat.dot(w_delta) - lane_offset_->f(p), h_hat.dot(w_delta)};
 }
 
-maliput::api::LanePositionResult MalidriveLane::DoToLanePosition(const maliput::api::GeoPosition& geo_pos_world) const {
+maliput::api::LanePositionResult Lane::DoToLanePosition(const maliput::api::GeoPosition& geo_pos_world) const {
   const maliput::math::Vector3 xyz = get_world_to_opendrive_transform().WorldToOpenDrive(geo_pos_world).xyz();
   const maliput::math::Vector3 unconstrained_prh{InertialFrameToLaneFrame(xyz)};
   MALIDRIVE_IS_IN_RANGE(unconstrained_prh[0], p0_, p1_);
@@ -176,15 +176,15 @@ maliput::api::LanePositionResult MalidriveLane::DoToLanePosition(const maliput::
   return result;
 }
 
-maliput::api::Rotation MalidriveLane::DoGetOrientation(const maliput::api::LanePosition& lane_pos) const {
+maliput::api::Rotation Lane::DoGetOrientation(const maliput::api::LanePosition& lane_pos) const {
   const double p = p_from_s_(s_range_validation_(lane_pos.s()));
   const maliput::math::RollPitchYaw rpy =
       road_curve_->Orientation({p, to_reference_r(p, lane_pos.r()), lane_pos.h()}, lane_offset_.get());
   return maliput::api::Rotation::FromRpy(rpy.roll_angle(), rpy.pitch_angle(), rpy.yaw_angle());
 }
 
-maliput::api::LanePosition MalidriveLane::DoEvalMotionDerivatives(const maliput::api::LanePosition& position,
-                                                                  const maliput::api::IsoLaneVelocity& velocity) const {
+maliput::api::LanePosition Lane::DoEvalMotionDerivatives(const maliput::api::LanePosition& position,
+                                                         const maliput::api::IsoLaneVelocity& velocity) const {
   const double p = p_from_s_(s_range_validation_(position.s()));
   const double r = to_reference_r(p, position.r());
   const double h = position.h();
@@ -198,14 +198,13 @@ maliput::api::LanePosition MalidriveLane::DoEvalMotionDerivatives(const maliput:
   return {ds_dsigma * velocity.sigma_v, velocity.rho_v, velocity.eta_v};
 }
 
-maliput::api::GeoPosition MalidriveLane::ToInertialPosition(const maliput::api::LanePosition& lane_pos) const {
+maliput::api::GeoPosition Lane::ToInertialPosition(const maliput::api::LanePosition& lane_pos) const {
   const maliput::api::GeoPosition world_position = ToGeoPosition(lane_pos);
   return get_world_to_opendrive_transform().WorldToOpenDrive(world_position);
 }
 
-const WorldToOpenDriveTransform& MalidriveLane::get_world_to_opendrive_transform() const {
-  return static_cast<const MalidriveRoadGeometry*>(segment()->junction()->road_geometry())
-      ->get_world_to_opendrive_transform();
+const WorldToOpenDriveTransform& Lane::get_world_to_opendrive_transform() const {
+  return static_cast<const RoadGeometry*>(segment()->junction()->road_geometry())->get_world_to_opendrive_transform();
 }
 
 }  // namespace malidrive

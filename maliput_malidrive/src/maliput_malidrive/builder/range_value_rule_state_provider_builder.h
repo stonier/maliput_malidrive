@@ -13,9 +13,9 @@ using maliput::api::rules::RangeValueRule;
 using maliput::api::rules::Rule;
 
 /// Functor to build a RangeValueRuleStateProvider.
-class MalidriveRangeValueRuleStateProviderBuilder {
+class RangeValueRuleStateProviderBuilder {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveRangeValueRuleStateProviderBuilder)
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(RangeValueRuleStateProviderBuilder)
 
   /// Constructs a MalidriveRangeValueRuleStateProviderBuilder.
   ///
@@ -23,8 +23,7 @@ class MalidriveRangeValueRuleStateProviderBuilder {
   ///        It must not be nullptr.
   ///
   /// @throws maliput::common::assertion_error When `rulebook` is nullptr.
-  explicit MalidriveRangeValueRuleStateProviderBuilder(const maliput::api::rules::RoadRulebook* rulebook)
-      : rulebook_(rulebook) {
+  explicit RangeValueRuleStateProviderBuilder(const maliput::api::rules::RoadRulebook* rulebook) : rulebook_(rulebook) {
     MALIDRIVE_DEMAND(rulebook_ != nullptr);
   }
 

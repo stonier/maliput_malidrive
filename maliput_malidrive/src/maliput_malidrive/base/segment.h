@@ -17,11 +17,11 @@ namespace malidrive {
 ///
 /// Child MalidriveLanes of this segment will be constructed as offsets of the
 /// reference curve.
-class MalidriveSegment : public maliput::geometry_base::Segment {
+class Segment : public maliput::geometry_base::Segment {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveSegment)
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(Segment)
 
-  /// Constructs a MalidriveSegment.
+  /// Constructs a Segment.
   /// The incidence region of the Segment on the @p road_curve will be
   /// delimited by the range composed by @p p0 and @p p1.
   ///
@@ -30,15 +30,15 @@ class MalidriveSegment : public maliput::geometry_base::Segment {
   ///        It must not be nullptr.
   /// @param reference_line_offset The road reference line offset function of the Segment shared by all Lanes.
   ///        It must not be nullptr.
-  /// @param p0 The value of the @f$ p @f$ parameter of @p road_curve that matches the start of the MalidriveSegment.
-  /// @param p1 The value of the @f$ p @f$ parameter of @p road_curve that matches the finish of the MalidriveSegment.
+  /// @param p0 The value of the @f$ p @f$ parameter of @p road_curve that matches the start of the Segment.
+  /// @param p1 The value of the @f$ p @f$ parameter of @p road_curve that matches the finish of the Segment.
   ///
   /// @throws maliput::common::assertion_error When @p road_curve is nullptr.
   /// @throws maliput::common::assertion_error When @p reference_line_offset is nullptr.
   /// @throws maliput::common::assertion_error When @p p0 is negative.
   /// @throws maliput::common::assertion_error When @p p0 is greater than @p p1.
-  MalidriveSegment(const maliput::api::SegmentId& id, const road_curve::RoadCurve* road_curve,
-                   const road_curve::Function* reference_line_offset, double p0, double p1)
+  Segment(const maliput::api::SegmentId& id, const road_curve::RoadCurve* road_curve,
+          const road_curve::Function* reference_line_offset, double p0, double p1)
       : maliput::geometry_base::Segment(id),
         road_curve_(road_curve),
         reference_line_offset_(reference_line_offset),

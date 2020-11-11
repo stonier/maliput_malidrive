@@ -6,7 +6,7 @@
 
 #include "maliput/api/lane_data.h"
 #include "maliput/api/road_geometry.h"
-#include "maliput_malidrive/base/malidrive_lane.h"
+#include "maliput_malidrive/base/lane.h"
 #include "maliput_malidrive/builder/rule_tools.h"
 #include "maliput_malidrive/common/macros.h"
 #include "maliput_malidrive/xodr/junction.h"
@@ -264,18 +264,18 @@ std::vector<rules::XodrSpeedProperties> GetLaneSpeedProperties(const xodr::Lane&
                                                                double s_track_end);
 
 /// @returns The xodr::RoadHeader that matches with the Road that contains `lane`.
-/// @param lane The Malidrive::MalidriveLane to retrieve its correspondant xodr::RoadHeader. It must not be nullptr.
+/// @param lane The Lane to retrieve its correspondant xodr::RoadHeader. It must not be nullptr.
 ///
 /// @throws maliput::common::assertion_error When lane is nullptr.
 /// @throws maliput::common::assertion_error When the correspondant xodr::RoadHeader cannot be found.
-const xodr::RoadHeader& GetXodrRoadFromMalidriveLane(const MalidriveLane* lane);
+const xodr::RoadHeader& GetXodrRoadFromMalidriveLane(const Lane* lane);
 
 /// @returns The xodr::Lane that matches with `lane`.
-/// @param lane The MalidriveLane to retrieve its correspondant xodr::Lane. It must not be nullptr.
+/// @param lane The Lane to retrieve its correspondant xodr::Lane. It must not be nullptr.
 ///
 /// @throws maliput::common::assertion_error When lane is nullptr.
 /// @throws maliput::common::assertion_error When the correspondant xodr::Lane cannot be found.
-const xodr::Lane& GetXodrLaneFromMalidriveLane(const MalidriveLane* lane);
+const xodr::Lane& GetXodrLaneFromMalidriveLane(const Lane* lane);
 
 /// @returns The direction usage value of `lane`. It is one in the string set
 /// `{"AgainstS", "WithS", "Bidirectional", "Undefined"}`.
@@ -283,7 +283,7 @@ const xodr::Lane& GetXodrLaneFromMalidriveLane(const MalidriveLane* lane);
 /// @param lane The Lane to retrieve its direction usage. It must not be nullptr.
 ///
 /// @throws maliput::common::assertion_error When lane is nullptr.
-std::string GetDirectionUsageRuleStateType(const MalidriveLane* lane);
+std::string GetDirectionUsageRuleStateType(const Lane* lane);
 
 /// @returns A vector of XodrSpeedProperties which contains the speed limits information of a `lane`.
 /// This method attempts to obtain the speed records for the entire `lane`'s range.
@@ -297,13 +297,13 @@ std::string GetDirectionUsageRuleStateType(const MalidriveLane* lane);
 /// nullptr.
 ///
 /// @throws maliput::common::assertion_error When `lane` is nullptr.
-std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const MalidriveLane* lane);
+std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const Lane* lane);
 
 /// @returns A pair whose first element is vehicle usage rule value and
 ///          second element is the vehicle exclusive rule value for
 ///          `lane`.
 /// @throws maliput::common::assertion_error When `lane` is nullptr.
-std::pair<std::string, std::optional<std::string>> VehicleUsageAndExclusiveRuleStateValues(const MalidriveLane* lane);
+std::pair<std::string, std::optional<std::string>> VehicleUsageAndExclusiveRuleStateValues(const Lane* lane);
 
 }  // namespace builder
 }  // namespace malidrive

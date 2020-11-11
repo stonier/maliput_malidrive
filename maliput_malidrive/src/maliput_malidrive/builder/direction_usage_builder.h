@@ -8,23 +8,22 @@
 #include "maliput/api/road_geometry.h"
 #include "maliput/api/rules/direction_usage_rule.h"
 #include "maliput/common/logger.h"
-#include "maliput_malidrive/base/malidrive_lane.h"
+#include "maliput_malidrive/base/lane.h"
 #include "maliput_malidrive/builder/id_providers.h"
 
 namespace malidrive {
 namespace builder {
 
 /// Functor to build a a vector of maliput::api::rules::DirectionUsageRules.
-class MalidriveDirectionUsageBuilder {
+class DirectionUsageBuilder {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveDirectionUsageBuilder)
-  MalidriveDirectionUsageBuilder() = delete;
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(DirectionUsageBuilder)
+  DirectionUsageBuilder() = delete;
 
-  /// Constructs a MalidriveDirectionUsageBuilder.
+  /// Constructs a DirectionUsageBuilder.
   ///
   /// @param rg is the pointer to the maliput::api::RoadGeometry. It must not be nullptr.
-  MalidriveDirectionUsageBuilder(const maliput::api::RoadGeometry* rg)
-      : rg_(rg), direction_usage_indexer_(/* base ID*/ 0) {
+  DirectionUsageBuilder(const maliput::api::RoadGeometry* rg) : rg_(rg), direction_usage_indexer_(/* base ID*/ 0) {
     MALIDRIVE_THROW_UNLESS(rg_ != nullptr);
   }
 
@@ -58,14 +57,14 @@ class MalidriveDirectionUsageBuilder {
   ///
   /// @param rule_id is the ID of the DirectionUsageRule.
   /// @param lane is Lane pointer.  It must not be nullptr and its type
-  ///        must be `malidrive::MalidriveLane`.
+  ///        must be `malidrive::Lane`.
   maliput::api::rules::DirectionUsageRule::State BuildDirectionUsageRuleStateFor(
-      const maliput::api::rules::DirectionUsageRule::Id& rule_id, const MalidriveLane* lane);
+      const maliput::api::rules::DirectionUsageRule::Id& rule_id, const Lane* lane);
 
   /// Builds a maliput::api::rules::DirectionUsageRule for `lane`.
   ///
   /// @param lane is the Lane to inspect. It must not be nullptr and its type
-  ///        must be `malidrive::MalidriveLane`.
+  ///        must be `malidrive::Lane`.
   maliput::api::rules::DirectionUsageRule BuildDirectionUsageRuleFor(const maliput::api::Lane* lane);
 
   const maliput::api::RoadGeometry* rg_{};

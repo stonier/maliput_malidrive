@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_road_geometry_builder.h"
+#include "maliput_malidrive/builder/road_geometry_builder.h"
 
 #include <gtest/gtest.h>
 
@@ -9,7 +9,7 @@
 #include "maliput/api/lane_data.h"
 #include "maliput/common/assertion_error.h"
 #include "maliput/test_utilities/maliput_types_compare.h"
-#include "maliput_malidrive/base/malidrive_lane.h"
+#include "maliput_malidrive/base/lane.h"
 #include "maliput_malidrive/builder/id_providers.h"
 #include "maliput_malidrive/constants.h"
 
@@ -61,11 +61,11 @@ class BuilderTestSingleLane : public ::testing::Test {
 };
 
 TEST_F(BuilderTestSingleLane, RoadGeometryBuilderConstructor) {
-  std::unique_ptr<const maliput::api::RoadGeometry> dut = builder::MalidriveRoadGeometryBuilder(
+  std::unique_ptr<const maliput::api::RoadGeometry> dut = builder::RoadGeometryBuilder(
       std::move(manager_), road_geometry_configuration_, kWorldToOpenDriveTransform, std::move(factory_))();
   ASSERT_NE(dut.get(), nullptr);
 
-  ASSERT_NE(dynamic_cast<const malidrive::MalidriveRoadGeometry*>(dut.get()), nullptr);
+  ASSERT_NE(dynamic_cast<const malidrive::RoadGeometry*>(dut.get()), nullptr);
 
   EXPECT_DOUBLE_EQ(dut->linear_tolerance(), kLinearTolerance);
   EXPECT_DOUBLE_EQ(dut->angular_tolerance(), kAngularTolerance);
@@ -77,27 +77,27 @@ TEST_F(BuilderTestSingleLane, RoadGeometryBuilderConstructorBadUsed) {
   {
     RoadGeometryConfiguration bad_config = road_geometry_configuration_;
     bad_config.linear_tolerance = -5.;
-    EXPECT_THROW(builder::MalidriveRoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform,
-                                                       std::move(factory_)),
-                 maliput::common::assertion_error);
+    EXPECT_THROW(
+        builder::RoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform, std::move(factory_)),
+        maliput::common::assertion_error);
   }
   {
     RoadGeometryConfiguration bad_config = road_geometry_configuration_;
     bad_config.angular_tolerance = -5.;
-    EXPECT_THROW(builder::MalidriveRoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform,
-                                                       std::move(factory_)),
-                 maliput::common::assertion_error);
+    EXPECT_THROW(
+        builder::RoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform, std::move(factory_)),
+        maliput::common::assertion_error);
   }
   {
     RoadGeometryConfiguration bad_config = road_geometry_configuration_;
     bad_config.scale_length = -5.;
-    EXPECT_THROW(builder::MalidriveRoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform,
-                                                       std::move(factory_)),
-                 maliput::common::assertion_error);
+    EXPECT_THROW(
+        builder::RoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform, std::move(factory_)),
+        maliput::common::assertion_error);
   }
   {
-    EXPECT_THROW(builder::MalidriveRoadGeometryBuilder(nullptr, road_geometry_configuration_,
-                                                       kWorldToOpenDriveTransform, std::move(factory_)),
+    EXPECT_THROW(builder::RoadGeometryBuilder(nullptr, road_geometry_configuration_, kWorldToOpenDriveTransform,
+                                              std::move(factory_)),
                  maliput::common::assertion_error);
   }
 }
@@ -278,7 +278,7 @@ class RoadGeometryBuilderBaseTest : public ::testing::TestWithParam<RoadGeometry
 
   // Tests Junction, Segments and Lanes properties.
   void RunTest() {
-    std::unique_ptr<const maliput::api::RoadGeometry> dut = builder::MalidriveRoadGeometryBuilder(
+    std::unique_ptr<const maliput::api::RoadGeometry> dut = builder::RoadGeometryBuilder(
         std::move(manager_), road_geometry_configuration_, kWorldToOpenDriveTransform, std::move(factory_))();
     ASSERT_NE(dut.get(), nullptr);
 
@@ -341,7 +341,7 @@ class RoadGeometryBuilderBaseTest : public ::testing::TestWithParam<RoadGeometry
           EXPECT_NE(expected_road_it, expected_roads.end());
           EXPECT_NEAR(expected_road_it->heading, lane->GetOrientation({0., 0., 0.}).yaw(), kLinearTolerance);
 
-          auto malidrive_lane = dynamic_cast<const MalidriveLane*>(lane);
+          auto malidrive_lane = dynamic_cast<const Lane*>(lane);
           ASSERT_NE(malidrive_lane, nullptr);
 
           EXPECT_EQ(expected_lane_it->xodr_road_id, malidrive_lane->get_track());
@@ -643,8 +643,8 @@ class BuilderBranchPointTest : public ::testing::TestWithParam<BuilderBranchPoin
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromFile(road_geometry_configuration_.opendrive_file.value(), kLinearTolerance);
     auto factory = std::make_unique<builder::RoadCurveFactory>(kLinearTolerance, kScaleLength, kAngularTolerance);
-    rg_ = builder::MalidriveRoadGeometryBuilder(std::move(manager), road_geometry_configuration_,
-                                                kWorldToOpenDriveTransform, std::move(factory))();
+    rg_ = builder::RoadGeometryBuilder(std::move(manager), road_geometry_configuration_, kWorldToOpenDriveTransform,
+                                       std::move(factory))();
     expected_connections = GetParam().expected_connections;
   }
 
@@ -759,7 +759,7 @@ std::vector<SurfaceBoundariesTestParmeters> InstantiateBuilderSurfaceBoundariesP
 class RoadGeometryBuilderSurfaceBoundariesTest : public ::testing::TestWithParam<SurfaceBoundariesTestParmeters> {
  protected:
   void SetUp() override {
-    dut_ = builder::MalidriveRoadGeometryBuilder(
+    dut_ = builder::RoadGeometryBuilder(
         xodr::LoadDataBaseFromFile(kRoadGeometryConfiguration.opendrive_file.value(), kLinearTolerance),
         kRoadGeometryConfiguration, kWorldToOpenDriveTransform,
         std::make_unique<builder::RoadCurveFactory>(kLinearTolerance, kScaleLength, kAngularTolerance))();

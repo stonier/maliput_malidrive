@@ -16,7 +16,6 @@ set(UNIT_TEST_XODR_SOURCES
   geometry_test.cc
   header_test.cc
   junction_test.cc
-  lane_test.cc
   lane_link_test.cc
   lanes_test.cc
   lane_offset_test.cc
@@ -31,6 +30,7 @@ set(UNIT_TEST_XODR_SOURCES
   road_type_test.cc
   tools_test.cc
   unit_test.cc
+  xodr_lane_test.cc
 )
 
 maliput_malidrive_build_tests(${UNIT_TEST_XODR_SOURCES})

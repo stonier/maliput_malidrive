@@ -12,18 +12,18 @@
 namespace malidrive {
 namespace builder {
 
-class MalidriveRoadNetworkBuilder : public RoadNetworkBuilderBase {
+class RoadNetworkBuilder : public RoadNetworkBuilderBase {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveRoadNetworkBuilder);
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(RoadNetworkBuilder);
 
-  /// Constructs a MalidriveRoadNetworkBuilder.
+  /// Constructs a RoadNetworkBuilder.
   ///
   /// @param road_network_configuration Holds the information of all the
   ///        RoadNetwork entities.
   /// @param world_transform Translation from the Inertial World frame to the
   ///        RoadGeometry Inertial Frame.
-  MalidriveRoadNetworkBuilder(const RoadNetworkConfiguration& road_network_configuration,
-                              const WorldToOpenDriveTransform world_transform)
+  RoadNetworkBuilder(const RoadNetworkConfiguration& road_network_configuration,
+                     const WorldToOpenDriveTransform world_transform)
       : RoadNetworkBuilderBase(road_network_configuration, world_transform) {}
 
   /// @return A malidrive RoadNetwork without OpenDrive SDK.

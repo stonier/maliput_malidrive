@@ -15,9 +15,9 @@
 namespace malidrive {
 
 /// Maliput implementation of the malidrive backend.
-class MalidriveRoadGeometry final : public maliput::geometry_base::RoadGeometry {
+class RoadGeometry final : public maliput::geometry_base::RoadGeometry {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveRoadGeometry);
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(RoadGeometry);
 
   /// Constructs a RoadGeometry.
   ///
@@ -33,9 +33,9 @@ class MalidriveRoadGeometry final : public maliput::geometry_base::RoadGeometry 
   /// @param world_transform is the World Frame to OpenDRIVE Inertial Frame
   /// transform.
   /// @throw maliput::common::assertion_error When @p manager_ is nullptr.
-  MalidriveRoadGeometry(const maliput::api::RoadGeometryId& id, std::unique_ptr<xodr::DBManager> manager,
-                        double linear_tolerance, double angular_tolerance, double scale_length,
-                        const WorldToOpenDriveTransform& world_transform)
+  RoadGeometry(const maliput::api::RoadGeometryId& id, std::unique_ptr<xodr::DBManager> manager,
+               double linear_tolerance, double angular_tolerance, double scale_length,
+               const WorldToOpenDriveTransform& world_transform)
       : maliput::geometry_base::RoadGeometry(id, linear_tolerance, angular_tolerance, scale_length),
         world_transform_(world_transform),
         manager_(std::move(manager)) {

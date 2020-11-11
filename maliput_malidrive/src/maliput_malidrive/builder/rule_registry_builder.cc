@@ -1,7 +1,7 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_rule_registry_builder.h"
+#include "maliput_malidrive/builder/rule_registry_builder.h"
 
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
+#include "maliput_malidrive/builder/builder_tools.h"
 #include "maliput_malidrive/constants.h"
 
 namespace malidrive {
@@ -11,7 +11,7 @@ using maliput::api::rules::DiscreteValueRule;
 using maliput::api::rules::RangeValueRule;
 using maliput::api::rules::Rule;
 
-std::unique_ptr<maliput::api::rules::RuleRegistry> MalidriveRuleRegistryBuilder::operator()() {
+std::unique_ptr<maliput::api::rules::RuleRegistry> RuleRegistryBuilder::operator()() {
   auto rule_registry = std::make_unique<maliput::api::rules::RuleRegistry>();
   AddDiscreteValueRuleTypes(rule_registry.get());
   AddSpeedLimitRuleType(rule_registry.get());
@@ -19,7 +19,7 @@ std::unique_ptr<maliput::api::rules::RuleRegistry> MalidriveRuleRegistryBuilder:
   return rule_registry;
 }
 
-void MalidriveRuleRegistryBuilder::AddDiscreteValueRuleTypes(maliput::api::rules::RuleRegistry* rule_registry) const {
+void RuleRegistryBuilder::AddDiscreteValueRuleTypes(maliput::api::rules::RuleRegistry* rule_registry) const {
   MALIDRIVE_THROW_UNLESS(rule_registry != nullptr);
 
   const Rule::RelatedRules empty_related_rules{};
@@ -38,8 +38,8 @@ void MalidriveRuleRegistryBuilder::AddDiscreteValueRuleTypes(maliput::api::rules
   rule_registry->RegisterDiscreteValueRule(direction_usage_rule_type.first, direction_usage_rule_type.second);
 }
 
-std::unordered_map<DiscreteValueRule::TypeId, std::vector<std::string>>
-MalidriveRuleRegistryBuilder::RuleTypesAndValues() const {
+std::unordered_map<DiscreteValueRule::TypeId, std::vector<std::string>> RuleRegistryBuilder::RuleTypesAndValues()
+    const {
   return {
       // Defines whether or not vehicles and pedestrians can travel along a route.
       {rules::VehicleUsageRuleTypeId(),
@@ -65,7 +65,7 @@ MalidriveRuleRegistryBuilder::RuleTypesAndValues() const {
   };
 }
 
-void MalidriveRuleRegistryBuilder::AddSpeedLimitRuleType(maliput::api::rules::RuleRegistry* rule_registry) const {
+void RuleRegistryBuilder::AddSpeedLimitRuleType(maliput::api::rules::RuleRegistry* rule_registry) const {
   MALIDRIVE_THROW_UNLESS(rule_registry != nullptr);
 
   const Rule::RelatedRules empty_related_rules{};
@@ -76,7 +76,7 @@ void MalidriveRuleRegistryBuilder::AddSpeedLimitRuleType(maliput::api::rules::Ru
   // containing the default minimum speed limit and the discovered maximum
   // speed limit.
   for (const auto lane_id_lane : rg_->ById().GetLanes()) {
-    const auto max_speed_limits = GetMaxSpeedLimitFor(dynamic_cast<const MalidriveLane*>(lane_id_lane.second));
+    const auto max_speed_limits = GetMaxSpeedLimitFor(dynamic_cast<const Lane*>(lane_id_lane.second));
     for (const auto& speed_limit : max_speed_limits) {
       speed_limit_range_set.insert(RangeValueRule::Range{Rule::State::kStrict, empty_related_rules,
                                                          empty_related_unique_ids, "m/s",

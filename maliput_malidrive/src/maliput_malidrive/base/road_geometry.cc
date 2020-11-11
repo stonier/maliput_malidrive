@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/base/malidrive_road_geometry.h"
+#include "maliput_malidrive/base/road_geometry.h"
 
 #include <algorithm>
 
@@ -62,9 +62,9 @@ bool IsNewRoadPositionResultCloser(const maliput::api::RoadPositionResult& new_r
 
 namespace malidrive {
 
-void MalidriveRoadGeometry::AddRoadCharacteristics(const xodr::RoadHeader::Id& road_id,
-                                                   std::unique_ptr<road_curve::RoadCurve> road_curve,
-                                                   std::unique_ptr<road_curve::Function> reference_line_offset) {
+void RoadGeometry::AddRoadCharacteristics(const xodr::RoadHeader::Id& road_id,
+                                          std::unique_ptr<road_curve::RoadCurve> road_curve,
+                                          std::unique_ptr<road_curve::Function> reference_line_offset) {
   MALIDRIVE_THROW_UNLESS(road_curve != nullptr);
   MALIDRIVE_THROW_UNLESS(reference_line_offset != nullptr);
   if (road_characteristics_.find(road_id) != road_characteristics_.end()) {
@@ -73,21 +73,21 @@ void MalidriveRoadGeometry::AddRoadCharacteristics(const xodr::RoadHeader::Id& r
   road_characteristics_.emplace(road_id, RoadCharacteristics{std::move(road_curve), std::move(reference_line_offset)});
 }
 
-const road_curve::RoadCurve* MalidriveRoadGeometry::GetRoadCurve(const xodr::RoadHeader::Id& road_id) const {
+const road_curve::RoadCurve* RoadGeometry::GetRoadCurve(const xodr::RoadHeader::Id& road_id) const {
   if (road_characteristics_.find(road_id) == road_characteristics_.end()) {
     MALIDRIVE_THROW_MESSAGE(std::string("There is no RoadCurve for RoadID: ") + road_id.string());
   }
   return road_characteristics_.at(road_id).road_curve.get();
 }
 
-const road_curve::Function* MalidriveRoadGeometry::GetReferenceLineOffset(const xodr::RoadHeader::Id& road_id) const {
+const road_curve::Function* RoadGeometry::GetReferenceLineOffset(const xodr::RoadHeader::Id& road_id) const {
   if (road_characteristics_.find(road_id) == road_characteristics_.end()) {
     MALIDRIVE_THROW_MESSAGE(std::string("There is no reference line offset function for RoadID: ") + road_id.string());
   }
   return road_characteristics_.at(road_id).reference_line_offset.get();
 }
 
-maliput::api::RoadPositionResult MalidriveRoadGeometry::DoToRoadPosition(
+maliput::api::RoadPositionResult RoadGeometry::DoToRoadPosition(
     const maliput::api::GeoPosition& geo_pos, const std::optional<maliput::api::RoadPosition>& hint) const {
   maliput::api::RoadPositionResult result;
   if (hint.has_value()) {
@@ -109,7 +109,7 @@ maliput::api::RoadPositionResult MalidriveRoadGeometry::DoToRoadPosition(
   return result;
 }
 
-std::vector<maliput::api::RoadPositionResult> MalidriveRoadGeometry::DoFindRoadPositions(
+std::vector<maliput::api::RoadPositionResult> RoadGeometry::DoFindRoadPositions(
     const maliput::api::GeoPosition& geo_position, double radius) const {
   return maliput::geometry_base::BruteForceFindRoadPositionsStrategy(this, geo_position, radius);
 }

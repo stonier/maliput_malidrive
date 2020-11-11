@@ -20,9 +20,9 @@ namespace malidrive {
 /// road_curve::Function. Lane's width varies with `s`.
 ///
 /// In maps an XODR Lane within a certain XODR LaneSection.
-class MalidriveLane : public maliput::geometry_base::Lane {
+class Lane : public maliput::geometry_base::Lane {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveLane);
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(Lane);
 
   /// Constructs a Lane.
   ///
@@ -56,10 +56,9 @@ class MalidriveLane : public maliput::geometry_base::Lane {
   /// @throws maliput::common::assertion_error When @p lane_width's or
   ///         @p lane_offset's range are not within
   ///         `road_curve->linear_tolerance()` of [ @p p0, @p p1 ] range.
-  MalidriveLane(const maliput::api::LaneId& id, int xodr_track, int xodr_lane_id,
-                const maliput::api::HBounds& elevation_bounds, const road_curve::RoadCurve* road_curve,
-                std::unique_ptr<road_curve::Function> lane_width, std::unique_ptr<road_curve::Function> lane_offset,
-                double p0, double p1);
+  Lane(const maliput::api::LaneId& id, int xodr_track, int xodr_lane_id, const maliput::api::HBounds& elevation_bounds,
+       const road_curve::RoadCurve* road_curve, std::unique_ptr<road_curve::Function> lane_width,
+       std::unique_ptr<road_curve::Function> lane_offset, double p0, double p1);
 
   /// @return The OpenDRIVE Road Id, which is also referred to as Track Id. It
   ///         is a non-negative number.

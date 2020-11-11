@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
+#include "maliput_malidrive/builder/builder_tools.h"
 
 #include <gtest/gtest.h>
 

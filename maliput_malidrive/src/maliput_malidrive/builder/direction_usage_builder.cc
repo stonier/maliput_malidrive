@@ -1,7 +1,7 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_direction_usage_builder.h"
+#include "maliput_malidrive/builder/direction_usage_builder.h"
 
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
+#include "maliput_malidrive/builder/builder_tools.h"
 
 #include <map>
 #include <unordered_map>
@@ -11,7 +11,7 @@ namespace builder {
 
 using maliput::api::rules::DirectionUsageRule;
 
-std::vector<DirectionUsageRule> MalidriveDirectionUsageBuilder::operator()() {
+std::vector<DirectionUsageRule> DirectionUsageBuilder::operator()() {
   maliput::log()->trace("Building DirectionUsageRules...");
   const std::unordered_map<maliput::api::LaneId, const maliput::api::Lane*> lanes = rg_->ById().GetLanes();
   // Since Malidrive's RoadNetwork builder computes DirectionUsageRule IDs based on the order in which Lanes are
@@ -30,7 +30,7 @@ std::vector<DirectionUsageRule> MalidriveDirectionUsageBuilder::operator()() {
   return direction_usage_rules;
 }
 
-DirectionUsageRule::State::Type MalidriveDirectionUsageBuilder::ParseStateType(const std::string& state) const {
+DirectionUsageRule::State::Type DirectionUsageBuilder::ParseStateType(const std::string& state) const {
   const std::unordered_map<std::string, DirectionUsageRule::State::Type> string_to_state{
       {"AgainstS", DirectionUsageRule::State::Type::kAgainstS},
       {"WithS", DirectionUsageRule::State::Type::kWithS},
@@ -42,16 +42,16 @@ DirectionUsageRule::State::Type MalidriveDirectionUsageBuilder::ParseStateType(c
   return string_to_state.at(state);
 }
 
-DirectionUsageRule::State MalidriveDirectionUsageBuilder::BuildDirectionUsageRuleStateFor(
-    const DirectionUsageRule::Id& rule_id, const MalidriveLane* lane) {
+DirectionUsageRule::State DirectionUsageBuilder::BuildDirectionUsageRuleStateFor(const DirectionUsageRule::Id& rule_id,
+                                                                                 const Lane* lane) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const DirectionUsageRule::State::Id state_id = GetDirectionUsageRuleStateId(rule_id);
   const DirectionUsageRule::State::Type state_type = ParseStateType(GetDirectionUsageRuleStateType(lane));
   return DirectionUsageRule::State(state_id, state_type, DirectionUsageRule::State::Severity::kStrict);
 }
 
-DirectionUsageRule MalidriveDirectionUsageBuilder::BuildDirectionUsageRuleFor(const maliput::api::Lane* lane) {
-  const MalidriveLane* mali_lane = dynamic_cast<const MalidriveLane*>(lane);
+DirectionUsageRule DirectionUsageBuilder::BuildDirectionUsageRuleFor(const maliput::api::Lane* lane) {
+  const Lane* mali_lane = dynamic_cast<const Lane*>(lane);
   MALIDRIVE_THROW_UNLESS(mali_lane != nullptr);
 
   const DirectionUsageRule::Id rule_id = GetDirectionUsageRuleId(mali_lane->id(), direction_usage_indexer_.new_id());

@@ -1,11 +1,10 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_speed_limit_builder.h"
+#include "maliput_malidrive/builder/speed_limit_builder.h"
 
 #include "maliput/api/junction.h"
 #include "maliput/common/logger.h"
-#include "maliput_malidrive/base/malidrive_road_geometry.h"
+#include "maliput_malidrive/builder/builder_tools.h"
 #include "maliput_malidrive/builder/id_providers.h"
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
 #include "maliput_malidrive/constants.h"
 
 namespace malidrive {
@@ -15,7 +14,7 @@ using maliput::api::LaneSRange;
 using maliput::api::SRange;
 using maliput::api::rules::SpeedLimitRule;
 
-std::vector<SpeedLimitRule> MalidriveSpeedLimitBuilder::operator()() {
+std::vector<SpeedLimitRule> SpeedLimitBuilder::operator()() {
   maliput::log()->trace("Building SpeedLimitRules...");
   std::vector<SpeedLimitRule> speed_limits;
   for (int i = 0; i < rg_->num_junctions(); ++i) {
@@ -29,7 +28,7 @@ std::vector<SpeedLimitRule> MalidriveSpeedLimitBuilder::operator()() {
   return speed_limits;
 }
 
-std::vector<maliput::api::rules::SpeedLimitRule> MalidriveSpeedLimitBuilder::BuildSpeedLimitFor(
+std::vector<maliput::api::rules::SpeedLimitRule> SpeedLimitBuilder::BuildSpeedLimitFor(
     const maliput::api::Segment* segment) {
   MALIDRIVE_THROW_UNLESS(segment != nullptr);
 
@@ -38,7 +37,7 @@ std::vector<maliput::api::rules::SpeedLimitRule> MalidriveSpeedLimitBuilder::Bui
 
   std::vector<SpeedLimitRule> speed_limits;
   for (int i = 0; i < segment->num_lanes(); ++i) {
-    const MalidriveLane* lane = dynamic_cast<const MalidriveLane*>(segment->lane(i));
+    const Lane* lane = dynamic_cast<const Lane*>(segment->lane(i));
     const auto max_speed_limits = GetMaxSpeedLimitFor(lane);
     UniqueIntegerProvider speed_limit_indexer(0);
     for (const auto& speed_limit : max_speed_limits) {

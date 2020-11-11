@@ -2,8 +2,8 @@
 # MaliputMalidrive base
 ##############################################################################
 add_library(base
-  malidrive_lane.cc
-  malidrive_road_geometry.cc
+  lane.cc
+  road_geometry.cc
   world_to_opendrive_transform.cc
 )
 
@@ -46,9 +46,9 @@ install(TARGETS base
 install(
   FILES
     inertial_to_lane_mapping_config.h
-    malidrive_lane.h
-    malidrive_road_geometry.h
-    malidrive_segment.h
+    lane.h
+    road_geometry.h
+    segment.h
     world_to_opendrive_transform.h
   DESTINATION
     ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/base/

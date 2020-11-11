@@ -1,10 +1,10 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_road_rulebook_builder.h"
+#include "maliput_malidrive/builder/road_rulebook_builder.h"
 
 #include "maliput/api/regions.h"
 #include "maliput/base/road_rulebook_loader.h"
+#include "maliput_malidrive/builder/builder_tools.h"
 #include "maliput_malidrive/builder/id_providers.h"
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
 
 namespace malidrive {
 namespace builder {
@@ -16,7 +16,7 @@ using maliput::api::rules::DiscreteValueRule;
 using maliput::api::rules::RangeValueRule;
 using maliput::api::rules::Rule;
 
-MalidriveRoadRuleBookBuilder::MalidriveRoadRuleBookBuilder(
+RoadRuleBookBuilder::RoadRuleBookBuilder(
     const maliput::api::RoadGeometry* rg, const maliput::api::rules::RuleRegistry* rule_registry,
     const std::optional<std::string>& road_rulebook_file_path,
     const std::vector<maliput::api::rules::DirectionUsageRule>& direction_usage_rules,
@@ -30,7 +30,7 @@ MalidriveRoadRuleBookBuilder::MalidriveRoadRuleBookBuilder(
   MALIDRIVE_THROW_UNLESS(rule_registry_ != nullptr);
 }
 
-std::unique_ptr<const maliput::api::rules::RoadRulebook> MalidriveRoadRuleBookBuilder::operator()() {
+std::unique_ptr<const maliput::api::rules::RoadRulebook> RoadRuleBookBuilder::operator()() {
   auto rulebook = !road_rulebook_file_path_.has_value()
                       ? std::make_unique<maliput::ManualRulebook>()
                       : maliput::LoadRoadRulebookFromFile(rg_, road_rulebook_file_path_.value());
@@ -62,17 +62,17 @@ std::unique_ptr<const maliput::api::rules::RoadRulebook> MalidriveRoadRuleBookBu
   return rulebook;
 }
 
-LaneSRoute MalidriveRoadRuleBookBuilder::CreateLaneSRouteFor(const MalidriveLane* lane) const {
+LaneSRoute RoadRuleBookBuilder::CreateLaneSRouteFor(const Lane* lane) const {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   return LaneSRoute({LaneSRange(lane->id(), SRange(0., lane->length()))});
 }
 
-void MalidriveRoadRuleBookBuilder::CreateVehicleRelatedRules(maliput::ManualRulebook* rulebook) const {
+void RoadRuleBookBuilder::CreateVehicleRelatedRules(maliput::ManualRulebook* rulebook) const {
   MALIDRIVE_DEMAND(rulebook != nullptr);
   const int severity{Rule::State::kStrict};
 
   for (const auto& lane_id_lane : rg_->ById().GetLanes()) {
-    const MalidriveLane* lane = dynamic_cast<const MalidriveLane*>(lane_id_lane.second);
+    const Lane* lane = dynamic_cast<const Lane*>(lane_id_lane.second);
     MALIDRIVE_THROW_UNLESS(lane != nullptr);
 
     const std::pair<std::string, std::optional<std::string>> vehicle_rule_values =
@@ -100,7 +100,7 @@ void MalidriveRoadRuleBookBuilder::CreateVehicleRelatedRules(maliput::ManualRule
   }
 }
 
-void MalidriveRoadRuleBookBuilder::CreateSpeedLimitRules(maliput::ManualRulebook* rulebook) const {
+void RoadRuleBookBuilder::CreateSpeedLimitRules(maliput::ManualRulebook* rulebook) const {
   const std::optional<maliput::api::rules::RuleRegistry::QueryResult> speed_limit_query_result =
       rule_registry_->GetPossibleStatesOfRuleType(maliput::SpeedLimitRuleTypeId());
   MALIDRIVE_THROW_UNLESS(speed_limit_query_result.has_value());
@@ -121,7 +121,7 @@ void MalidriveRoadRuleBookBuilder::CreateSpeedLimitRules(maliput::ManualRulebook
   };
 
   for (const auto& lane_id_lane : rg_->ById().GetLanes()) {
-    const MalidriveLane* lane = dynamic_cast<const MalidriveLane*>(lane_id_lane.second);
+    const Lane* lane = dynamic_cast<const Lane*>(lane_id_lane.second);
     MALIDRIVE_THROW_UNLESS(lane != nullptr);
 
     const auto max_speed_limits = GetMaxSpeedLimitFor(lane);
@@ -139,13 +139,13 @@ void MalidriveRoadRuleBookBuilder::CreateSpeedLimitRules(maliput::ManualRulebook
   }
 }
 
-void MalidriveRoadRuleBookBuilder::CreateDirectionUsageRules(maliput::ManualRulebook* rulebook) const {
+void RoadRuleBookBuilder::CreateDirectionUsageRules(maliput::ManualRulebook* rulebook) const {
   MALIDRIVE_THROW_UNLESS(rulebook != nullptr);
   const int severity{Rule::State::kStrict};
   for (const auto& lane_id_lane : rg_->ById().GetLanes()) {
     const Rule::RelatedRules empty_related_rules;
     const Rule::RelatedUniqueIds empty_related_unique_ids;
-    const MalidriveLane* lane = dynamic_cast<const MalidriveLane*>(lane_id_lane.second);
+    const Lane* lane = dynamic_cast<const Lane*>(lane_id_lane.second);
     rulebook->AddRule(rule_registry_->BuildDiscreteValueRule(
         GetRuleIdFrom(maliput::DirectionUsageRuleTypeId(), lane->id()), maliput::DirectionUsageRuleTypeId(),
         CreateLaneSRouteFor(lane),

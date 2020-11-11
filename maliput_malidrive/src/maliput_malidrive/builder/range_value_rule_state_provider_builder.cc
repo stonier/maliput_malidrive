@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_range_value_rule_state_provider_builder.h"
+#include "maliput_malidrive/builder/range_value_rule_state_provider_builder.h"
 
 #include "maliput/base/manual_range_value_rule_state_provider.h"
 
@@ -21,8 +21,8 @@ void PopulateRangeValueRuleStates(const std::map<Rule::Id, RangeValueRule>& rang
 
 }  // namespace
 
-std::unique_ptr<maliput::api::rules::RangeValueRuleStateProvider> MalidriveRangeValueRuleStateProviderBuilder::
-operator()() const {
+std::unique_ptr<maliput::api::rules::RangeValueRuleStateProvider> RangeValueRuleStateProviderBuilder::operator()()
+    const {
   auto state_provider = std::make_unique<maliput::ManualRangeValueRuleStateProvider>(rulebook_);
   const maliput::api::rules::RoadRulebook::QueryResults all_rules = rulebook_->Rules();
   PopulateRangeValueRuleStates(all_rules.range_value_rules, state_provider.get());

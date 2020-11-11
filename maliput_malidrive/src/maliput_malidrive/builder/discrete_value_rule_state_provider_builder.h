@@ -13,17 +13,17 @@ using maliput::api::rules::DiscreteValueRule;
 using maliput::api::rules::Rule;
 
 /// Functor to build a DiscreteValueRuleStateProvider.
-class MalidriveDiscreteValueRuleStateProviderBuilder {
+class DiscreteValueRuleStateProviderBuilder {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveDiscreteValueRuleStateProviderBuilder)
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(DiscreteValueRuleStateProviderBuilder)
 
-  /// Constructs a MalidriveDiscreteValueRuleStateProviderBuilder.
+  /// Constructs a DiscreteValueRuleStateProviderBuilder.
   ///
   /// @param rulebook A RoadRulebook to feed the DiscreteValueRuleStateProvider.
   ///        It must not be nullptr.
   ///
   /// @throws maliput::common::assertion_error When `rulebook` is nullptr.
-  explicit MalidriveDiscreteValueRuleStateProviderBuilder(const maliput::api::rules::RoadRulebook* rulebook)
+  explicit DiscreteValueRuleStateProviderBuilder(const maliput::api::rules::RoadRulebook* rulebook)
       : rulebook_(rulebook) {
     MALIDRIVE_DEMAND(rulebook_ != nullptr);
   }

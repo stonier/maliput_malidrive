@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_discrete_value_rule_state_provider_builder.h"
+#include "maliput_malidrive/builder/discrete_value_rule_state_provider_builder.h"
 
 #include "maliput/base/manual_discrete_value_rule_state_provider.h"
 
@@ -22,8 +22,8 @@ void PopulateDiscreteValueRuleStates(const std::map<Rule::Id, DiscreteValueRule>
 
 }  // namespace
 
-std::unique_ptr<maliput::api::rules::DiscreteValueRuleStateProvider> MalidriveDiscreteValueRuleStateProviderBuilder::
-operator()() const {
+std::unique_ptr<maliput::api::rules::DiscreteValueRuleStateProvider> DiscreteValueRuleStateProviderBuilder::operator()()
+    const {
   auto state_provider = std::make_unique<maliput::ManualDiscreteValueRuleStateProvider>(rulebook_);
   const maliput::api::rules::RoadRulebook::QueryResults all_rules = rulebook_->Rules();
   PopulateDiscreteValueRuleStates(all_rules.discrete_value_rules, state_provider.get());

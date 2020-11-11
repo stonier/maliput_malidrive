@@ -10,8 +10,8 @@ set(TEST_TYPE UNIT)
 ##############################################################################
 
 set(UNIT_BASE_TEST_SOURCES
-  malidrive_lane_test.cc
-  malidrive_segment_test.cc
+  lane_test.cc
+  segment_test.cc
 )
 
 maliput_malidrive_build_tests(${UNIT_BASE_TEST_SOURCES})

@@ -5,7 +5,7 @@
 
 #include "maliput/api/road_geometry.h"
 #include "maliput/base/rule_registry.h"
-#include "maliput_malidrive/base/malidrive_lane.h"
+#include "maliput_malidrive/base/lane.h"
 #include "maliput_malidrive/builder/rule_tools.h"
 #include "maliput_malidrive/common/macros.h"
 
@@ -13,17 +13,15 @@ namespace malidrive {
 namespace builder {
 
 /// Functor to build a RuleRegistry.
-class MalidriveRuleRegistryBuilder {
+class RuleRegistryBuilder {
  public:
-  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(MalidriveRuleRegistryBuilder)
+  MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(RuleRegistryBuilder)
 
   /// Constructs a maliput::api::rules::RuleRegistry.
   ///
   /// @param rg A malidrive::RoadGeometry. It is used to extract speed limit
   /// rule ranges. It must not be nullptr.
-  MalidriveRuleRegistryBuilder(const maliput::api::RoadGeometry* rg) : rg_{rg} {
-    MALIDRIVE_THROW_UNLESS(rg_ != nullptr);
-  }
+  RuleRegistryBuilder(const maliput::api::RoadGeometry* rg) : rg_{rg} { MALIDRIVE_THROW_UNLESS(rg_ != nullptr); }
 
   /// Builds a RuleRegistry.
   ///

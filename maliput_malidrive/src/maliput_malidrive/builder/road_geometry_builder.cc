@@ -1,10 +1,9 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_road_geometry_builder.h"
+#include "maliput_malidrive/builder/road_geometry_builder.h"
 
 #include "maliput/common/logger.h"
 #include "maliput/common/maliput_unused.h"
 #include "maliput/geometry_base/junction.h"
-#include "maliput_malidrive/base/malidrive_lane.h"
 #include "maliput_malidrive/builder/determine_tolerance.h"
 #include "maliput_malidrive/builder/road_curve_factory.h"
 #include "maliput_malidrive/builder/simplify_geometries.h"
@@ -28,11 +27,11 @@ namespace {
 // `factory` must not be nullptr.
 //
 // @throws maliput::common::assertion_error When aforementioned conditions aren't met.
-std::unique_ptr<MalidriveLane> BuildLane(const xodr::Lane* lane,
-                                         road_curve::LaneOffset::AdjacentLaneFunctions& adjacent_lane_functions,
-                                         int xodr_lane_section_index, const xodr::RoadHeader* road_header,
-                                         const xodr::LaneSection* lane_section, const MalidriveSegment* segment,
-                                         const RoadCurveFactoryBase* factory) {
+std::unique_ptr<Lane> BuildLane(const xodr::Lane* lane,
+                                road_curve::LaneOffset::AdjacentLaneFunctions& adjacent_lane_functions,
+                                int xodr_lane_section_index, const xodr::RoadHeader* road_header,
+                                const xodr::LaneSection* lane_section, const Segment* segment,
+                                const RoadCurveFactoryBase* factory) {
   MALIDRIVE_THROW_UNLESS(xodr_lane_section_index >= 0);
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   MALIDRIVE_THROW_UNLESS(road_header != nullptr);
@@ -76,8 +75,8 @@ std::unique_ptr<MalidriveLane> BuildLane(const xodr::Lane* lane,
   //@}
   adjacent_lane_functions.width = lane_width.get();
   adjacent_lane_functions.offset = lane_offset.get();
-  return std::make_unique<MalidriveLane>(lane_id, xodr_track_id, xodr_lane_id, elevation_bounds, segment->road_curve(),
-                                         std::move(lane_width), std::move(lane_offset), p_0, p_1);
+  return std::make_unique<Lane>(lane_id, xodr_track_id, xodr_lane_id, elevation_bounds, segment->road_curve(),
+                                std::move(lane_width), std::move(lane_offset), p_0, p_1);
 }
 
 // Filters all the xodr::DBManager::XodrGeometriesToSimplify that refer to the
@@ -99,10 +98,10 @@ std::vector<xodr::DBManager::XodrGeometriesToSimplify> FilterGeometriesToSimplif
 
 }  // namespace
 
-MalidriveRoadGeometryBuilder::MalidriveRoadGeometryBuilder(std::unique_ptr<xodr::DBManager> manager,
-                                                           const RoadGeometryConfiguration& road_geometry_configuration,
-                                                           const WorldToOpenDriveTransform& world_transform,
-                                                           std::unique_ptr<RoadCurveFactoryBase> factory)
+RoadGeometryBuilder::RoadGeometryBuilder(std::unique_ptr<xodr::DBManager> manager,
+                                         const RoadGeometryConfiguration& road_geometry_configuration,
+                                         const WorldToOpenDriveTransform& world_transform,
+                                         std::unique_ptr<RoadCurveFactoryBase> factory)
     : RoadGeometryBuilderBase(road_geometry_configuration, world_transform),
       simplification_policy_(road_geometry_configuration.simplification_policy),
       manager_(std::move(manager)),
@@ -118,7 +117,7 @@ MalidriveRoadGeometryBuilder::MalidriveRoadGeometryBuilder(std::unique_ptr<xodr:
   }
 }
 
-std::unique_ptr<const maliput::api::RoadGeometry> MalidriveRoadGeometryBuilder::operator()() {
+std::unique_ptr<const maliput::api::RoadGeometry> RoadGeometryBuilder::operator()() {
   maliput::log()->trace("Starting to build malidrive::RoadGeometry.");
 
   if (tolerance_selection_policy_ == RoadGeometryConfiguration::ToleranceSelectionPolicy::kAutomaticSelection) {
@@ -138,8 +137,8 @@ std::unique_ptr<const maliput::api::RoadGeometry> MalidriveRoadGeometryBuilder::
           ? manager_->GetGeometriesToSimplify(linear_tolerance_)
           : std::vector<xodr::DBManager::XodrGeometriesToSimplify>();
 
-  auto rg = std::make_unique<MalidriveRoadGeometry>(id_, std::move(manager_), linear_tolerance_, angular_tolerance_,
-                                                    scale_length_, world_transform_);
+  auto rg = std::make_unique<RoadGeometry>(id_, std::move(manager_), linear_tolerance_, angular_tolerance_,
+                                           scale_length_, world_transform_);
 
   maliput::log()->trace("Visiting XODR Roads...");
   for (const auto& road_header : road_headers) {
@@ -173,7 +172,7 @@ std::unique_ptr<const maliput::api::RoadGeometry> MalidriveRoadGeometryBuilder::
       // Add a segment for each lane section.
       const auto road_curve = rg->GetRoadCurve(road_header.first);
       const auto reference_line_offset = rg->GetReferenceLineOffset(road_header.first);
-      MalidriveSegment* segment = junction->AddSegment(std::make_unique<MalidriveSegment>(
+      Segment* segment = junction->AddSegment(std::make_unique<Segment>(
           GetSegmentId(std::stoi(road_header.first.string()), lane_section_index), road_curve, reference_line_offset,
           road_curve->PFromP(lane_section.s_0),
           road_curve->PFromP(lane_section.s_0 + road_header.second.GetLaneSectionLength(lane_section_index))));
@@ -200,7 +199,7 @@ std::unique_ptr<const maliput::api::RoadGeometry> MalidriveRoadGeometryBuilder::
   return std::move(rg);
 }
 
-std::unique_ptr<road_curve::RoadCurve> MalidriveRoadGeometryBuilder::BuildRoadCurve(
+std::unique_ptr<road_curve::RoadCurve> RoadGeometryBuilder::BuildRoadCurve(
     const xodr::RoadHeader& road_header,
     const std::vector<xodr::DBManager::XodrGeometriesToSimplify>& geometries_to_simplify) {
   const auto& start_geometry = road_header.reference_geometry.plan_view.geometries.begin();
@@ -225,17 +224,16 @@ std::unique_ptr<road_curve::RoadCurve> MalidriveRoadGeometryBuilder::BuildRoadCu
   return factory_->MakeMalidriveRoadCurve(std::move(ground_curve), std::move(elevation), std::move(superelevation));
 }
 
-void MalidriveRoadGeometryBuilder::BuildLanesForSegment(const std::vector<xodr::Lane>& lanes,
-                                                        int xodr_lane_section_index,
-                                                        const xodr::LaneSection* lane_section,
-                                                        const xodr::RoadHeader* road_header, bool reverse_build,
-                                                        MalidriveSegment* segment, MalidriveRoadGeometry* rg) {
+void RoadGeometryBuilder::BuildLanesForSegment(const std::vector<xodr::Lane>& lanes, int xodr_lane_section_index,
+                                               const xodr::LaneSection* lane_section,
+                                               const xodr::RoadHeader* road_header, bool reverse_build,
+                                               Segment* segment, RoadGeometry* rg) {
   MALIDRIVE_THROW_UNLESS(lane_section != nullptr);
   MALIDRIVE_THROW_UNLESS(road_header != nullptr);
   MALIDRIVE_THROW_UNLESS(segment != nullptr);
   MALIDRIVE_THROW_UNLESS(rg != nullptr);
 
-  std::vector<std::unique_ptr<MalidriveLane>> built_lanes;
+  std::vector<std::unique_ptr<Lane>> built_lanes;
   road_curve::LaneOffset::AdjacentLaneFunctions adjacent_lane_functions{nullptr, nullptr};
   // Build a lane out of a xodr::Lane.
   auto build_lane = [&adjacent_lane_functions, &built_lanes, xodr_lane_section_index, &lane_section, &road_header,
@@ -245,8 +243,8 @@ void MalidriveRoadGeometryBuilder::BuildLanesForSegment(const std::vector<xodr::
     if (!is_driveable_lane(xodr_lane)) {
       return;
     }
-    std::unique_ptr<MalidriveLane> lane = BuildLane(&xodr_lane, adjacent_lane_functions, xodr_lane_section_index,
-                                                    road_header, lane_section, segment, factory);
+    std::unique_ptr<Lane> lane = BuildLane(&xodr_lane, adjacent_lane_functions, xodr_lane_section_index, road_header,
+                                           lane_section, segment, factory);
     maliput::log()->trace("Built Lane ID: {}.", lane->id().string());
     const auto result = lane_properties.insert(
         {lane->id(), MatchingLanes{lane.get(), MalidriveXodrLaneProperties(road_header, lane_section,
@@ -278,22 +276,22 @@ void MalidriveRoadGeometryBuilder::BuildLanesForSegment(const std::vector<xodr::
   }
 }
 
-std::unique_ptr<maliput::geometry_base::Junction> MalidriveRoadGeometryBuilder::BuildJunction(
-    const std::string& xodr_track_id, int lane_section_index) {
+std::unique_ptr<maliput::geometry_base::Junction> RoadGeometryBuilder::BuildJunction(const std::string& xodr_track_id,
+                                                                                     int lane_section_index) {
   const int xodr_track = std::stoi(xodr_track_id);
   MALIDRIVE_THROW_UNLESS(xodr_track >= 0);
   MALIDRIVE_THROW_UNLESS(lane_section_index >= 0);
   return std::make_unique<maliput::geometry_base::Junction>(GetJunctionId(xodr_track, lane_section_index));
 }
 
-std::unique_ptr<maliput::geometry_base::Junction> MalidriveRoadGeometryBuilder::BuildJunction(
+std::unique_ptr<maliput::geometry_base::Junction> RoadGeometryBuilder::BuildJunction(
     const std::string& xodr_junction_id) {
   const int xodr_junction = std::stoi(xodr_junction_id);
   MALIDRIVE_THROW_UNLESS(xodr_junction >= 0);
   return std::make_unique<maliput::geometry_base::Junction>(GetJunctionId(xodr_junction));
 }
 
-std::unique_ptr<malidrive::road_curve::GroundCurve> MalidriveRoadGeometryBuilder::MakeGroundCurve(
+std::unique_ptr<malidrive::road_curve::GroundCurve> RoadGeometryBuilder::MakeGroundCurve(
     const std::vector<xodr::Geometry>& geometries,
     const std::vector<xodr::DBManager::XodrGeometriesToSimplify>& geometries_to_simplify) {
   MALIDRIVE_THROW_UNLESS(!geometries.empty());
@@ -316,7 +314,7 @@ std::unique_ptr<malidrive::road_curve::GroundCurve> MalidriveRoadGeometryBuilder
   return factory_->MakePiecewiseGroundCurve(SimplifyGeometries(geometries, geometries_to_simplify));
 }
 
-void MalidriveRoadGeometryBuilder::BuildBranchPointsForLanes(MalidriveRoadGeometry* rg) {
+void RoadGeometryBuilder::BuildBranchPointsForLanes(RoadGeometry* rg) {
   MALIDRIVE_THROW_UNLESS(rg != nullptr);
   maliput::log()->trace("Building BranchPoints for Lanes...");
 
@@ -326,8 +324,8 @@ void MalidriveRoadGeometryBuilder::BuildBranchPointsForLanes(MalidriveRoadGeomet
   }
 }
 
-void MalidriveRoadGeometryBuilder::FindOrCreateBranchPointFor(const MalidriveXodrLaneProperties& xodr_lane_properties,
-                                                              MalidriveLane* lane, MalidriveRoadGeometry* rg) {
+void RoadGeometryBuilder::FindOrCreateBranchPointFor(const MalidriveXodrLaneProperties& xodr_lane_properties,
+                                                     Lane* lane, RoadGeometry* rg) {
   MALIDRIVE_THROW_UNLESS(rg != nullptr);
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
 
@@ -349,9 +347,8 @@ void MalidriveRoadGeometryBuilder::FindOrCreateBranchPointFor(const MalidriveXod
   AttachLaneEndToBranchPoint(end_lane_end, connecting_lane_ends);
 }
 
-std::vector<maliput::api::LaneEnd> MalidriveRoadGeometryBuilder::FindConnectingLaneEndsForLaneEnd(
-    const maliput::api::LaneEnd& lane_end, const MalidriveXodrLaneProperties& xodr_lane_properties,
-    MalidriveRoadGeometry* rg) {
+std::vector<maliput::api::LaneEnd> RoadGeometryBuilder::FindConnectingLaneEndsForLaneEnd(
+    const maliput::api::LaneEnd& lane_end, const MalidriveXodrLaneProperties& xodr_lane_properties, RoadGeometry* rg) {
   MALIDRIVE_THROW_UNLESS(rg != nullptr);
 
   // Checks if the LaneSection is an inner LaneSection or not. When it is

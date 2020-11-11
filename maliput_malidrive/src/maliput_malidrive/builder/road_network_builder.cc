@@ -1,5 +1,5 @@
 // Copyright 2020 Toyota Research Institute
-#include "maliput_malidrive/builder/malidrive_road_network_builder.h"
+#include "maliput_malidrive/builder/road_network_builder.h"
 
 #include <map>
 #include <optional>
@@ -21,15 +21,15 @@
 #include "maliput/common/logger.h"
 #include "maliput/common/maliput_unused.h"
 
-#include "maliput_malidrive/builder/malidrive_builder_tools.h"
-#include "maliput_malidrive/builder/malidrive_direction_usage_builder.h"
-#include "maliput_malidrive/builder/malidrive_discrete_value_rule_state_provider_builder.h"
-#include "maliput_malidrive/builder/malidrive_range_value_rule_state_provider_builder.h"
-#include "maliput_malidrive/builder/malidrive_road_geometry_builder.h"
-#include "maliput_malidrive/builder/malidrive_road_rulebook_builder.h"
-#include "maliput_malidrive/builder/malidrive_rule_registry_builder.h"
-#include "maliput_malidrive/builder/malidrive_speed_limit_builder.h"
+#include "maliput_malidrive/builder/builder_tools.h"
+#include "maliput_malidrive/builder/direction_usage_builder.h"
+#include "maliput_malidrive/builder/discrete_value_rule_state_provider_builder.h"
+#include "maliput_malidrive/builder/range_value_rule_state_provider_builder.h"
 #include "maliput_malidrive/builder/road_curve_factory.h"
+#include "maliput_malidrive/builder/road_geometry_builder.h"
+#include "maliput_malidrive/builder/road_rulebook_builder.h"
+#include "maliput_malidrive/builder/rule_registry_builder.h"
+#include "maliput_malidrive/builder/speed_limit_builder.h"
 
 #include "maliput_malidrive/common/macros.h"
 #include "maliput_malidrive/constants.h"
@@ -38,38 +38,38 @@
 namespace malidrive {
 namespace builder {
 
-std::unique_ptr<maliput::api::RoadNetwork> MalidriveRoadNetworkBuilder::operator()() const {
+std::unique_ptr<maliput::api::RoadNetwork> RoadNetworkBuilder::operator()() const {
   MALIDRIVE_VALIDATE(road_network_configuration_.road_geometry_configuration.opendrive_file.has_value(),
                      std::runtime_error, "opendrive_file cannot be empty");
   std::unique_ptr<builder::RoadCurveFactoryBase> road_curve_factory = std::make_unique<builder::RoadCurveFactory>(
       road_network_configuration_.road_geometry_configuration.linear_tolerance,
       road_network_configuration_.road_geometry_configuration.scale_length,
       road_network_configuration_.road_geometry_configuration.angular_tolerance);
-  std::unique_ptr<const maliput::api::RoadGeometry> rg = builder::MalidriveRoadGeometryBuilder(
+  std::unique_ptr<const maliput::api::RoadGeometry> rg = builder::RoadGeometryBuilder(
       xodr::LoadDataBaseFromFile(road_network_configuration_.road_geometry_configuration.opendrive_file.value(),
                                  road_network_configuration_.road_geometry_configuration.linear_tolerance),
       road_network_configuration_.road_geometry_configuration, world_transform_, std::move(road_curve_factory))();
 
-  auto direction_usages = MalidriveDirectionUsageBuilder(rg.get())();
+  auto direction_usages = DirectionUsageBuilder(rg.get())();
   maliput::common::unused(direction_usages);
-  auto speed_limits = MalidriveSpeedLimitBuilder(rg.get())();
+  auto speed_limits = SpeedLimitBuilder(rg.get())();
   maliput::common::unused(speed_limits);
 
   maliput::log()->trace("Building RuleRegistry...");
-  auto rule_registry = MalidriveRuleRegistryBuilder(rg.get())();
+  auto rule_registry = RuleRegistryBuilder(rg.get())();
   maliput::log()->trace("Built RuleRegistry...");
 
   maliput::log()->trace("Building RuleRoadBook...");
-  auto rule_book = MalidriveRoadRuleBookBuilder(
-      rg.get(), rule_registry.get(), road_network_configuration_.road_rule_book, direction_usages, speed_limits)();
+  auto rule_book = RoadRuleBookBuilder(rg.get(), rule_registry.get(), road_network_configuration_.road_rule_book,
+                                       direction_usages, speed_limits)();
   maliput::log()->trace("Built RuleRoadBook.");
 
   maliput::log()->trace("Building DiscreteValueRuleStateProvider...");
-  auto discrete_value_rule_state_provider = MalidriveDiscreteValueRuleStateProviderBuilder(rule_book.get())();
+  auto discrete_value_rule_state_provider = DiscreteValueRuleStateProviderBuilder(rule_book.get())();
   maliput::log()->trace("Built DiscreteValueRuleStateProvider.");
 
   maliput::log()->trace("Building RangeValueRuleStateProvider...");
-  auto range_value_rule_state_provider = MalidriveRangeValueRuleStateProviderBuilder(rule_book.get())();
+  auto range_value_rule_state_provider = RangeValueRuleStateProviderBuilder(rule_book.get())();
   maliput::log()->trace("Built RangeValueRuleStateProvider.");
 
   maliput::log()->trace("Building TrafficLightBook...");
