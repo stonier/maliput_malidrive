@@ -11,10 +11,8 @@ namespace builder {
 
 using maliput::geometry_base::BranchPoint;
 
-RoadGeometryBuilderBase::RoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration,
-                                                 const WorldToOpenDriveTransform& world_transform)
+RoadGeometryBuilderBase::RoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration)
     : inertial_to_lane_mapping_config_(road_geometry_configuration.inertial_to_lane_mapping_config),
-      world_transform_(world_transform),
       id_(road_geometry_configuration.id),
       build_policy_(road_geometry_configuration.build_policy),
       linear_tolerance_(road_geometry_configuration.linear_tolerance),

@@ -7,7 +7,6 @@
 
 #include "maliput/geometry_base/junction.h"
 #include "maliput_malidrive/base/inertial_to_lane_mapping_config.h"
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/builder/id_providers.h"
 #include "maliput_malidrive/builder/road_geometry_configuration.h"
 
@@ -101,8 +100,7 @@ class RoadGeometryBuilderBase {
   /// `road_geometry_configuration.linear_tolerance`,
   /// `road_geometry_configuration.angular_tolerance` or
   /// `road_geometry_configuration.scale_length` are negative.
-  RoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration,
-                          const WorldToOpenDriveTransform& world_transform);
+  RoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration);
 
   /// Creates a maliput equivalent backend (malidrive::RoadGeometry).
   virtual std::unique_ptr<const maliput::api::RoadGeometry> operator()() = 0;
@@ -160,7 +158,6 @@ class RoadGeometryBuilderBase {
       const std::vector<std::unique_ptr<maliput::geometry_base::BranchPoint>>& bps);
 
   const InertialToLaneMappingConfig inertial_to_lane_mapping_config_;
-  const WorldToOpenDriveTransform world_transform_;
   const maliput::api::RoadGeometryId id_;
   const BuildPolicy build_policy_{};
 

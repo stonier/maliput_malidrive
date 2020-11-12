@@ -48,7 +48,7 @@ std::unique_ptr<maliput::api::RoadNetwork> RoadNetworkBuilder::operator()() cons
   std::unique_ptr<const maliput::api::RoadGeometry> rg = builder::RoadGeometryBuilder(
       xodr::LoadDataBaseFromFile(road_network_configuration_.road_geometry_configuration.opendrive_file.value(),
                                  road_network_configuration_.road_geometry_configuration.linear_tolerance),
-      road_network_configuration_.road_geometry_configuration, world_transform_, std::move(road_curve_factory))();
+      road_network_configuration_.road_geometry_configuration, std::move(road_curve_factory))();
 
   auto direction_usages = DirectionUsageBuilder(rg.get())();
   maliput::common::unused(direction_usages);

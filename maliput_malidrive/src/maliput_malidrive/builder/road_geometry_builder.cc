@@ -100,9 +100,8 @@ std::vector<xodr::DBManager::XodrGeometriesToSimplify> FilterGeometriesToSimplif
 
 RoadGeometryBuilder::RoadGeometryBuilder(std::unique_ptr<xodr::DBManager> manager,
                                          const RoadGeometryConfiguration& road_geometry_configuration,
-                                         const WorldToOpenDriveTransform& world_transform,
                                          std::unique_ptr<RoadCurveFactoryBase> factory)
-    : RoadGeometryBuilderBase(road_geometry_configuration, world_transform),
+    : RoadGeometryBuilderBase(road_geometry_configuration),
       simplification_policy_(road_geometry_configuration.simplification_policy),
       manager_(std::move(manager)),
       factory_(std::move(factory)) {
@@ -137,8 +136,8 @@ std::unique_ptr<const maliput::api::RoadGeometry> RoadGeometryBuilder::operator(
           ? manager_->GetGeometriesToSimplify(linear_tolerance_)
           : std::vector<xodr::DBManager::XodrGeometriesToSimplify>();
 
-  auto rg = std::make_unique<RoadGeometry>(id_, std::move(manager_), linear_tolerance_, angular_tolerance_,
-                                           scale_length_, world_transform_);
+  auto rg =
+      std::make_unique<RoadGeometry>(id_, std::move(manager_), linear_tolerance_, angular_tolerance_, scale_length_);
 
   maliput::log()->trace("Visiting XODR Roads...");
   for (const auto& road_header : road_headers) {

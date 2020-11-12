@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/builder/road_network_configuration.h"
 #include "maliput_malidrive/common/macros.h"
 
@@ -22,18 +21,14 @@ class RoadNetworkBuilderBase {
   ///
   /// @param road_network_configuration Holds the information of all the
   ///        RoadNetwork entities.
-  /// @param world_transform Translation from the Inertial World frame to the
-  ///        RoadGeometry Inertial Frame.
-  RoadNetworkBuilderBase(const RoadNetworkConfiguration& road_network_configuration,
-                         const WorldToOpenDriveTransform world_transform)
-      : road_network_configuration_(road_network_configuration), world_transform_(world_transform) {}
+  RoadNetworkBuilderBase(const RoadNetworkConfiguration& road_network_configuration)
+      : road_network_configuration_(road_network_configuration) {}
 
   /// @return A maliput::api::RoadNetwork.
   virtual std::unique_ptr<maliput::api::RoadNetwork> operator()() const = 0;
 
  protected:
   const RoadNetworkConfiguration road_network_configuration_;
-  const WorldToOpenDriveTransform world_transform_;
 };
 
 }  // namespace builder

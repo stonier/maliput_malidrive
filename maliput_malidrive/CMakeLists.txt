@@ -149,7 +149,6 @@ unset(MALIPUT_MALIDRIVE_INTEGRATION_TESTS CACHE)
 ament_environment_hooks(setup.sh.in)
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(drake_vendor)
-ament_export_dependencies(PROJ4)
 ament_export_interfaces(${PROJECT_NAME}-targets HAS_LIBRARY_TARGET)
 
 ament_package()

@@ -16,7 +16,6 @@
 #include "maliput/test_utilities/maliput_types_compare.h"
 #include "maliput_malidrive/base/road_geometry.h"
 #include "maliput_malidrive/base/segment.h"
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/road_curve/arc_ground_curve.h"
 #include "maliput_malidrive/road_curve/cubic_polynomial.h"
 #include "maliput_malidrive/road_curve/function.h"
@@ -232,9 +231,8 @@ class MalidriveFlatLineLaneFullyInitializedTest : public LaneTest {
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
@@ -321,38 +319,6 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToGeoPosition) {
                                  dut_->ToGeoPosition({kSHalf, kRRight, kH}), kLinearTolerance));
   EXPECT_TRUE(IsGeoPositionClose(GeoPosition(75.05382386916237, 88.36753236814712, 0.),
                                  dut_->ToGeoPosition({kSEnd, kRRight, kH}), kLinearTolerance));
-  //@}
-}
-
-TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.9289321881345254, 19.071067811865476, 0.),
-                                 dut_->ToInertialPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(38.2842712474619, 54.426406871192846, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(73.63961030678928, 89.78174593052022, 0.),
-                                 dut_->ToInertialPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
-  //@}
-
-  // To the left
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.2218254069479784, 19.77817459305202, 0.),
-                                 dut_->ToInertialPosition({kSStart, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(37.577164466275356, 55.13351365237939, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(72.93250352560273, 90.48885271170676, 0.),
-                                 dut_->ToInertialPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
-  //@}
-
-  // To the right
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(4.34314575050762, 17.65685424949238, 0.),
-                                 dut_->ToInertialPosition({kSStart, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(39.698484809834994, 53.01219330881975, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(75.05382386916237, 88.36753236814712, 0.),
-                                 dut_->ToInertialPosition({kSEnd, kRRight, kH}), kLinearTolerance));
   //@}
 }
 
@@ -479,9 +445,8 @@ class MalidriveFlatArcLaneFullyInitializedTest : public LaneTest {
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::ArcGroundCurve>(kLinearTolerance, kXy0, kStartHeading, kCurvature, kArcLength, kP0,
@@ -571,38 +536,6 @@ TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToGeoPosition) {
                                  dut_->ToGeoPosition({kSHalf, kRRight, kH}), kLinearTolerance));
   EXPECT_TRUE(IsGeoPositionClose(GeoPosition(92.3072623207537, -2.349426921060793, 0.),
                                  dut_->ToGeoPosition({kSEnd, kRRight, kH}), kLinearTolerance));
-  //@}
-}
-
-TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(1.3397459621556127, 17.0, 0.),
-                                 dut_->ToInertialPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.711772824485934, 40.97529846801386, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(94.29335591114437, -2.113986376104993, 0.),
-                                 dut_->ToInertialPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
-  //@}
-
-  // To the left
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(0.47372055837117344, 17.5, 0.),
-                                 dut_->ToInertialPosition({kSStart, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.913187957948104, 41.95480443737414, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(95.28640270633971, -1.9962661036270921, 0.),
-                                 dut_->ToInertialPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
-  //@}
-
-  // To the right
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(3.0717967697244903, 16.0, 0.),
-                                 dut_->ToInertialPosition({kSStart, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.3089425575616, 39.01628652929331, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(92.3072623207537, -2.349426921060793, 0.),
-                                 dut_->ToInertialPosition({kSEnd, kRRight, kH}), kLinearTolerance));
   //@}
 }
 
@@ -742,9 +675,8 @@ class MalidriveFlatSLaneFullyInitializedTest : public ::testing::Test {
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     std::vector<std::unique_ptr<road_curve::GroundCurve>> ground_curves;
     ground_curves.push_back(std::make_unique<road_curve::ArcGroundCurve>(kLinearTolerance, kXY0A, kAStartHeading,
                                                                          kACurvature, kALength90DegLeft, kP0A, kP1A));
@@ -882,38 +814,6 @@ TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToGeoPosition) {
                                  dut_->ToGeoPosition({kSHalf, kRRight, kH}), kLinearTolerance));
   EXPECT_TRUE(
       IsGeoPositionClose(GeoPosition(-5., 108., 0.), dut_->ToGeoPosition({kSEnd, kRRight, kH}), kLinearTolerance));
-  //@}
-}
-
-TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(5., -90., 0.), dut_->ToInertialPosition({kSStart, kRCenterline, kH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-30.5707765633, -4.27831414064, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-5., 110., 0.), dut_->ToInertialPosition({kSEnd, kRCenterline, kH}),
-                                 kLinearTolerance));
-  //@}
-
-  // To the left
-  //@{
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(5., -89., 0.), dut_->ToInertialPosition({kSStart, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-30.9969561727, -5.18295270965, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(-5., 111., 0.), dut_->ToInertialPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
-  //@}
-
-  // To the right
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(5., -92., 0.), dut_->ToInertialPosition({kSStart, kRRight, kH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-29.7184173445, -2.46903700262, 0.),
-                                 dut_->ToInertialPosition({kSHalf, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(-5., 108., 0.), dut_->ToInertialPosition({kSEnd, kRRight, kH}), kLinearTolerance));
   //@}
 }
 
@@ -1106,9 +1006,8 @@ class MalidriveLineLaneWithElevationFullyInitializedTest : public ::testing::Tes
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
@@ -1221,46 +1120,6 @@ TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToGeoPosition) {
                                  dut_->ToGeoPosition({params_.expected_s_half, kRRight, kZeroH}), kLinearTolerance));
   EXPECT_TRUE(IsGeoPositionClose(GeoPosition(75.05382386916237, 88.36753236814712, params_.expected_z_end),
                                  dut_->ToGeoPosition({params_.expected_s_end, kRRight, kZeroH}), kLinearTolerance));
-  //@}
-}
-
-TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.9289321881345254, 19.071067811865476, params_.expected_z_start),
-                                 dut_->ToInertialPosition({params_.expected_s_start, kRCenterline, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(38.2842712474619, 54.426406871192846, params_.expected_z_half),
-                                 dut_->ToInertialPosition({params_.expected_s_half, kRCenterline, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(73.63961030678928, 89.78174593052022, params_.expected_z_end),
-                                 dut_->ToInertialPosition({params_.expected_s_end, kRCenterline, kZeroH}),
-                                 kLinearTolerance));
-  //@}
-
-  // To the left
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.2218254069479784, 19.77817459305202, params_.expected_z_start),
-                                 dut_->ToInertialPosition({params_.expected_s_start, kRLeft, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(37.577164466275356, 55.13351365237939, params_.expected_z_half),
-                                 dut_->ToInertialPosition({params_.expected_s_half, kRLeft, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(72.93250352560273, 90.48885271170676, params_.expected_z_end),
-                                 dut_->ToInertialPosition({params_.expected_s_end, kRLeft, kZeroH}), kLinearTolerance));
-  //@}
-
-  // To the right
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(4.34314575050762, 17.65685424949238, params_.expected_z_start),
-                                 dut_->ToInertialPosition({params_.expected_s_start, kRRight, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(39.698484809834994, 53.01219330881975, params_.expected_z_half),
-                                 dut_->ToInertialPosition({params_.expected_s_half, kRRight, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(75.05382386916237, 88.36753236814712, params_.expected_z_end),
-                                 dut_->ToInertialPosition({params_.expected_s_end, kRRight, kZeroH}),
-                                 kLinearTolerance));
   //@}
 }
 
@@ -1460,9 +1319,8 @@ class MalidriveArcLaneWithElevationFullyInitializedTest : public ::testing::Test
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::ArcGroundCurve>(kLinearTolerance, kXy0, kStartHeading, kCurvature, kArcLength, kP0,
@@ -1582,38 +1440,6 @@ TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToGeoPosition) {
                                  dut_->ToGeoPosition({kSHalf, kRRight, kZeroH}), kLinearTolerance));
   EXPECT_TRUE(IsGeoPositionClose(GeoPosition(92.3072623207537, -2.349426921060793, params_.expected_z_end),
                                  dut_->ToGeoPosition({kSEnd, kRRight, kZeroH}), kLinearTolerance));
-  //@}
-}
-
-TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(1.3397459621556127, 17.0, params_.expected_z_start),
-                                 dut_->ToInertialPosition({kSStart, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.711772824485934, 40.97529846801386, params_.expected_z_half),
-                                 dut_->ToInertialPosition({kSHalf, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(94.29335591114437, -2.113986376104993, params_.expected_z_end),
-                                 dut_->ToInertialPosition({kSEnd, kRCenterline, kZeroH}), kLinearTolerance));
-  //@}
-
-  // To the left
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(0.47372055837117344, 17.5, params_.expected_z_start),
-                                 dut_->ToInertialPosition({kSStart, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.913187957948104, 41.95480443737414, params_.expected_z_half),
-                                 dut_->ToInertialPosition({kSHalf, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(95.28640270633971, -1.9962661036270921, params_.expected_z_end),
-                                 dut_->ToInertialPosition({kSEnd, kRLeft, kZeroH}), kLinearTolerance));
-  //@}
-
-  // To the right
-  //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(3.0717967697244903, 16.0, params_.expected_z_start),
-                                 dut_->ToInertialPosition({kSStart, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.3089425575616, 39.01628652929331, params_.expected_z_half),
-                                 dut_->ToInertialPosition({kSHalf, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(92.3072623207537, -2.349426921060793, params_.expected_z_end),
-                                 dut_->ToInertialPosition({kSEnd, kRRight, kZeroH}), kLinearTolerance));
   //@}
 }
 
@@ -1751,9 +1577,8 @@ class MalidriveLineLaneWithSuperelevationFullyInitializedTest
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     const auto superelevation_coefficients{GetParam().pol_coeff};
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
@@ -1885,38 +1710,6 @@ TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToGeoPosition) {
                                  kLinearTolerance));
   EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtEnd], dut_->ToGeoPosition({s_end, kRRight, kZeroH}),
                                  kLinearTolerance));
-  // @}
-}
-
-TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  // @{
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtCenterLine][AtStart],
-                                 dut_->ToInertialPosition({s_start, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtCenterLine][AtHalf],
-                                 dut_->ToInertialPosition({s_half, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtCenterLine][AtEnd],
-                                 dut_->ToInertialPosition({s_end, kRCenterline, kZeroH}), kLinearTolerance));
-  // @}
-
-  // To the left
-  // @{
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtLeft][AtStart],
-                                 dut_->ToInertialPosition({s_start, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtLeft][AtHalf],
-                                 dut_->ToInertialPosition({s_half, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtLeft][AtEnd],
-                                 dut_->ToInertialPosition({s_end, kRLeft, kZeroH}), kLinearTolerance));
-  // @}
-
-  // To the right
-  // @{
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtStart],
-                                 dut_->ToInertialPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtHalf],
-                                 dut_->ToInertialPosition({s_half, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtEnd],
-                                 dut_->ToInertialPosition({s_end, kRRight, kZeroH}), kLinearTolerance));
   // @}
 }
 
@@ -2105,9 +1898,8 @@ class MalidriveFlatLineVariableWidthLaneFullyInitializedTest : public ::testing:
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ =
-        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
-                                       kAngularTolerance, kScaleLength, WorldToOpenDriveTransform::Identity());
+    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
+                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
@@ -2236,33 +2028,6 @@ TEST_F(MalidriveFlatLineVariableWidthLaneFullyInitializedTest, ToGeoPosition) {
                                  dut_->ToGeoPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
   EXPECT_TRUE(IsGeoPositionClose({34.941125496954285, 37.76955262170047, 0.},
                                  dut_->ToGeoPosition({s_half, kRRight, kZeroH}), kLinearTolerance));
-  // @}
-}
-
-TEST_F(MalidriveFlatLineVariableWidthLaneFullyInitializedTest, ToInertialPosition) {
-  // At centerline.
-  // @{
-  EXPECT_TRUE(IsGeoPositionClose({-1.1213203435592888901, 3.1213203435599963242, 0.},
-                                 dut_->ToInertialPosition({s_start, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({34.58757210636101, 38.123106012293746, 0.},
-                                 dut_->ToInertialPosition({s_half, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({70.296464556281, 73.124891681027, 0.},
-                                 dut_->ToInertialPosition({s_end, kRCenterline, kZeroH}), kLinearTolerance));
-  // @}
-
-  // At Left.
-  // @{
-  EXPECT_TRUE(IsGeoPositionClose({-1.474873734152916, 3.474873734152916, 0.},
-                                 dut_->ToInertialPosition({s_start, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({34.23401871576773, 38.47665940288702, 0.},
-                                 dut_->ToInertialPosition({s_half, kRLeft, kZeroH}), kLinearTolerance));
-
-  // At Right.
-  // @{
-  EXPECT_TRUE(IsGeoPositionClose({-0.7677669529663687, 2.767766952966369, 0.},
-                                 dut_->ToInertialPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({34.941125496954285, 37.76955262170047, 0.},
-                                 dut_->ToInertialPosition({s_half, kRRight, kZeroH}), kLinearTolerance));
   // @}
 }
 

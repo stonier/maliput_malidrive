@@ -9,7 +9,6 @@
 #include "maliput_malidrive/base/lane.h"
 #include "maliput_malidrive/base/road_geometry.h"
 #include "maliput_malidrive/base/segment.h"
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/builder/builder_tools.h"
 #include "maliput_malidrive/builder/id_providers.h"
 #include "maliput_malidrive/builder/road_curve_factory.h"
@@ -42,7 +41,7 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   /// @see RoadGeometryBuilderBase::RoadGeometryBuilderBase() for further details.
   RoadGeometryBuilder(std::unique_ptr<xodr::DBManager> manager,
                       const RoadGeometryConfiguration& road_geometry_configuration,
-                      const WorldToOpenDriveTransform& world_transform, std::unique_ptr<RoadCurveFactoryBase> factory);
+                      std::unique_ptr<RoadCurveFactoryBase> factory);
 
   /// Creates a maliput equivalent backend (malidrive::RoadGeometry).
   std::unique_ptr<const maliput::api::RoadGeometry> operator()() override;

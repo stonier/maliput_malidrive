@@ -44,7 +44,6 @@ class BuilderTestSingleLane : public ::testing::Test {
   const double kScaleLength{constants::kScaleLength};
   const double kExplorationRadius{constants::kExplorationRadius};
   const int kMaxIntersectIterations{constants::kNumIterations};
-  const WorldToOpenDriveTransform kWorldToOpenDriveTransform{WorldToOpenDriveTransform::Identity()};
 
   const RoadGeometryConfiguration road_geometry_configuration_{
       maliput::api::RoadGeometryId("RoadGeometryId"),
@@ -61,8 +60,8 @@ class BuilderTestSingleLane : public ::testing::Test {
 };
 
 TEST_F(BuilderTestSingleLane, RoadGeometryBuilderConstructor) {
-  std::unique_ptr<const maliput::api::RoadGeometry> dut = builder::RoadGeometryBuilder(
-      std::move(manager_), road_geometry_configuration_, kWorldToOpenDriveTransform, std::move(factory_))();
+  std::unique_ptr<const maliput::api::RoadGeometry> dut =
+      builder::RoadGeometryBuilder(std::move(manager_), road_geometry_configuration_, std::move(factory_))();
   ASSERT_NE(dut.get(), nullptr);
 
   ASSERT_NE(dynamic_cast<const malidrive::RoadGeometry*>(dut.get()), nullptr);
@@ -77,27 +76,23 @@ TEST_F(BuilderTestSingleLane, RoadGeometryBuilderConstructorBadUsed) {
   {
     RoadGeometryConfiguration bad_config = road_geometry_configuration_;
     bad_config.linear_tolerance = -5.;
-    EXPECT_THROW(
-        builder::RoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform, std::move(factory_)),
-        maliput::common::assertion_error);
+    EXPECT_THROW(builder::RoadGeometryBuilder(std::move(manager_), bad_config, std::move(factory_)),
+                 maliput::common::assertion_error);
   }
   {
     RoadGeometryConfiguration bad_config = road_geometry_configuration_;
     bad_config.angular_tolerance = -5.;
-    EXPECT_THROW(
-        builder::RoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform, std::move(factory_)),
-        maliput::common::assertion_error);
+    EXPECT_THROW(builder::RoadGeometryBuilder(std::move(manager_), bad_config, std::move(factory_)),
+                 maliput::common::assertion_error);
   }
   {
     RoadGeometryConfiguration bad_config = road_geometry_configuration_;
     bad_config.scale_length = -5.;
-    EXPECT_THROW(
-        builder::RoadGeometryBuilder(std::move(manager_), bad_config, kWorldToOpenDriveTransform, std::move(factory_)),
-        maliput::common::assertion_error);
+    EXPECT_THROW(builder::RoadGeometryBuilder(std::move(manager_), bad_config, std::move(factory_)),
+                 maliput::common::assertion_error);
   }
   {
-    EXPECT_THROW(builder::RoadGeometryBuilder(nullptr, road_geometry_configuration_, kWorldToOpenDriveTransform,
-                                              std::move(factory_)),
+    EXPECT_THROW(builder::RoadGeometryBuilder(nullptr, road_geometry_configuration_, std::move(factory_)),
                  maliput::common::assertion_error);
   }
 }
@@ -278,8 +273,8 @@ class RoadGeometryBuilderBaseTest : public ::testing::TestWithParam<RoadGeometry
 
   // Tests Junction, Segments and Lanes properties.
   void RunTest() {
-    std::unique_ptr<const maliput::api::RoadGeometry> dut = builder::RoadGeometryBuilder(
-        std::move(manager_), road_geometry_configuration_, kWorldToOpenDriveTransform, std::move(factory_))();
+    std::unique_ptr<const maliput::api::RoadGeometry> dut =
+        builder::RoadGeometryBuilder(std::move(manager_), road_geometry_configuration_, std::move(factory_))();
     ASSERT_NE(dut.get(), nullptr);
 
     // Junctions.
@@ -364,7 +359,6 @@ class RoadGeometryBuilderBaseTest : public ::testing::TestWithParam<RoadGeometry
   //@}
   const double kExplorationRadius{constants::kExplorationRadius};
   const int kMaxIntersectIterations{constants::kNumIterations};
-  const WorldToOpenDriveTransform kWorldToOpenDriveTransform{WorldToOpenDriveTransform::Identity()};
   const std::vector<RoadAttributes> expected_roads = GetParam().roads;
   const std::map<JunctionId, std::vector<std::pair<SegmentAttributes, std::vector<LaneAttributes>>>>
       expected_junctions_segments_lanes_ids = GetParam().junctions_segments_lanes_ids;
@@ -643,8 +637,7 @@ class BuilderBranchPointTest : public ::testing::TestWithParam<BuilderBranchPoin
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromFile(road_geometry_configuration_.opendrive_file.value(), kLinearTolerance);
     auto factory = std::make_unique<builder::RoadCurveFactory>(kLinearTolerance, kScaleLength, kAngularTolerance);
-    rg_ = builder::RoadGeometryBuilder(std::move(manager), road_geometry_configuration_, kWorldToOpenDriveTransform,
-                                       std::move(factory))();
+    rg_ = builder::RoadGeometryBuilder(std::move(manager), road_geometry_configuration_, std::move(factory))();
     expected_connections = GetParam().expected_connections;
   }
 
@@ -655,7 +648,6 @@ class BuilderBranchPointTest : public ::testing::TestWithParam<BuilderBranchPoin
   //@}
   const double kExplorationRadius{constants::kExplorationRadius};
   const int kMaxIntersectIterations{constants::kNumIterations};
-  const WorldToOpenDriveTransform kWorldToOpenDriveTransform{WorldToOpenDriveTransform::Identity()};
   const RoadGeometryConfiguration road_geometry_configuration_{
       maliput::api::RoadGeometryId(GetParam().road_id),
       utility::FindResource(GetParam().path_to_xodr_file),
@@ -761,7 +753,7 @@ class RoadGeometryBuilderSurfaceBoundariesTest : public ::testing::TestWithParam
   void SetUp() override {
     dut_ = builder::RoadGeometryBuilder(
         xodr::LoadDataBaseFromFile(kRoadGeometryConfiguration.opendrive_file.value(), kLinearTolerance),
-        kRoadGeometryConfiguration, kWorldToOpenDriveTransform,
+        kRoadGeometryConfiguration,
         std::make_unique<builder::RoadCurveFactory>(kLinearTolerance, kScaleLength, kAngularTolerance))();
   }
 
@@ -772,7 +764,6 @@ class RoadGeometryBuilderSurfaceBoundariesTest : public ::testing::TestWithParam
   //@}
   const double kExplorationRadius{constants::kExplorationRadius};
   const int kMaxIntersectIterations{constants::kNumIterations};
-  const WorldToOpenDriveTransform kWorldToOpenDriveTransform{WorldToOpenDriveTransform::Identity()};
   const RoadGeometryConfiguration kRoadGeometryConfiguration{
       maliput::api::RoadGeometryId(GetParam().road_geometry_id),
       utility::FindResource(GetParam().path_to_xodr_file),

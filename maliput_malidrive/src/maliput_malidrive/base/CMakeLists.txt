@@ -4,7 +4,6 @@
 add_library(base
   lane.cc
   road_geometry.cc
-  world_to_opendrive_transform.cc
 )
 
 set_target_properties(base PROPERTIES OUTPUT_NAME base)
@@ -12,7 +11,6 @@ set_target_properties(base PROPERTIES OUTPUT_NAME base)
 target_include_directories(
   base
   PUBLIC
-    ${PROJ4_INCLUDE_DIRS}
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
@@ -49,7 +47,6 @@ install(
     lane.h
     road_geometry.h
     segment.h
-    world_to_opendrive_transform.h
   DESTINATION
     ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/base/
 )

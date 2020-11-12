@@ -114,7 +114,7 @@ maliput::api::GeoPosition Lane::DoToGeoPosition(const maliput::api::LanePosition
   const Vector3 inertial_position = road_curve_->W({p, to_reference_r(p, lane_pos.r()), lane_pos.h()});
   const maliput::api::GeoPosition xodr_inertial_pos(inertial_position.x(), inertial_position.y(),
                                                     inertial_position.z());
-  return get_world_to_opendrive_transform().OpenDriveToWorld(xodr_inertial_pos);
+  return xodr_inertial_pos;
 }
 
 Vector3 Lane::InertialFrameToLaneFrame(const Vector3& xyz) const {
@@ -159,7 +159,7 @@ Vector3 Lane::InertialFrameToLaneFrame(const Vector3& xyz) const {
 }
 
 maliput::api::LanePositionResult Lane::DoToLanePosition(const maliput::api::GeoPosition& geo_pos_world) const {
-  const maliput::math::Vector3 xyz = get_world_to_opendrive_transform().WorldToOpenDrive(geo_pos_world).xyz();
+  const maliput::math::Vector3 xyz = geo_pos_world.xyz();
   const maliput::math::Vector3 unconstrained_prh{InertialFrameToLaneFrame(xyz)};
   MALIDRIVE_IS_IN_RANGE(unconstrained_prh[0], p0_, p1_);
   const double s = s_from_p_(unconstrained_prh[0]);
@@ -196,15 +196,6 @@ maliput::api::LanePosition Lane::DoEvalMotionDerivatives(const maliput::api::Lan
   const double ds_dsigma = road_curve_->WDot({p, to_reference_r(p, 0.), 0.}, lane_offset_.get()).norm() /
                            road_curve_->WDot({p, r, h}, lane_offset_.get()).norm();
   return {ds_dsigma * velocity.sigma_v, velocity.rho_v, velocity.eta_v};
-}
-
-maliput::api::GeoPosition Lane::ToInertialPosition(const maliput::api::LanePosition& lane_pos) const {
-  const maliput::api::GeoPosition world_position = ToGeoPosition(lane_pos);
-  return get_world_to_opendrive_transform().WorldToOpenDrive(world_position);
-}
-
-const WorldToOpenDriveTransform& Lane::get_world_to_opendrive_transform() const {
-  return static_cast<const RoadGeometry*>(segment()->junction()->road_geometry())->get_world_to_opendrive_transform();
 }
 
 }  // namespace malidrive

@@ -7,7 +7,6 @@
 #include "maliput/geometry_base/lane.h"
 
 #include "maliput/math/vector.h"
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/common/macros.h"
 #include "maliput_malidrive/road_curve/function.h"
 #include "maliput_malidrive/road_curve/road_curve.h"
@@ -93,11 +92,6 @@ class Lane : public maliput::geometry_base::Lane {
   /// @throws maliput::common::assertion_error When @p track_s is not in range.
   double LaneSFromTrackS(double track_s) const { return s_from_p_(track_s); }
 
-  /// Performs the same computation as `ToGeoPosition()` but, instead of
-  /// returning a coordinate in the World Inertial Frame, it returns the
-  /// coordinate in the OpenDRIVE Inertial Frame.
-  maliput::api::GeoPosition ToInertialPosition(const maliput::api::LanePosition& lane_pos) const;
-
  private:
   // maliput::api::Lane private virtual method implementations.
   //@{
@@ -119,10 +113,6 @@ class Lane : public maliput::geometry_base::Lane {
   // @returns The r-coordinate in `road_curve` Frame from `(p, r)` in the LANE
   //          Frame.
   double to_reference_r(double p, double r) const { return r + lane_offset_->f(p); }
-
-  // @returns The WorldToOpenDriveTransform to convert back and forth from the
-  //          INERTIAL Frame and OpenDRIVE INERTIAL Frame.
-  const WorldToOpenDriveTransform& get_world_to_opendrive_transform() const;
 
   // @returns The prh coordinate in LANE Frame from `xyz` in the INERTIAL Frame.
   maliput::math::Vector3 InertialFrameToLaneFrame(const maliput::math::Vector3& xyz) const;

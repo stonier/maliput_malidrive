@@ -7,7 +7,6 @@
 
 #include "maliput/geometry_base/road_geometry.h"
 
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/common/macros.h"
 #include "maliput_malidrive/road_curve/road_curve.h"
 #include "maliput_malidrive/xodr/db_manager.h"
@@ -30,22 +29,16 @@ class RoadGeometry final : public maliput::geometry_base::RoadGeometry {
   /// maliput::api::RoadGeometry::angular_tolerance() for reference.
   /// @param scale_length see @ref
   /// maliput::api::RoadGeometry::scale_length() for reference.
-  /// @param world_transform is the World Frame to OpenDRIVE Inertial Frame
-  /// transform.
   /// @throw maliput::common::assertion_error When @p manager_ is nullptr.
   RoadGeometry(const maliput::api::RoadGeometryId& id, std::unique_ptr<xodr::DBManager> manager,
-               double linear_tolerance, double angular_tolerance, double scale_length,
-               const WorldToOpenDriveTransform& world_transform)
+               double linear_tolerance, double angular_tolerance, double scale_length)
       : maliput::geometry_base::RoadGeometry(id, linear_tolerance, angular_tolerance, scale_length),
-        world_transform_(world_transform),
         manager_(std::move(manager)) {
     MALIDRIVE_THROW_UNLESS(manager_ != nullptr);
   }
 
   /// Returns a xodr::DBManager.
   xodr::DBManager* get_manager() const { return manager_.get(); }
-
-  const WorldToOpenDriveTransform& get_world_to_opendrive_transform() const { return world_transform_; };
 
   /// Adds the description of a Road.
   /// @param road_id Is the xodr id of the road that `road_curve` belongs to.
@@ -85,7 +78,6 @@ class RoadGeometry final : public maliput::geometry_base::RoadGeometry {
   std::vector<maliput::api::RoadPositionResult> DoFindRoadPositions(const maliput::api::GeoPosition& geo_position,
                                                                     double radius) const override;
 
-  const WorldToOpenDriveTransform world_transform_;
   std::unique_ptr<xodr::DBManager> manager_;
   std::unordered_map<xodr::RoadHeader::Id, RoadCharacteristics> road_characteristics_;
 };

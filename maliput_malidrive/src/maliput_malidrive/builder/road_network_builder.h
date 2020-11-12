@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include "maliput_malidrive/base/world_to_opendrive_transform.h"
 #include "maliput_malidrive/builder/road_network_builder_base.h"
 #include "maliput_malidrive/builder/road_network_configuration.h"
 
@@ -20,11 +19,8 @@ class RoadNetworkBuilder : public RoadNetworkBuilderBase {
   ///
   /// @param road_network_configuration Holds the information of all the
   ///        RoadNetwork entities.
-  /// @param world_transform Translation from the Inertial World frame to the
-  ///        RoadGeometry Inertial Frame.
-  RoadNetworkBuilder(const RoadNetworkConfiguration& road_network_configuration,
-                     const WorldToOpenDriveTransform world_transform)
-      : RoadNetworkBuilderBase(road_network_configuration, world_transform) {}
+  RoadNetworkBuilder(const RoadNetworkConfiguration& road_network_configuration)
+      : RoadNetworkBuilderBase(road_network_configuration) {}
 
   /// @return A malidrive RoadNetwork without OpenDrive SDK.
   std::unique_ptr<maliput::api::RoadNetwork> operator()() const override;
