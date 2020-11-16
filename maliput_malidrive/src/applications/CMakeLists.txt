@@ -1,5 +1,11 @@
 include(${PROJECT_SOURCE_DIR}/cmake/MaliputMalidriveFlags.cmake)
 
+add_library(log_level_flag INTERFACE)
+target_sources(log_level_flag
+  INTERFACE
+    log_level_flag.h
+)
+
 install(
   FILES
     log_level_flag.h
@@ -15,6 +21,8 @@ target_link_libraries(
     maliput::common
     utility
     xodr
+  INTERFACE
+    log_level_flag
 )
 install(
   TARGETS
@@ -31,6 +39,8 @@ target_link_libraries(
     maliput::common
     utility
     xodr
+  INTERFACE
+    log_level_flag
 )
 install(
   TARGETS
