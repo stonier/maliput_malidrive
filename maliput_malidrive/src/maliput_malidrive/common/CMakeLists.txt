@@ -5,6 +5,12 @@
 add_library(common
   common.cc
 )
+add_library(maliput_malidrive::common ALIAS common)
+set_target_properties(common
+  PROPERTIES
+    OUTPUT_NAME maliput_malidrive_common
+)
+
 
 target_include_directories(
   common

@@ -21,8 +21,11 @@ add_library(xodr
   tools.cc
   unit.cc
 )
-
-set_target_properties(xodr PROPERTIES OUTPUT_NAME xodr)
+add_library(maliput_malidrive::xodr ALIAS xodr)
+set_target_properties(xodr
+  PROPERTIES
+    OUTPUT_NAME maliput_malidrive_xodr
+)
 
 target_include_directories(
   xodr
@@ -37,8 +40,8 @@ ament_target_dependencies(xodr
 
 target_link_libraries(
   xodr
-    common
     maliput::math
+    maliput_malidrive::common
     tinyxml2
 )
 

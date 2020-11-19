@@ -20,7 +20,7 @@ target_link_libraries(
     gflags
     maliput::common
     utility
-    xodr
+    maliput_malidrive::xodr
   INTERFACE
     log_level_flag
 )
@@ -38,7 +38,7 @@ target_link_libraries(
     gflags
     maliput::common
     utility
-    xodr
+    maliput_malidrive::xodr
   INTERFACE
     log_level_flag
 )

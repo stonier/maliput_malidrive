@@ -32,6 +32,7 @@ find_package(maliput REQUIRED)
 
 message(STATUS "\n\n========= Project Configuration ========\n")
 
+set(BUILD_SHARED_LIBS true)
 
 ##############################################################################
 # Sources

@@ -47,9 +47,6 @@ macro(maliput_malidrive_build_tests)
 
     # Kind of an ugly catch-all bucket
     target_link_libraries(${BINARY_NAME}
-        base
-        builder
-        common
         drake::drake
         fmt::fmt
         maliput::api
@@ -58,10 +55,14 @@ macro(maliput_malidrive_build_tests)
         maliput::geometry_base
         maliput::math
         maliput::maliput_test_utilities
+        maliput_malidrive::base
+        maliput_malidrive::builder
+        maliput_malidrive::common
+        maliput_malidrive::road_curve
+        maliput_malidrive::test_utilities
+        maliput_malidrive::xodr
         pthread
-        road_curve
         utility
-        xodr
     )
 
     # Remove a warning in GTest.

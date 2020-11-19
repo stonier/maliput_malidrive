@@ -12,8 +12,11 @@ add_library(road_curve
   road_curve.cc
   road_curve_offset.cc
 )
-
-set_target_properties(road_curve PROPERTIES OUTPUT_NAME road_curve)
+add_library(maliput_malidrive::road_curve ALIAS road_curve)
+set_target_properties(road_curve
+  PROPERTIES
+    OUTPUT_NAME maliput_malidrive_road_curve
+)
 
 target_include_directories(
   road_curve
@@ -29,11 +32,11 @@ ament_target_dependencies(road_curve
 
 target_link_libraries(
   road_curve
-    common
     drake::drake
     maliput::api
     maliput::math
     maliput::utilities
+    maliput_malidrive::common
 )
 
 install(TARGETS road_curve

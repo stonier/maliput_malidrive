@@ -18,8 +18,11 @@ add_library(builder
   simplify_geometries.cc
   speed_limit_builder.cc
 )
-
-set_target_properties(builder PROPERTIES OUTPUT_NAME builder)
+add_library(maliput_malidrive::builder ALIAS builder)
+set_target_properties(builder
+  PROPERTIES
+    OUTPUT_NAME maliput_malidrive_builder
+)
 
 target_include_directories(
   builder
@@ -34,16 +37,16 @@ ament_target_dependencies(builder
 
 target_link_libraries(
   builder
-    base
-    common
     drake::drake
     maliput::api
     maliput::base
     maliput::geometry_base
     maliput::math
     maliput::utilities
-    road_curve
-    xodr
+    maliput_malidrive::base
+    maliput_malidrive::common
+    maliput_malidrive::road_curve
+    maliput_malidrive::xodr
 )
 
 install(TARGETS builder

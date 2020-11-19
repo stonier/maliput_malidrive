@@ -3,6 +3,7 @@
 ##############################################################################
 
 add_library(test_utilities INTERFACE)
+add_library(maliput_malidrive::test_utilities ALIAS test_utilities)
 
 target_include_directories(
   test_utilities
@@ -13,10 +14,10 @@ target_include_directories(
 
 target_link_libraries(test_utilities
   INTERFACE
-    common
     maliput::api
     maliput::math
     maliput::utilities
+    maliput_malidrive::common
 )
 
 install(
