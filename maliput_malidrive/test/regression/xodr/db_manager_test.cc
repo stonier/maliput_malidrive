@@ -1177,131 +1177,303 @@ GTEST_TEST(DBManagerTest, GetJunctions) {
   EXPECT_EQ(kExpectedJunctions, junctions);
 }
 
-// Loads FlatTown01 map.
+// Returns a travelDir-userData node with the directive provided by `travel_dir`.
+std::string LaneUserDataTravelDirTemplate(const std::string& travel_dir) {
+  return fmt::format(
+      R"R(<userData>
+    <vectorLane travelDir="{}"/>
+</userData>
+)R",
+      travel_dir);
+}
+
+// Loads Highway map.
 //
 // RoadLinks and Junctions were already tested in previous tests .
 // However, this test's goal is showing the correct functioning by loading a long XODR description and selecting a
 // random Road and Junction and checking that the values are well parsed.
-GTEST_TEST(DBManagerTest, FlatTown01) {
-  const std::string kXodrFile = "odr/FlatTown01.xodr";
-  const int NumOfRoads{98};
-  const int NumOfJunctions{12};
-  // Road 137 of FlatTown01.xodr description:
+GTEST_TEST(DBManagerTest, Highway) {
+  const std::string kXodrFile = "odr/Highway.xodr";
+  const int NumOfRoads{37};
+  const int NumOfJunctions{6};
+  // Road 52 of Highway description:
   // @{
   const RoadLink::LinkAttributes kPredecessor{RoadLink::ElementType::kRoad /* elementType */,
-                                              RoadLink::LinkAttributes::Id("24") /* elementId*/,
-                                              RoadLink::ContactPoint::kEnd /* contactPoint*/};
+                                              RoadLink::LinkAttributes::Id("1") /* elementId*/,
+                                              RoadLink::ContactPoint::kStart /* contactPoint*/};
   const RoadLink::LinkAttributes kSuccessor{RoadLink::ElementType::kRoad /* elementType */,
-                                            RoadLink::LinkAttributes::Id("5") /* elementId*/,
+                                            RoadLink::LinkAttributes::Id("13") /* elementId*/,
                                             RoadLink::ContactPoint::kEnd /* contactPoint*/};
   const RoadLink kExpectedRoadLink{kPredecessor, kSuccessor};
-  const PlanView kPlanView{std::vector<Geometry>{Geometry{0. /* s_0 */,
-                                                          {90.418236746110423 /* x */, -317.30264337930384 /* y */},
-                                                          -1.5706443141063069 /* orientation */,
-                                                          2.2756762945784530 /* length */,
-                                                          Geometry::Type::kLine /* Type */,
-                                                          Geometry::Line{} /* description */},
-                                                 Geometry{2.2756762945784530 /* s_0 */,
-                                                          {90.418582677780989 /* x */, -319.57831964758930 /* y */},
-                                                          -1.5706443141063060 /* orientation */,
-                                                          6.8497465474720673 /* length */,
-                                                          Geometry::Type::kArc /* Type */,
-                                                          Geometry::Arc{-0.11443647794544970} /* description */},
-                                                 Geometry{9.1254228420505203 /* s_0 */,
-                                                          {87.869572938694091 /* x */, -325.74823398060119 /* y */},
-                                                          -2.3545051838180031 /* orientation */,
-                                                          6.8460365397577396 /* length */,
-                                                          Geometry::Type::kArc /* Type */,
-                                                          Geometry::Arc{-0.11505953523797172} /* description */},
-                                                 Geometry{15.971459381808259 /* s_0 */,
-                                                          {81.708287801687575 /* x */, -328.30420257455290 /* y */},
-                                                          3.1409783408748879 /* orientation */,
-                                                          2.2949318835227182 /* length */,
-                                                          Geometry::Type::kLine /* Type */,
-                                                          Geometry::Line{} /* description */}}};
+  const PlanView kPlanView{{Geometry{0. /* s_0 */,
+                                     {-5.0699830717506373e+1 /* x */, 1.7300712434268502e+2 /* y */},
+                                     4.9059097257144400e+0 /* orientation */,
+                                     1.0336660934588906e+1 /* length */,
+                                     Geometry::Type::kArc /* Type */,
+                                     Geometry::Arc{-5.5921424523716991e-2} /* description */},
+                            Geometry{1.0336660934588904e+1 /* s_0 */,
+                                     {-5.1671813359707308e+1 /* x */, 1.6286021921862766e+2 /* y */},
+                                     4.3278689214335735e+0 /* orientation */,
+                                     3.0371685926263199e+0 /* length */,
+                                     Geometry::Type::kArc /* Type */,
+                                     Geometry::Arc{-5.5921424523716991e-2} /* description */},
+                            Geometry{1.3373829527215225e+1 /* s_0 */,
+                                     {-5.3044141851610902e+1 /* x */, 1.6015486258116991e+2 /* y */},
+                                     4.1580261272152175e+0 /* orientation */,
+                                     5.5402357751415368e+0 /* length */,
+                                     Geometry::Type::kLine /* Type */,
+                                     Geometry::Line{} /* description */},
+                            Geometry{1.8914065302356761e+1 /* s_0 */,
+                                     {-5.5960547992372049e+1 /* x */, 1.5544432764177000e+2 /* y */},
+                                     4.1580261272152157e+0 /* orientation */,
+                                     5.4279091869543947e+1 /* length */,
+                                     Geometry::Type::kLine /* Type */,
+                                     Geometry::Line{} /* description */},
+                            Geometry{7.3193157171900708e+1 /* s_0 */,
+                                     {-8.4533153245060589e+1 /* x */, 1.0929428925330896e+2 /* y */},
+                                     4.1580261272152157e+0 /* orientation */,
+                                     2.0500000000000682e+0 /* length */,
+                                     Geometry::Type::kLine /* Type */,
+                                     Geometry::Line{} /* description */}}};
+  const ElevationProfile kElevationProfile{{
+      ElevationProfile::Elevation{0.0000000000000000e+0, 1.0e+1, 0., 0., 0.},
+      ElevationProfile::Elevation{1.0336660934588904e+1, 1.0e+1, 0., 0., 0.},
+      ElevationProfile::Elevation{1.8914065302356761e+1, 1.0e+1, 0., 0., 0.},
+      ElevationProfile::Elevation{7.3193157171900708e+1, 1.0e+1, 0., 0., 0.},
+  }};
+  const std::vector<LaneOffset> kLaneOffsets{
+      {0.0000000000000000e+0 /* s */, 6.3500000000000001e-1 /* a */, 0. /* b */, 0. /* c */, 0. /* d */},
+      {1.0336660934588904e+1 /* s */, 0.0000000000000000e+0 /* a */, 0. /* b */, 0. /* c */, 0. /* d */},
+      {1.8914065302356761e+1 /* s */, 1.1500000000000011e+1 /* a */, 0. /* b */, 0. /* c */, 0. /* d */},
+      {7.3193157171900708e+1 /* s */, 1.1500000000000011e+1 /* a */, 0. /* b */, 0. /* c */, 0. /* d */},
+  };
+  const LaneLink kLaneLink0_2{LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"2"}} /* predecessor */,
+                              LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-1"}} /* successor */};
+  const LaneLink kLaneLink1_1{LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-2"}} /* predecessor */,
+                              LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-6"}} /* successor */};
+  const LaneLink kLaneLink2_6{LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-1"}} /* predecessor */,
+                              LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-6"}} /* successor */};
+  const LaneLink kLaneLink3_6{LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-6"}} /* predecessor */,
+                              LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"6"}} /* successor */};
 
-  const LaneOffset kLaneOffset{0. /* s */, 0. /* a */, 0. /* b */, 0. /* c */, 0. /* d */};
-  const LaneLink kLaneLink{LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"-1"}} /* predecessor */,
-                           LaneLink::LinkAttributes{LaneLink::LinkAttributes::Id{"1"}} /* successor */};
+  // lane section 0
+  const Lane kCenterLane0{
+      Lane::Id("0"), Lane::Type::kNone, false, {}, {}, {}, LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane0_1{Lane::Id("-1"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 6.3500000000000001e-1, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane0_2{Lane::Id("-2"),
+                           Lane::Type::kDriving,
+                           false,
+                           kLaneLink0_2,
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const LaneSection kLaneSection0{0. /* s_0 */,
+                                  std::nullopt /* single_side */,
+                                  {} /* left_lanes */,
+                                  kCenterLane0 /* center_lane */,
+                                  {kRightLane0_2, kRightLane0_1} /* right_lanes */};
+  // lane section 1
+  const Lane kCenterLane1{Lane::Id("0"), Lane::Type::kNone, false, {}, {}, {}, {}};
+  const Lane kRightLane1_1{Lane::Id("-1"),
+                           Lane::Type::kDriving,
+                           false,
+                           kLaneLink1_1,
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const LaneSection kLaneSection1{1.0336660934588904e+1 /* s_0 */,
+                                  std::nullopt /* single_side */,
+                                  {} /* left_lanes */,
+                                  kCenterLane1 /* center_lane */,
+                                  {kRightLane1_1} /* right_lanes */};
 
-  const std::string kLaneUserData{R"R(<userData>
-    <vectorLane travelDir="forward"/>
-</userData>
-)R"};
-  const Lane kCenterLane{Lane::Id("0"), Lane::Type::kNone, false, {}, {}, {}, {}};
-  const Lane kRightLane{
-      Lane::Id("-1"), Lane::Type::kDriving, false, kLaneLink, std::vector<LaneWidth>{{0., 4., 0., 0., 0.}}, {},
-      kLaneUserData};
-  const LaneSection kLaneSection{0. /* s_0 */,
-                                 std::nullopt /* single_side */,
-                                 {} /* left_lanes */,
-                                 kCenterLane /* center_lane */,
-                                 {kRightLane} /* right_lanes */};
-  const Lanes kLanes{{{kLaneOffset}}, {{kLaneSection}}};
-  const RoadHeader kExpectedRoadHeader{std::string("Road 137") /* name */,
-                                       18.266391265330977 /* length */,
-                                       RoadHeader::Id("137") /* id */,
-                                       std::string("136") /* junction */,
+  // lane section 2
+  const Lane kCenterLane2{
+      Lane::Id("0"), Lane::Type::kNone, false, {}, {}, {}, LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane2_1{Lane::Id("-1"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 5.0e-1, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane2_2{Lane::Id("-2"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane2_3{Lane::Id("-3"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 5.0e-1, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane2_4{Lane::Id("-4"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const Lane kRightLane2_5{Lane::Id("-5"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const Lane kRightLane2_6{Lane::Id("-6"),
+                           Lane::Type::kDriving,
+                           false,
+                           kLaneLink2_6,
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const LaneSection kLaneSection2{
+      1.8914065302356761e+1 /* s_0 */,
+      std::nullopt /* single_side */,
+      {} /* left_lanes */,
+      kCenterLane2 /* center_lane */,
+      {kRightLane2_6, kRightLane2_5, kRightLane2_4, kRightLane2_3, kRightLane2_2, kRightLane2_1} /* right_lanes */};
+
+  // lane section 3
+  const Lane kCenterLane3{
+      Lane::Id("0"), Lane::Type::kNone, false, {}, {}, {}, LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane3_1{Lane::Id("-1"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 5.0e-1, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane3_2{Lane::Id("-2"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane3_3{Lane::Id("-3"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 5.0e-1, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("undirected")};
+  const Lane kRightLane3_4{Lane::Id("-4"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const Lane kRightLane3_5{Lane::Id("-5"),
+                           Lane::Type::kNone,
+                           false,
+                           {},
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const Lane kRightLane3_6{Lane::Id("-6"),
+                           Lane::Type::kDriving,
+                           false,
+                           kLaneLink3_6,
+                           std::vector<LaneWidth>{{0., 3.5, 0., 0., 0.}},
+                           {},
+                           LaneUserDataTravelDirTemplate("forward")};
+  const LaneSection kLaneSection3{
+      7.3193157171900708e+1 /* s_0 */,
+      std::nullopt /* single_side */,
+      {} /* left_lanes */,
+      kCenterLane3 /* center_lane */,
+      {kRightLane3_6, kRightLane3_5, kRightLane3_4, kRightLane3_3, kRightLane3_2, kRightLane3_1} /* right_lanes */};
+
+  const Lanes kLanes{{kLaneOffsets}, {{kLaneSection0, kLaneSection1, kLaneSection2, kLaneSection3}}};
+  const RoadHeader kExpectedRoadHeader{std::string("Road 52") /* name */,
+                                       7.5243157171900776e+1 /* length */,
+                                       RoadHeader::Id("52") /* id */,
+                                       std::string("50") /* junction */,
                                        std::nullopt,
                                        kExpectedRoadLink /* road_link */,
                                        {} /* road_types */,
-                                       {kPlanView} /* reference_geometry */,
+                                       {kPlanView, kElevationProfile, {}} /* reference_geometry */,
                                        kLanes /* lanes */};
   // @}
 
-  // Junction 76 of FlatTown01.xodr description:
+  // Junction 17 of Highway description:
   // @{
-  const Connection kConnection76_0{Connection::Id("0") /* id */,
-                                   "17" /* incoming_road */,
-                                   "79" /* connecting_road */,
+  const Connection kConnection17_0{Connection::Id("0") /* id */,
+                                   "9" /* incoming_road */,
+                                   "27" /* connecting_road */,
+                                   Connection::ContactPoint::kStart /* contact_point */,
+                                   std::nullopt /* connection_master */,
+                                   std::nullopt /* type */,
+                                   {{Connection::LaneLink::Id("7"), Connection::LaneLink::Id("7")},
+                                    {Connection::LaneLink::Id("6"), Connection::LaneLink::Id("6")},
+                                    {Connection::LaneLink::Id("5"), Connection::LaneLink::Id("5")},
+                                    {Connection::LaneLink::Id("4"), Connection::LaneLink::Id("4")}} /* lane_links */};
+  const Connection kConnection17_1{Connection::Id("1") /* id */,
+                                   "10" /* incoming_road */,
+                                   "27" /* connecting_road */,
                                    Connection::ContactPoint::kEnd /* contact_point */,
                                    std::nullopt /* connection_master */,
                                    std::nullopt /* type */,
-                                   {{Connection::LaneLink::Id("1"), Connection::LaneLink::Id("1")}} /* lane_links */};
-  const Connection kConnection76_1{Connection::Id("1") /* id */,
-                                   "16" /* incoming_road */,
-                                   "80" /* connecting_road */,
+                                   {{Connection::LaneLink::Id("7"), Connection::LaneLink::Id("7")},
+                                    {Connection::LaneLink::Id("6"), Connection::LaneLink::Id("6")},
+                                    {Connection::LaneLink::Id("5"), Connection::LaneLink::Id("5")},
+                                    {Connection::LaneLink::Id("4"), Connection::LaneLink::Id("4")}} /* lane_links */};
+  const Connection kConnection17_2{Connection::Id("2") /* id */,
+                                   "9" /* incoming_road */,
+                                   "28" /* connecting_road */,
                                    Connection::ContactPoint::kStart /* contact_point */,
                                    std::nullopt /* connection_master */,
                                    std::nullopt /* type */,
-                                   {{Connection::LaneLink::Id("-1"), Connection::LaneLink::Id("-1")}} /* lane_links */};
-  const Connection kConnection76_2{Connection::Id("2") /* id */,
+                                   {{Connection::LaneLink::Id("-1"), Connection::LaneLink::Id("-1")},
+                                    {Connection::LaneLink::Id("-2"), Connection::LaneLink::Id("-2")},
+                                    {Connection::LaneLink::Id("-3"), Connection::LaneLink::Id("-3")},
+                                    {Connection::LaneLink::Id("-4"), Connection::LaneLink::Id("-4")}} /* lane_links */};
+  const Connection kConnection17_3{Connection::Id("3") /* id */,
                                    "10" /* incoming_road */,
-                                   "82" /* connecting_road */,
-                                   Connection::ContactPoint::kStart /* contact_point */,
+                                   "28" /* connecting_road */,
+                                   Connection::ContactPoint::kEnd /* contact_point */,
                                    std::nullopt /* connection_master */,
                                    std::nullopt /* type */,
-                                   {{Connection::LaneLink::Id("-1"), Connection::LaneLink::Id("-1")}} /* lane_links */};
-  const Connection kConnection76_3{Connection::Id("3") /* id */,
-                                   "16" /* incoming_road */,
-                                   "83" /* connecting_road */,
-                                   Connection::ContactPoint::kStart /* contact_point */,
-                                   std::nullopt /* connection_master */,
-                                   std::nullopt /* type */,
-                                   {{Connection::LaneLink::Id("-1"), Connection::LaneLink::Id("-1")}} /* lane_links */};
-  const Connection kConnection76_4{Connection::Id("4") /* id */,
+                                   {{Connection::LaneLink::Id("-1"), Connection::LaneLink::Id("-1")},
+                                    {Connection::LaneLink::Id("-2"), Connection::LaneLink::Id("-2")},
+                                    {Connection::LaneLink::Id("-3"), Connection::LaneLink::Id("-3")},
+                                    {Connection::LaneLink::Id("-4"), Connection::LaneLink::Id("-4")}} /* lane_links */};
+  const Connection kConnection17_4{Connection::Id("4") /* id */,
                                    "10" /* incoming_road */,
-                                   "84" /* connecting_road */,
+                                   "30" /* connecting_road */,
                                    Connection::ContactPoint::kStart /* contact_point */,
                                    std::nullopt /* connection_master */,
                                    std::nullopt /* type */,
-                                   {{Connection::LaneLink::Id("-1"), Connection::LaneLink::Id("-1")}} /* lane_links */};
-  const Connection kConnection76_5{Connection::Id("5") /* id */,
-                                   "17" /* incoming_road */,
-                                   "85" /* connecting_road */,
-                                   Connection::ContactPoint::kStart /* contact_point */,
+                                   {{Connection::LaneLink::Id("7"), Connection::LaneLink::Id("-7")}} /* lane_links */};
+  const Connection kConnection17_5{Connection::Id("5") /* id */,
+                                   "4" /* incoming_road */,
+                                   "30" /* connecting_road */,
+                                   Connection::ContactPoint::kEnd /* contact_point */,
                                    std::nullopt /* connection_master */,
                                    std::nullopt /* type */,
                                    {{Connection::LaneLink::Id("1"), Connection::LaneLink::Id("-1")}} /* lane_links */};
-  const Junction kExpectedJunction76{Junction::Id("76"),
-                                     "junction76",
+  const Junction kExpectedJunction17{Junction::Id("17"),
+                                     "junction17",
                                      std::nullopt,
-                                     {{kConnection76_0.id, kConnection76_0},
-                                      {kConnection76_1.id, kConnection76_1},
-                                      {kConnection76_2.id, kConnection76_2},
-                                      {kConnection76_3.id, kConnection76_3},
-                                      {kConnection76_4.id, kConnection76_4},
-                                      {kConnection76_5.id, kConnection76_5}}};
+                                     {{kConnection17_0.id, kConnection17_0},
+                                      {kConnection17_1.id, kConnection17_1},
+                                      {kConnection17_2.id, kConnection17_2},
+                                      {kConnection17_3.id, kConnection17_3},
+                                      {kConnection17_4.id, kConnection17_4},
+                                      {kConnection17_5.id, kConnection17_5}}};
   // @}
 
   const std::unique_ptr<DBManager> dut =
@@ -1313,7 +1485,7 @@ GTEST_TEST(DBManagerTest, FlatTown01) {
 
   const std::unordered_map<Junction::Id, Junction> junctions = dut->GetJunctions();
   EXPECT_EQ(NumOfJunctions, static_cast<int>(junctions.size()));
-  EXPECT_EQ(kExpectedJunction76, junctions.at(kExpectedJunction76.id));
+  EXPECT_EQ(kExpectedJunction17, junctions.at(kExpectedJunction17.id));
 }
 
 GTEST_TEST(DBManagerTest, LoadMapWith2Connections) {
@@ -1466,13 +1638,13 @@ GTEST_TEST(DBManager, GetGeometriesLengthInformation) {
   EXPECT_EQ(kExpectedLargest.length, largest_geometry.length);
 }
 
-// Loads Town01.xodr and verifies the shortest and largest LaneSection in the XODR.
+// Loads Highway.xodr and verifies the shortest and largest LaneSection in the XODR.
 GTEST_TEST(DBManager, GetLaneSectionLengthInformation) {
   const double kTolerance{1e-14};
-  const std::string kXodrFile = "odr/Town01.xodr";
+  const std::string kXodrFile = "odr/Highway.xodr";
   const auto db_manager = LoadDataBaseFromFile(utility::FindResource(kXodrFile), constants::kLinearTolerance);
-  const DBManager::XodrLaneSectionLengthData kExpectedShortest{RoadHeader::Id("73"), 1, 0.007307600711499163};
-  const DBManager::XodrLaneSectionLengthData kExpectedLargest{RoadHeader::Id("8"), 0, 308.69004324444666};
+  const DBManager::XodrLaneSectionLengthData kExpectedShortest{RoadHeader::Id("4"), 0, 1.1649945427797022};
+  const DBManager::XodrLaneSectionLengthData kExpectedLargest{RoadHeader::Id("11"), 0, 2.9161454554383585e+2};
   const auto shortest_lane_section{db_manager->GetShortestLaneSection()};
   const auto largest_lane_section{db_manager->GetLargestLaneSection()};
   EXPECT_EQ(kExpectedShortest.road_header_id, shortest_lane_section.road_header_id);
