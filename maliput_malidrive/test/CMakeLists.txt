@@ -54,7 +54,7 @@ macro(maliput_malidrive_build_tests)
         maliput::common
         maliput::geometry_base
         maliput::math
-        maliput::maliput_test_utilities
+        maliput::test_utilities
         maliput_malidrive::base
         maliput_malidrive::builder
         maliput_malidrive::common
