@@ -13,7 +13,7 @@ add_library(utility
   resources.cc
 )
 
-set_target_properties(utility PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-utility)
+set_target_properties(utility PROPERTIES OUTPUT_NAME maliput_malidrive_utility)
 target_include_directories(
   utility
   PUBLIC
