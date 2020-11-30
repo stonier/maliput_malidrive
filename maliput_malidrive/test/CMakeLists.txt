@@ -78,8 +78,91 @@ macro(maliput_malidrive_build_tests)
   endforeach()
 endmacro()
 
+# This macro generates a test target per each map on the list.
+# Map file will be set using a CLI argument and it's the test responsibility
+# to parse it.
+macro(malidrive_build_integration_based_tests)
+  set(XODR_FILE_PREFIX ${PROJECT_SOURCE_DIR}/resources/)
+  set(XODR_FILE_PATHS
+    ArcLane.xodr
+    Highway.xodr
+    LShapeRoad.xodr
+    LShapeRoadVariableLanes.xodr
+    LineMultipleSections.xodr
+    LineVariableWidth.xodr
+    LineVariableOffset.xodr
+    ParkingGarageRamp.xodr
+    RRFigure8.xodr
+    RRLongRoad.xodr
+    SingleLane.xodr
+    SShapeRoad.xodr
+    SShapeSuperelevatedRoad.xodr
+    TShapeRoad.xodr
+
+        # The following map needs a different tolerance.
+    # Figure8.xodr
+  )
+  # Build all the tests
+  foreach(GTEST_SOURCE_file ${ARGN})
+    # When integration tests are disabled, we just skip adding them.
+    if(NOT MALIPUT_MALIDRIVE_INTEGRATION_TESTS)
+      if(${TEST_TYPE} MATCHES "INTEGRATION")
+        message("Integration tests are disarmed, skipping: " ${GTEST_SOURCE_file})
+        continue()
+      endif()
+    endif()
+
+    foreach(XODR_MAP_file ${XODR_FILE_PATHS})
+      string(REGEX REPLACE ".cc" "" BINARY_NAME ${GTEST_SOURCE_file})
+      set(BINARY_NAME ${TEST_TYPE}_${BINARY_NAME}_${XODR_MAP_file})
+
+      ament_add_gtest_executable(${BINARY_NAME} ${GTEST_SOURCE_file})
+
+      target_include_directories(${BINARY_NAME}
+        PRIVATE
+          ${PROJECT_SOURCE_DIR}/src
+          ${PROJECT_SOURCE_DIR}/include
+          ${PYTHON_INCLUDE_DIRS}
+      )
+
+      # Kind of an ugly catch-all bucket
+      target_link_libraries(${BINARY_NAME}
+          drake::drake
+          maliput::api
+          maliput::base
+          maliput::common
+          maliput::geometry_base
+          maliput::test_utilities
+          maliput_malidrive::base
+          maliput_malidrive::builder
+          maliput_malidrive::loader
+          utility
+      )
+
+      # Remove a warning in GTest.
+      target_compile_options(${BINARY_NAME} PRIVATE "-Wno-sign-compare")
+
+      add_test(${BINARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${BINARY_NAME}
+        --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml
+        --test-command ${BINARY_NAME} "--xodr_file=${XODR_FILE_PREFIX}${XODR_MAP_file}"
+      )
+
+      set_tests_properties(${BINARY_NAME} PROPERTIES TIMEOUT 240)
+
+      if (PYTHONINTERP_FOUND)
+        # Check that the test produced a result and create a failure if
+        # it didn't. Guards against crashed and timed out tests.
+        add_test(check_${BINARY_NAME} python
+          ${PROJECT_SOURCE_DIR}/test/utils/check_test_ran.py
+          ${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
+      endif()
+    endforeach()
+  endforeach()
+endmacro()
+
 ##############################################################################
 # Testing
 ##############################################################################
 
+add_subdirectory(integration)
 add_subdirectory(regression)
