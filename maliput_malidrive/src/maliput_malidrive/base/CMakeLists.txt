@@ -41,13 +41,3 @@ install(TARGETS base
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
-
-install(
-  FILES
-    inertial_to_lane_mapping_config.h
-    lane.h
-    road_geometry.h
-    segment.h
-  DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/base/
-)

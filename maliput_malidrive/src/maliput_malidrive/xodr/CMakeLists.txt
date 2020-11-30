@@ -51,28 +51,3 @@ install(TARGETS xodr
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
-
-install(
-  FILES
-    connection.h
-    db_manager.h
-    elevation_profile.h
-    geometry.h
-    header.h
-    junction.h
-    lanes.h
-    lane_offset.h
-    lane_section.h
-    lane.h
-    lane_link.h
-    lane_width.h
-    lateral_profile.h
-    plan_view.h
-    reference_geometry.h
-    road_header.h
-    road_link.h
-    road_type.h
-    unit.h
-  DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/xodr
-)

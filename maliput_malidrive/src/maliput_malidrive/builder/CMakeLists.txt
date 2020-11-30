@@ -55,19 +55,3 @@ install(TARGETS builder
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
-
-install(
-  FILES
-    id_providers.h
-    builder_tools.h
-    road_network_builder.h
-    road_geometry_builder.h
-    road_curve_factory.h
-    road_geometry_builder_base.h
-    road_geometry_configuration.h
-    road_network_configuration.h
-    road_network_builder_base.h
-    rule_tools.h
-  DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/builder
-)

@@ -1,7 +1,3 @@
-##############################################################################
-# test_utilities
-##############################################################################
-
 add_library(test_utilities INTERFACE)
 add_library(maliput_malidrive::test_utilities ALIAS test_utilities)
 
@@ -30,4 +26,9 @@ install(
 )
 
 # Install the exported target
-install(TARGETS test_utilities EXPORT ${PROJECT_NAME}-targets)
+install(
+  TARGETS test_utilities
+  EXPORT ${PROJECT_NAME}-targets
+)
+
+ament_export_include_directories(${CMAKE_CURRENT_SOURCE_DIR})

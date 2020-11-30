@@ -138,6 +138,13 @@ install (FILES resources/figure8_trafficlights/figure8_trafficlights.xodr
 # Unsets the cache, expecting a fresh configuration after each cmake run.
 unset(MALIPUT_MALIDRIVE_INTEGRATION_TESTS CACHE)
 
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+ament_export_include_directories(include)
+
 ament_environment_hooks(setup.sh.in)
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(drake_vendor)

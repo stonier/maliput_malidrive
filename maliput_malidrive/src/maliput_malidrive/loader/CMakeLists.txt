@@ -38,10 +38,3 @@ install(TARGETS loader
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
-
-install(
-  FILES
-    loader.h
-  DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/loader
-)

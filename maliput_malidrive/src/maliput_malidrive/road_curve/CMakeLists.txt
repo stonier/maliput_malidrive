@@ -45,21 +45,3 @@ install(TARGETS road_curve
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
-
-install(
-  FILES
-    arc_ground_curve.h
-    cubic_polynomial.h
-    function.h
-    ground_curve.h
-    lane_offset.h
-    line_ground_curve.h
-    open_range_validator.h
-    piecewise_function.h
-    piecewise_ground_curve.h
-    road_curve.h
-    road_curve_offset.h
-    scaled_domain_function.h
-  DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/road_curve
-)
