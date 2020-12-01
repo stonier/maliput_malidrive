@@ -11,6 +11,7 @@ set(TEST_TYPE UNIT)
 
 set(UNIT_BASE_TEST_SOURCES
   lane_test.cc
+  road_geometry_test.cc
   segment_test.cc
 )
 
