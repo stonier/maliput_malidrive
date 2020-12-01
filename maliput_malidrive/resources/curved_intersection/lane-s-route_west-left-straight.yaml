@@ -1,6 +1,6 @@
 # -*- yaml -*-
 ---
-xodr_file: src/malidrive/resources/curved_intersection/roadnetwork.xodr
+xodr_file: src/malidrive/maliput_malidrive/resources/curved_intersection/roadnetwork.xodr
 max_length: 45
 waypoints:
   - [34.128, 0.776, 0]
