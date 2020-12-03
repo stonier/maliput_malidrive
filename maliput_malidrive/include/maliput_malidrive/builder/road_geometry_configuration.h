@@ -1,0 +1,52 @@
+// Copyright 2019 Toyota Research Institute
+#pragma once
+
+#include "maliput/api/road_network.h"
+
+#include "maliput_malidrive/base/inertial_to_lane_mapping_config.h"
+#include "maliput_malidrive/constants.h"
+
+namespace malidrive {
+namespace builder {
+
+/// Holds the policy for concurrency optimization
+/// during lane creation.
+struct BuildPolicy {
+  enum Type {
+    kSequential = 0,
+    kParallel,
+  };
+  Type type{Type::kSequential};
+  std::optional<int> num_threads{};
+};
+
+/// Structure to wrap RoadGeometry parameters.
+struct RoadGeometryConfiguration {
+  /// Determines whether a simplification to the geometry should be applied or
+  /// not.
+  enum class SimplificationPolicy {
+    kNone,                                         ///< No simplification must be done.
+    kSimplifyWithinToleranceAndKeepGeometryModel,  ///< Merge geometry pieces and keep the original geometry model.
+  };
+
+  /// Determines whether the tolerance and scale length should be automatically
+  /// computed or not.
+  enum class ToleranceSelectionPolicy {
+    kManualSelection,     ///< Manual adjustment.
+    kAutomaticSelection,  ///< Automatic selection.
+  };
+
+  // Designed for use with uniform initialization.
+  maliput::api::RoadGeometryId id;
+  std::optional<std::string> opendrive_file;
+  double linear_tolerance{constants::kLinearTolerance};
+  double angular_tolerance{constants::kAngularTolerance};
+  double scale_length{constants::kScaleLength};
+  InertialToLaneMappingConfig inertial_to_lane_mapping_config;
+  BuildPolicy build_policy{BuildPolicy::Type::kSequential};
+  SimplificationPolicy simplification_policy{SimplificationPolicy::kNone};
+  ToleranceSelectionPolicy tolerance_selection_policy{ToleranceSelectionPolicy::kManualSelection};
+};
+
+}  // namespace builder
+}  // namespace malidrive
