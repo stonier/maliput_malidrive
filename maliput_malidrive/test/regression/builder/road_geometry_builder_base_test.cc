@@ -11,7 +11,7 @@
 #include "maliput_malidrive/common/macros.h"
 
 using maliput::api::BranchPointId;
-using maliput::api::GeoPosition;
+using maliput::api::InertialPosition;
 using maliput::api::LaneEnd;
 using maliput::api::LaneId;
 using maliput::api::Rotation;
@@ -44,7 +44,7 @@ class MockLane : public maliput::geometry_base::Lane {
   maliput::api::HBounds do_elevation_bounds(double, double) const override {
     MALIDRIVE_ABORT_MSG("Code should never reach this point");
   }
-  maliput::api::GeoPosition DoToGeoPosition(const maliput::api::LanePosition&) const override {
+  maliput::api::InertialPosition DoToInertialPosition(const maliput::api::LanePosition&) const override {
     MALIDRIVE_ABORT_MSG("Code should never reach this point");
   }
   maliput::api::Rotation DoGetOrientation(const maliput::api::LanePosition&) const override {
@@ -54,7 +54,7 @@ class MockLane : public maliput::geometry_base::Lane {
                                                      const maliput::api::IsoLaneVelocity&) const override {
     MALIDRIVE_ABORT_MSG("Code should never reach this point");
   }
-  maliput::api::LanePositionResult DoToLanePosition(const maliput::api::GeoPosition&) const override {
+  maliput::api::LanePositionResult DoToLanePosition(const maliput::api::InertialPosition&) const override {
     MALIDRIVE_ABORT_MSG("Code should never reach this point");
   }
 };

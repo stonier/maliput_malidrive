@@ -88,16 +88,16 @@ const road_curve::Function* RoadGeometry::GetReferenceLineOffset(const xodr::Roa
 }
 
 maliput::api::RoadPositionResult RoadGeometry::DoToRoadPosition(
-    const maliput::api::GeoPosition& geo_pos, const std::optional<maliput::api::RoadPosition>& hint) const {
+    const maliput::api::InertialPosition& inertial_pos, const std::optional<maliput::api::RoadPosition>& hint) const {
   maliput::api::RoadPositionResult result;
   if (hint.has_value()) {
     MALIDRIVE_THROW_UNLESS(hint->lane != nullptr);
-    const maliput::api::LanePositionResult lane_pos = hint->lane->ToLanePosition(geo_pos);
+    const maliput::api::LanePositionResult lane_pos = hint->lane->ToLanePosition(inertial_pos);
     result = maliput::api::RoadPositionResult{
         {hint->lane, lane_pos.lane_position}, lane_pos.nearest_position, lane_pos.distance};
   } else {
     const std::vector<maliput::api::RoadPositionResult> road_position_results =
-        DoFindRoadPositions(geo_pos, std::numeric_limits<double>::infinity());
+        DoFindRoadPositions(inertial_pos, std::numeric_limits<double>::infinity());
     MALIDRIVE_THROW_UNLESS(road_position_results.size());
     result = road_position_results[0];
     for (const auto& road_position_result : road_position_results) {
@@ -110,8 +110,8 @@ maliput::api::RoadPositionResult RoadGeometry::DoToRoadPosition(
 }
 
 std::vector<maliput::api::RoadPositionResult> RoadGeometry::DoFindRoadPositions(
-    const maliput::api::GeoPosition& geo_position, double radius) const {
-  return maliput::geometry_base::BruteForceFindRoadPositionsStrategy(this, geo_position, radius);
+    const maliput::api::InertialPosition& inertial_position, double radius) const {
+  return maliput::geometry_base::BruteForceFindRoadPositionsStrategy(this, inertial_position, radius);
 }
 
 }  // namespace malidrive

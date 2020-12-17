@@ -99,8 +99,8 @@ class Lane : public maliput::geometry_base::Lane {
   maliput::api::RBounds do_lane_bounds(double s) const override;
   maliput::api::RBounds do_segment_bounds(double s) const override;
   maliput::api::HBounds do_elevation_bounds(double, double) const override { return elevation_bounds_; }
-  maliput::api::GeoPosition DoToGeoPosition(const maliput::api::LanePosition& lane_pos) const override;
-  maliput::api::LanePositionResult DoToLanePosition(const maliput::api::GeoPosition& geo_pos_world) const override;
+  maliput::api::InertialPosition DoToInertialPosition(const maliput::api::LanePosition& lane_pos) const override;
+  maliput::api::LanePositionResult DoToLanePosition(const maliput::api::InertialPosition& inertial_pos) const override;
   maliput::api::Rotation DoGetOrientation(const maliput::api::LanePosition& lane_pos) const override;
   maliput::api::LanePosition DoEvalMotionDerivatives(const maliput::api::LanePosition& position,
                                                      const maliput::api::IsoLaneVelocity& velocity) const override;

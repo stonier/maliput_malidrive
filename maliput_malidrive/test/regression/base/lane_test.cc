@@ -30,12 +30,12 @@ namespace malidrive {
 namespace test {
 namespace {
 
-using maliput::api::GeoPosition;
+using maliput::api::InertialPosition;
 using maliput::api::LanePosition;
 using maliput::api::LanePositionResult;
 using maliput::api::Rotation;
-using maliput::api::test::IsGeoPositionClose;
 using maliput::api::test::IsHBoundsClose;
+using maliput::api::test::IsInertialPositionClose;
 using maliput::api::test::IsLanePositionClose;
 using maliput::api::test::IsRBoundsClose;
 using maliput::api::test::IsRotationClose;
@@ -44,11 +44,11 @@ using maliput::math::Quaternion;
 using maliput::math::Vector2;
 using maliput::math::Vector3;
 
-#define IsLanePositionResultClose(lpr_a, lpr_b, tolerance)                                      \
-  do {                                                                                          \
-    EXPECT_TRUE(IsLanePositionClose(lpr_a.lane_position, lpr_b.lane_position, tolerance));      \
-    EXPECT_TRUE(IsGeoPositionClose(lpr_a.nearest_position, lpr_b.nearest_position, tolerance)); \
-    EXPECT_NEAR(lpr_a.distance, lpr_b.distance, tolerance);                                     \
+#define IsLanePositionResultClose(lpr_a, lpr_b, tolerance)                                           \
+  do {                                                                                               \
+    EXPECT_TRUE(IsLanePositionClose(lpr_a.lane_position, lpr_b.lane_position, tolerance));           \
+    EXPECT_TRUE(IsInertialPositionClose(lpr_a.nearest_position, lpr_b.nearest_position, tolerance)); \
+    EXPECT_NEAR(lpr_a.distance, lpr_b.distance, tolerance);                                          \
   } while (0);
 
 std::unique_ptr<road_curve::Function> MakeCubicPolynomial(double a, double b, double c, double d, double p0, double p1,
@@ -97,13 +97,13 @@ double BruteForcePathLengthIntegral(const road_curve::RoadCurve& road_curve, dou
   // in the global frame for each interval boundary and sums up the path lengths
   // of the segments in the global frame that correspond to each one of those
   // intervals.
-  Vector3 geo_position_at_prev_p = road_curve.W(Vector3(p0, r, h));
+  Vector3 inertial_position_at_prev_p = road_curve.W(Vector3(p0, r, h));
   for (int i = 1; i <= iterations; ++i) {
     const double p = p0 + d_p * static_cast<double>(i) / iterations;
-    const Vector3 geo_position_at_p = road_curve.W(Vector3(p, r, h));
-    const double ith_step_length = (geo_position_at_p - geo_position_at_prev_p).norm();
+    const Vector3 inertial_position_at_p = road_curve.W(Vector3(p, r, h));
+    const double ith_step_length = (inertial_position_at_p - inertial_position_at_prev_p).norm();
     length += ith_step_length;
-    geo_position_at_prev_p = geo_position_at_p;
+    inertial_position_at_prev_p = inertial_position_at_p;
   }
   return length;
 }
@@ -290,35 +290,35 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(dut_->length(), 0.), kLinearTolerance));
 }
 
-TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToGeoPosition) {
+TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.9289321881345254, 19.071067811865476, 0.),
-                                 dut_->ToGeoPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(38.2842712474619, 54.426406871192846, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(73.63961030678928, 89.78174593052022, 0.),
-                                 dut_->ToGeoPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(2.9289321881345254, 19.071067811865476, 0.),
+                                      dut_->ToInertialPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(38.2842712474619, 54.426406871192846, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(73.63961030678928, 89.78174593052022, 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
   //@}
 
   // To the left
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.2218254069479784, 19.77817459305202, 0.),
-                                 dut_->ToGeoPosition({kSStart, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(37.577164466275356, 55.13351365237939, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(72.93250352560273, 90.48885271170676, 0.),
-                                 dut_->ToGeoPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(2.2218254069479784, 19.77817459305202, 0.),
+                                      dut_->ToInertialPosition({kSStart, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(37.577164466275356, 55.13351365237939, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(72.93250352560273, 90.48885271170676, 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
   //@}
 
   // To the right
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(4.34314575050762, 17.65685424949238, 0.),
-                                 dut_->ToGeoPosition({kSStart, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(39.698484809834994, 53.01219330881975, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(75.05382386916237, 88.36753236814712, 0.),
-                                 dut_->ToGeoPosition({kSEnd, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(4.34314575050762, 17.65685424949238, 0.),
+                                      dut_->ToInertialPosition({kSStart, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(39.698484809834994, 53.01219330881975, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(75.05382386916237, 88.36753236814712, 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRRight, kH}), kLinearTolerance));
   //@}
 }
 
@@ -328,17 +328,17 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToLanePosition) {
   // At centerline.
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{2.9289321881345254, 19.071067811865476, 0.};
+  expected_result.nearest_position = InertialPosition{2.9289321881345254, 19.071067811865476, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{38.2842712474619, 54.426406871192846, 0.};
+  expected_result.nearest_position = InertialPosition{38.2842712474619, 54.426406871192846, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{73.63961030678928, 89.78174593052022, 0.};
+  expected_result.nearest_position = InertialPosition{73.63961030678928, 89.78174593052022, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -346,17 +346,17 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToLanePosition) {
   // To the left
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{2.2218254069479784, 19.77817459305202, 0.};
+  expected_result.nearest_position = InertialPosition{2.2218254069479784, 19.77817459305202, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{37.577164466275356, 55.13351365237939, 0.};
+  expected_result.nearest_position = InertialPosition{37.577164466275356, 55.13351365237939, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{72.93250352560273, 90.48885271170676, 0.};
+  expected_result.nearest_position = InertialPosition{72.93250352560273, 90.48885271170676, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -364,17 +364,17 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToLanePosition) {
   // To the right
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{4.34314575050762, 17.65685424949238, 0.};
+  expected_result.nearest_position = InertialPosition{4.34314575050762, 17.65685424949238, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{39.698484809834994, 53.01219330881975, 0.};
+  expected_result.nearest_position = InertialPosition{39.698484809834994, 53.01219330881975, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{75.05382386916237, 88.36753236814712, 0.};
+  expected_result.nearest_position = InertialPosition{75.05382386916237, 88.36753236814712, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -507,35 +507,35 @@ TEST_F(MalidriveFlatArcLaneFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(dut_->length(), 0.), kLinearTolerance));
 }
 
-TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToGeoPosition) {
+TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(1.3397459621556127, 17.0, 0.),
-                                 dut_->ToGeoPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.711772824485934, 40.97529846801386, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(94.29335591114437, -2.113986376104993, 0.),
-                                 dut_->ToGeoPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(1.3397459621556127, 17.0, 0.),
+                                      dut_->ToInertialPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(54.711772824485934, 40.97529846801386, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(94.29335591114437, -2.113986376104993, 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
   //@}
 
   // To the left
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(0.47372055837117344, 17.5, 0.), dut_->ToGeoPosition({kSStart, kRLeft, kH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.913187957948104, 41.95480443737414, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(95.28640270633971, -1.9962661036270921, 0.),
-                                 dut_->ToGeoPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(0.47372055837117344, 17.5, 0.),
+                                      dut_->ToInertialPosition({kSStart, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(54.913187957948104, 41.95480443737414, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(95.28640270633971, -1.9962661036270921, 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
   //@}
 
   // To the right
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(3.0717967697244903, 16.0, 0.), dut_->ToGeoPosition({kSStart, kRRight, kH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.3089425575616, 39.01628652929331, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(92.3072623207537, -2.349426921060793, 0.),
-                                 dut_->ToGeoPosition({kSEnd, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(3.0717967697244903, 16.0, 0.),
+                                      dut_->ToInertialPosition({kSStart, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(54.3089425575616, 39.01628652929331, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(92.3072623207537, -2.349426921060793, 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRRight, kH}), kLinearTolerance));
   //@}
 }
 
@@ -545,17 +545,17 @@ TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToLanePosition) {
   // At centerline.
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{1.3397459621556127, 17.0, 0.};
+  expected_result.nearest_position = InertialPosition{1.3397459621556127, 17.0, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{54.711772824485934, 40.97529846801386, 0.};
+  expected_result.nearest_position = InertialPosition{54.711772824485934, 40.97529846801386, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{94.29335591114437, -2.113986376104993, 0.};
+  expected_result.nearest_position = InertialPosition{94.29335591114437, -2.113986376104993, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -563,17 +563,17 @@ TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToLanePosition) {
   // To the left
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{0.47372055837117344, 17.5, 0.};
+  expected_result.nearest_position = InertialPosition{0.47372055837117344, 17.5, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{54.913187957948104, 41.95480443737414, 0.};
+  expected_result.nearest_position = InertialPosition{54.913187957948104, 41.95480443737414, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{95.28640270633971, -1.9962661036270921, 0.};
+  expected_result.nearest_position = InertialPosition{95.28640270633971, -1.9962661036270921, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -581,17 +581,17 @@ TEST_F(MalidriveFlatArcLaneFullyInitializedTest, ToLanePosition) {
   // To the right
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{3.0717967697244903, 16.0, 0.};
+  expected_result.nearest_position = InertialPosition{3.0717967697244903, 16.0, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{54.3089425575616, 39.01628652929331, 0.};
+  expected_result.nearest_position = InertialPosition{54.3089425575616, 39.01628652929331, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{92.3072623207537, -2.349426921060793, 0.};
+  expected_result.nearest_position = InertialPosition{92.3072623207537, -2.349426921060793, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -785,35 +785,35 @@ TEST_F(MalidriveFlatSLaneFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(dut_->length(), 0.), kLinearTolerance));
 }
 
-TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToGeoPosition) {
+TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(5., -90., 0.), dut_->ToGeoPosition({kSStart, kRCenterline, kH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-30.5707765633, -4.27831414064, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(-5., 110., 0.), dut_->ToGeoPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(5., -90., 0.),
+                                      dut_->ToInertialPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(-30.5707765633, -4.27831414064, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(-5., 110., 0.),
+                                      dut_->ToInertialPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
   //@}
 
   // To the left
   //@{
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(5., -89., 0.), dut_->ToGeoPosition({kSStart, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-30.9969561727, -5.18295270965, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(-5., 111., 0.), dut_->ToGeoPosition({kSEnd, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(5., -89., 0.), dut_->ToInertialPosition({kSStart, kRLeft, kH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(-30.9969561727, -5.18295270965, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRLeft, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(-5., 111., 0.), dut_->ToInertialPosition({kSEnd, kRLeft, kH}),
+                                      kLinearTolerance));
   //@}
 
   // To the right
   //@{
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(5., -92., 0.), dut_->ToGeoPosition({kSStart, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(-29.7184173445, -2.46903700262, 0.),
-                                 dut_->ToGeoPosition({kSHalf, kRRight, kH}), kLinearTolerance));
-  EXPECT_TRUE(
-      IsGeoPositionClose(GeoPosition(-5., 108., 0.), dut_->ToGeoPosition({kSEnd, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(5., -92., 0.), dut_->ToInertialPosition({kSStart, kRRight, kH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(-29.7184173445, -2.46903700262, 0.),
+                                      dut_->ToInertialPosition({kSHalf, kRRight, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(-5., 108., 0.), dut_->ToInertialPosition({kSEnd, kRRight, kH}),
+                                      kLinearTolerance));
   //@}
 }
 
@@ -823,17 +823,17 @@ TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToLanePosition) {
   // At centerline.
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{5., -90., 0.};
+  expected_result.nearest_position = InertialPosition{5., -90., 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{-30.5707765633, -4.27831414064, 0.};
+  expected_result.nearest_position = InertialPosition{-30.5707765633, -4.27831414064, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRCenterline, kH};
-  expected_result.nearest_position = GeoPosition{-5., 110., 0.};
+  expected_result.nearest_position = InertialPosition{-5., 110., 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -841,17 +841,17 @@ TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToLanePosition) {
   // To the left
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{5., -89., 0.};
+  expected_result.nearest_position = InertialPosition{5., -89., 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{-30.9969561727, -5.18295270965, 0.};
+  expected_result.nearest_position = InertialPosition{-30.9969561727, -5.18295270965, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRLeft, kH};
-  expected_result.nearest_position = GeoPosition{-5., 111., 0.};
+  expected_result.nearest_position = InertialPosition{-5., 111., 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -859,17 +859,17 @@ TEST_F(MalidriveFlatSLaneFullyInitializedTest, ToLanePosition) {
   // To the right
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{5., -92., 0.};
+  expected_result.nearest_position = InertialPosition{5., -92., 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{-29.7184173445, -2.46903700262, 0.};
+  expected_result.nearest_position = InertialPosition{-29.7184173445, -2.46903700262, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRRight, kH};
-  expected_result.nearest_position = GeoPosition{-5., 108., 0.};
+  expected_result.nearest_position = InertialPosition{-5., 108., 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1088,38 +1088,44 @@ TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(dut_->length(), 0.), kLinearTolerance));
 }
 
-TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToGeoPosition) {
+TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.9289321881345254, 19.071067811865476, params_.expected_z_start),
-                                 dut_->ToGeoPosition({params_.expected_s_start, kRCenterline, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(38.2842712474619, 54.426406871192846, params_.expected_z_half),
-                                 dut_->ToGeoPosition({params_.expected_s_half, kRCenterline, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(73.63961030678928, 89.78174593052022, params_.expected_z_end),
-                                 dut_->ToGeoPosition({params_.expected_s_end, kRCenterline, kZeroH}),
-                                 kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(
+      InertialPosition(2.9289321881345254, 19.071067811865476, params_.expected_z_start),
+      dut_->ToInertialPosition({params_.expected_s_start, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(38.2842712474619, 54.426406871192846, params_.expected_z_half),
+                                      dut_->ToInertialPosition({params_.expected_s_half, kRCenterline, kZeroH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(73.63961030678928, 89.78174593052022, params_.expected_z_end),
+                                      dut_->ToInertialPosition({params_.expected_s_end, kRCenterline, kZeroH}),
+                                      kLinearTolerance));
   //@}
 
   // To the left
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(2.2218254069479784, 19.77817459305202, params_.expected_z_start),
-                                 dut_->ToGeoPosition({params_.expected_s_start, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(37.577164466275356, 55.13351365237939, params_.expected_z_half),
-                                 dut_->ToGeoPosition({params_.expected_s_half, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(72.93250352560273, 90.48885271170676, params_.expected_z_end),
-                                 dut_->ToGeoPosition({params_.expected_s_end, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(2.2218254069479784, 19.77817459305202, params_.expected_z_start),
+                                      dut_->ToInertialPosition({params_.expected_s_start, kRLeft, kZeroH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(37.577164466275356, 55.13351365237939, params_.expected_z_half),
+                                      dut_->ToInertialPosition({params_.expected_s_half, kRLeft, kZeroH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(72.93250352560273, 90.48885271170676, params_.expected_z_end),
+                                      dut_->ToInertialPosition({params_.expected_s_end, kRLeft, kZeroH}),
+                                      kLinearTolerance));
   //@}
 
   // To the right
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(4.34314575050762, 17.65685424949238, params_.expected_z_start),
-                                 dut_->ToGeoPosition({params_.expected_s_start, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(39.698484809834994, 53.01219330881975, params_.expected_z_half),
-                                 dut_->ToGeoPosition({params_.expected_s_half, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(75.05382386916237, 88.36753236814712, params_.expected_z_end),
-                                 dut_->ToGeoPosition({params_.expected_s_end, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(4.34314575050762, 17.65685424949238, params_.expected_z_start),
+                                      dut_->ToInertialPosition({params_.expected_s_start, kRRight, kZeroH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(39.698484809834994, 53.01219330881975, params_.expected_z_half),
+                                      dut_->ToInertialPosition({params_.expected_s_half, kRRight, kZeroH}),
+                                      kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(75.05382386916237, 88.36753236814712, params_.expected_z_end),
+                                      dut_->ToInertialPosition({params_.expected_s_end, kRRight, kZeroH}),
+                                      kLinearTolerance));
   //@}
 }
 
@@ -1129,17 +1135,17 @@ TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToLanePosition) {
   // At centerline.
   //@{
   expected_result.lane_position = LanePosition{params_.expected_s_start, kRCenterline, kZeroH};
-  expected_result.nearest_position = GeoPosition{2.9289321881345254, 19.071067811865476, params_.expected_z_start};
+  expected_result.nearest_position = InertialPosition{2.9289321881345254, 19.071067811865476, params_.expected_z_start};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{params_.expected_s_half, kRCenterline, kZeroH};
-  expected_result.nearest_position = GeoPosition{38.2842712474619, 54.426406871192846, params_.expected_z_half};
+  expected_result.nearest_position = InertialPosition{38.2842712474619, 54.426406871192846, params_.expected_z_half};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{params_.expected_s_end, kRCenterline, kZeroH};
-  expected_result.nearest_position = GeoPosition{73.63961030678928, 89.78174593052022, params_.expected_z_end};
+  expected_result.nearest_position = InertialPosition{73.63961030678928, 89.78174593052022, params_.expected_z_end};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1147,17 +1153,17 @@ TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToLanePosition) {
   // To the left
   //@{
   expected_result.lane_position = LanePosition{params_.expected_s_start, kRLeft, kZeroH};
-  expected_result.nearest_position = GeoPosition{2.2218254069479784, 19.77817459305202, params_.expected_z_start};
+  expected_result.nearest_position = InertialPosition{2.2218254069479784, 19.77817459305202, params_.expected_z_start};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{params_.expected_s_half, kRLeft, kZeroH};
-  expected_result.nearest_position = GeoPosition{37.577164466275356, 55.13351365237939, params_.expected_z_half};
+  expected_result.nearest_position = InertialPosition{37.577164466275356, 55.13351365237939, params_.expected_z_half};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{params_.expected_s_end, kRLeft, kZeroH};
-  expected_result.nearest_position = GeoPosition{72.93250352560273, 90.48885271170676, params_.expected_z_end};
+  expected_result.nearest_position = InertialPosition{72.93250352560273, 90.48885271170676, params_.expected_z_end};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1165,17 +1171,17 @@ TEST_P(MalidriveLineLaneWithElevationFullyInitializedTest, ToLanePosition) {
   // To the right
   //@{
   expected_result.lane_position = LanePosition{params_.expected_s_start, kRRight, kZeroH};
-  expected_result.nearest_position = GeoPosition{4.34314575050762, 17.65685424949238, params_.expected_z_start};
+  expected_result.nearest_position = InertialPosition{4.34314575050762, 17.65685424949238, params_.expected_z_start};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{params_.expected_s_half, kRRight, kZeroH};
-  expected_result.nearest_position = GeoPosition{39.698484809834994, 53.01219330881975, params_.expected_z_half};
+  expected_result.nearest_position = InertialPosition{39.698484809834994, 53.01219330881975, params_.expected_z_half};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{params_.expected_s_end, kRRight, kZeroH};
-  expected_result.nearest_position = GeoPosition{75.05382386916237, 88.36753236814712, params_.expected_z_end};
+  expected_result.nearest_position = InertialPosition{75.05382386916237, 88.36753236814712, params_.expected_z_end};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1411,35 +1417,35 @@ TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(dut_->length(), 0.), kLinearTolerance));
 }
 
-TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToGeoPosition) {
+TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(1.3397459621556127, 17.0, params_.expected_z_start),
-                                 dut_->ToGeoPosition({kSStart, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.711772824485934, 40.97529846801386, params_.expected_z_half),
-                                 dut_->ToGeoPosition({kSHalf, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(94.29335591114437, -2.113986376104993, params_.expected_z_end),
-                                 dut_->ToGeoPosition({kSEnd, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(1.3397459621556127, 17.0, params_.expected_z_start),
+                                      dut_->ToInertialPosition({kSStart, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(54.711772824485934, 40.97529846801386, params_.expected_z_half),
+                                      dut_->ToInertialPosition({kSHalf, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(94.29335591114437, -2.113986376104993, params_.expected_z_end),
+                                      dut_->ToInertialPosition({kSEnd, kRCenterline, kZeroH}), kLinearTolerance));
   //@}
 
   // To the left
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(0.47372055837117344, 17.5, params_.expected_z_start),
-                                 dut_->ToGeoPosition({kSStart, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.913187957948104, 41.95480443737414, params_.expected_z_half),
-                                 dut_->ToGeoPosition({kSHalf, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(95.28640270633971, -1.9962661036270921, params_.expected_z_end),
-                                 dut_->ToGeoPosition({kSEnd, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(0.47372055837117344, 17.5, params_.expected_z_start),
+                                      dut_->ToInertialPosition({kSStart, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(54.913187957948104, 41.95480443737414, params_.expected_z_half),
+                                      dut_->ToInertialPosition({kSHalf, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(95.28640270633971, -1.9962661036270921, params_.expected_z_end),
+                                      dut_->ToInertialPosition({kSEnd, kRLeft, kZeroH}), kLinearTolerance));
   //@}
 
   // To the right
   //@{
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(3.0717967697244903, 16.0, params_.expected_z_start),
-                                 dut_->ToGeoPosition({kSStart, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(54.3089425575616, 39.01628652929331, params_.expected_z_half),
-                                 dut_->ToGeoPosition({kSHalf, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(GeoPosition(92.3072623207537, -2.349426921060793, params_.expected_z_end),
-                                 dut_->ToGeoPosition({kSEnd, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(3.0717967697244903, 16.0, params_.expected_z_start),
+                                      dut_->ToInertialPosition({kSStart, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(54.3089425575616, 39.01628652929331, params_.expected_z_half),
+                                      dut_->ToInertialPosition({kSHalf, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(92.3072623207537, -2.349426921060793, params_.expected_z_end),
+                                      dut_->ToInertialPosition({kSEnd, kRRight, kZeroH}), kLinearTolerance));
   //@}
 }
 
@@ -1449,17 +1455,17 @@ TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToLanePosition) {
   // At centerline.
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRCenterline, kZeroH};
-  expected_result.nearest_position = GeoPosition{1.3397459621556127, 17.0, params_.expected_z_start};
+  expected_result.nearest_position = InertialPosition{1.3397459621556127, 17.0, params_.expected_z_start};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRCenterline, kZeroH};
-  expected_result.nearest_position = GeoPosition{54.711772824485934, 40.97529846801386, params_.expected_z_half};
+  expected_result.nearest_position = InertialPosition{54.711772824485934, 40.97529846801386, params_.expected_z_half};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRCenterline, kZeroH};
-  expected_result.nearest_position = GeoPosition{94.29335591114437, -2.113986376104993, params_.expected_z_end};
+  expected_result.nearest_position = InertialPosition{94.29335591114437, -2.113986376104993, params_.expected_z_end};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1467,17 +1473,17 @@ TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToLanePosition) {
   // To the left
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRLeft, kZeroH};
-  expected_result.nearest_position = GeoPosition{0.47372055837117344, 17.5, params_.expected_z_start};
+  expected_result.nearest_position = InertialPosition{0.47372055837117344, 17.5, params_.expected_z_start};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRLeft, kZeroH};
-  expected_result.nearest_position = GeoPosition{54.913187957948104, 41.95480443737414, params_.expected_z_half};
+  expected_result.nearest_position = InertialPosition{54.913187957948104, 41.95480443737414, params_.expected_z_half};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRLeft, kZeroH};
-  expected_result.nearest_position = GeoPosition{95.28640270633971, -1.9962661036270921, params_.expected_z_end};
+  expected_result.nearest_position = InertialPosition{95.28640270633971, -1.9962661036270921, params_.expected_z_end};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1485,17 +1491,17 @@ TEST_P(MalidriveArcLaneWithElevationFullyInitializedTest, ToLanePosition) {
   // To the right
   //@{
   expected_result.lane_position = LanePosition{kSStart, kRRight, kZeroH};
-  expected_result.nearest_position = GeoPosition{3.0717967697244903, 16.0, params_.expected_z_start};
+  expected_result.nearest_position = InertialPosition{3.0717967697244903, 16.0, params_.expected_z_start};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSHalf, kRRight, kZeroH};
-  expected_result.nearest_position = GeoPosition{54.3089425575616, 39.01628652929331, params_.expected_z_half};
+  expected_result.nearest_position = InertialPosition{54.3089425575616, 39.01628652929331, params_.expected_z_half};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{kSEnd, kRRight, kZeroH};
-  expected_result.nearest_position = GeoPosition{92.3072623207537, -2.349426921060793, params_.expected_z_end};
+  expected_result.nearest_position = InertialPosition{92.3072623207537, -2.349426921060793, params_.expected_z_end};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1516,14 +1522,14 @@ struct SuperelevatedLaneTestParams {
   // @}
 
   // Geopositions at start(0), half(1) and end(1) of a lane located in the center(0), left(1) and the right(2).
-  // For example: geo_positions[2][0] will access to the GeoPosition in the start of right lane.
-  std::array<std::array<GeoPosition, 3>, 3> geo_positions;
+  // For example: inertial_positions[2][0] will access to the InertialPosition in the start of right lane.
+  std::array<std::array<InertialPosition, 3>, 3> inertial_positions;
 };
 
 // Returns a vector containing expected values for different superelevation.
 std::vector<SuperelevatedLaneTestParams> InstantiateSuperelevationParametersForLine() {
   return {
-      // To get the GeoPosition given (p,r,h) for a straight superelevated lane the following python code could be
+      // To get the InertialPosition given (p,r,h) for a straight superelevated lane the following python code could be
       // useful.
       // @code{python}
       //
@@ -1544,28 +1550,37 @@ std::vector<SuperelevatedLaneTestParams> InstantiateSuperelevationParametersForL
       // Single line Lane with a constant superelevation.
       {
           {0., 0., 0., -1.},
-          {{{{{6.1794857562991025638, 15.820514243700897436, -8.4147098480789650665} /* GeoPositionAtCenterStart  */,
-              {41.534824815626478784, 51.175853303028273656, -8.4147098480789650665} /* GeoPositionAtCenterHalf  */,
-              {76.890163874953855004, 86.531192362355649876, -8.4147098480789650665}}} /* GeoPositionAtCenterEnd  */,
-            {{{5.7974343319290128202, 16.202565668070987180, -9.2561808328868615732} /* GeoPositionAtLeftStart  */,
-              {41.152773391256389040, 51.557904727398363400, -9.2561808328868615732} /* GeoPositionAtLeftHalf  */,
-              {76.508112450583765260, 86.913243786725739620, -9.2561808328868615732}}} /* GeoPositionAtLeftEnd  */,
-            {{{6.9435886050392820511, 15.056411394960717949, -6.7317678784631720532} /* GeoPositionAtRightStart  */,
-              {42.298927664366658271, 50.411750454288094169, -6.7317678784631720532} /* GeoPositionAtRightHalf  */,
-              {77.654266723694034491, 85.767089513615470389, -6.7317678784631720532}}}}} /* GeoPositionAtRightEnd  */,
+          {{{{{6.1794857562991025638, 15.820514243700897436,
+               -8.4147098480789650665} /* InertialPositionAtCenterStart  */,
+              {41.534824815626478784, 51.175853303028273656,
+               -8.4147098480789650665} /* InertialPositionAtCenterHalf  */,
+              {76.890163874953855004, 86.531192362355649876,
+               -8.4147098480789650665}}} /* InertialPositionAtCenterEnd  */,
+            {{{5.7974343319290128202, 16.202565668070987180, -9.2561808328868615732} /* InertialPositionAtLeftStart  */,
+              {41.152773391256389040, 51.557904727398363400, -9.2561808328868615732} /* InertialPositionAtLeftHalf  */,
+              {76.508112450583765260, 86.913243786725739620, -9.2561808328868615732}}} /* InertialPositionAtLeftEnd  */,
+            {{{6.9435886050392820511, 15.056411394960717949,
+               -6.7317678784631720532} /* InertialPositionAtRightStart  */,
+              {42.298927664366658271, 50.411750454288094169, -6.7317678784631720532} /* InertialPositionAtRightHalf  */,
+              {77.654266723694034491, 85.767089513615470389,
+               -6.7317678784631720532}}}}} /* InertialPositionAtRightEnd  */,
       },
       // Single line Lane with a cubic superelevation.
       {
           {-6.04716270616596e-6, 0.000569931657984447, 0., -0.5},
-          {{{{{3.7945541943625438930, 18.205445805637456107, -4.7942553860420300538} /* GeoPositionAtCenterStart  */,
-              {38.384930812645887124, 54.325747306008865316, 1.6813142922099080234} /* GeoPositionAtCenterHalf  */,
-              {76.032461232327927565, 87.388895004981577315, -7.4985714325445416151}}} /* GeoPositionAtCenterEnd  */,
-            {{{3.1740096137987982823, 18.825990386201201718, -5.2736809246462330591} /* GeoPositionAtLeftStart  */,
-              {37.687889987977732185, 55.022788130677020255, 1.8494457214308988036} /* GeoPositionAtLeftHalf  */,
-              {75.564639543695244073, 87.856716693614260808, -8.2484285757989965759}}} /* GeoPositionAtLeftEnd  */,
-            {{{5.0356433554900351144, 16.964356644509964886, -3.8354043088336240430} /* GeoPositionAtRightStart  */,
-              {39.779012461982181928, 52.931665656672570512, 1.3450514337679264631} /* GeoPositionAtRightHalf  */,
-              {76.968104609593294550, 86.453251627716210331, -5.9988571460356334697}}}}} /* GeoPositionAtRightEnd  */,
+          {{{{{3.7945541943625438930, 18.205445805637456107,
+               -4.7942553860420300538} /* InertialPositionAtCenterStart  */,
+              {38.384930812645887124, 54.325747306008865316, 1.6813142922099080234} /* InertialPositionAtCenterHalf  */,
+              {76.032461232327927565, 87.388895004981577315,
+               -7.4985714325445416151}}} /* InertialPositionAtCenterEnd  */,
+            {{{3.1740096137987982823, 18.825990386201201718, -5.2736809246462330591} /* InertialPositionAtLeftStart  */,
+              {37.687889987977732185, 55.022788130677020255, 1.8494457214308988036} /* InertialPositionAtLeftHalf  */,
+              {75.564639543695244073, 87.856716693614260808, -8.2484285757989965759}}} /* InertialPositionAtLeftEnd  */,
+            {{{5.0356433554900351144, 16.964356644509964886,
+               -3.8354043088336240430} /* InertialPositionAtRightStart  */,
+              {39.779012461982181928, 52.931665656672570512, 1.3450514337679264631} /* InertialPositionAtRightHalf  */,
+              {76.968104609593294550, 86.453251627716210331,
+               -5.9988571460356334697}}}}} /* InertialPositionAtRightEnd  */,
       },
   };
 }
@@ -1630,7 +1645,7 @@ class MalidriveLineLaneWithSuperelevationFullyInitializedTest
   const double kRRight{-2.};
   const double kZeroH{0};
   const Lane* dut_{};
-  const std::array<std::array<GeoPosition, 3>, 3> kExpectedGeoPositions = GetParam().geo_positions;
+  const std::array<std::array<InertialPosition, 3>, 3> kExpectedInertialPositions = GetParam().inertial_positions;
   const int AtCenterLine = 0;
   const int AtLeft = 1;
   const int AtRight = 2;
@@ -1681,35 +1696,35 @@ TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(dut_->length(), 0.), kLinearTolerance));
 }
 
-TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToGeoPosition) {
+TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   // @{
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtCenterLine][AtStart],
-                                 dut_->ToGeoPosition({s_start, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtCenterLine][AtHalf],
-                                 dut_->ToGeoPosition({s_half, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtCenterLine][AtEnd],
-                                 dut_->ToGeoPosition({s_end, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtCenterLine][AtStart],
+                                      dut_->ToInertialPosition({s_start, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtCenterLine][AtHalf],
+                                      dut_->ToInertialPosition({s_half, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtCenterLine][AtEnd],
+                                      dut_->ToInertialPosition({s_end, kRCenterline, kZeroH}), kLinearTolerance));
   // @}
 
   // To the left
   // @{
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtLeft][AtStart], dut_->ToGeoPosition({s_start, kRLeft, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtLeft][AtHalf], dut_->ToGeoPosition({s_half, kRLeft, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtLeft][AtEnd], dut_->ToGeoPosition({s_end, kRLeft, kZeroH}),
-                                 kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtLeft][AtStart],
+                                      dut_->ToInertialPosition({s_start, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtLeft][AtHalf],
+                                      dut_->ToInertialPosition({s_half, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtLeft][AtEnd],
+                                      dut_->ToInertialPosition({s_end, kRLeft, kZeroH}), kLinearTolerance));
   // @}
 
   // To the right
   // @{
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtStart],
-                                 dut_->ToGeoPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtHalf], dut_->ToGeoPosition({s_half, kRRight, kZeroH}),
-                                 kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose(kExpectedGeoPositions[AtRight][AtEnd], dut_->ToGeoPosition({s_end, kRRight, kZeroH}),
-                                 kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtRight][AtStart],
+                                      dut_->ToInertialPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtRight][AtHalf],
+                                      dut_->ToInertialPosition({s_half, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(kExpectedInertialPositions[AtRight][AtEnd],
+                                      dut_->ToInertialPosition({s_end, kRRight, kZeroH}), kLinearTolerance));
   // @}
 }
 
@@ -1719,17 +1734,17 @@ TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToLanePosition) 
   // At centerline.
   //@{
   expected_result.lane_position = LanePosition{s_start, kRCenterline, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtCenterLine][AtStart];
+  expected_result.nearest_position = kExpectedInertialPositions[AtCenterLine][AtStart];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{s_half, kRCenterline, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtCenterLine][AtHalf];
+  expected_result.nearest_position = kExpectedInertialPositions[AtCenterLine][AtHalf];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{s_end, kRCenterline, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtCenterLine][AtEnd];
+  expected_result.nearest_position = kExpectedInertialPositions[AtCenterLine][AtEnd];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1737,17 +1752,17 @@ TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToLanePosition) 
   // To the left
   //@{
   expected_result.lane_position = LanePosition{s_start, kRLeft, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtLeft][AtStart];
+  expected_result.nearest_position = kExpectedInertialPositions[AtLeft][AtStart];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{s_half, kRLeft, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtLeft][AtHalf];
+  expected_result.nearest_position = kExpectedInertialPositions[AtLeft][AtHalf];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{s_end, kRLeft, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtLeft][AtEnd];
+  expected_result.nearest_position = kExpectedInertialPositions[AtLeft][AtEnd];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -1755,17 +1770,17 @@ TEST_P(MalidriveLineLaneWithSuperelevationFullyInitializedTest, ToLanePosition) 
   // To the right
   //@{
   expected_result.lane_position = LanePosition{s_start, kRRight, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtRight][AtStart];
+  expected_result.nearest_position = kExpectedInertialPositions[AtRight][AtStart];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{s_half, kRRight, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtRight][AtHalf];
+  expected_result.nearest_position = kExpectedInertialPositions[AtRight][AtHalf];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
 
   expected_result.lane_position = LanePosition{s_end, kRRight, kZeroH};
-  expected_result.nearest_position = kExpectedGeoPositions[AtRight][AtEnd];
+  expected_result.nearest_position = kExpectedInertialPositions[AtRight][AtEnd];
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
   //@}
@@ -2004,30 +2019,30 @@ TEST_F(MalidriveFlatLineVariableWidthLaneFullyInitializedTest, Bounds) {
   EXPECT_TRUE(IsHBoundsClose(kElevationBounds, dut_->elevation_bounds(s_end, 0.), kLinearTolerance));
 }
 
-TEST_F(MalidriveFlatLineVariableWidthLaneFullyInitializedTest, ToGeoPosition) {
+TEST_F(MalidriveFlatLineVariableWidthLaneFullyInitializedTest, ToInertialPosition) {
   // At centerline.
   // @{
-  EXPECT_TRUE(IsGeoPositionClose({-1.1213203435592888901, 3.1213203435599963242, 0.},
-                                 dut_->ToGeoPosition({s_start, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({34.58757210636101, 38.123106012293746, 0.},
-                                 dut_->ToGeoPosition({s_half, kRCenterline, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({70.296464556281, 73.124891681027, 0.},
-                                 dut_->ToGeoPosition({s_end, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({-1.1213203435592888901, 3.1213203435599963242, 0.},
+                                      dut_->ToInertialPosition({s_start, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({34.58757210636101, 38.123106012293746, 0.},
+                                      dut_->ToInertialPosition({s_half, kRCenterline, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({70.296464556281, 73.124891681027, 0.},
+                                      dut_->ToInertialPosition({s_end, kRCenterline, kZeroH}), kLinearTolerance));
   // @}
 
   // At Left.
   // @{
-  EXPECT_TRUE(IsGeoPositionClose({-1.474873734152916, 3.474873734152916, 0.},
-                                 dut_->ToGeoPosition({s_start, kRLeft, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({34.23401871576773, 38.47665940288702, 0.},
-                                 dut_->ToGeoPosition({s_half, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({-1.474873734152916, 3.474873734152916, 0.},
+                                      dut_->ToInertialPosition({s_start, kRLeft, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({34.23401871576773, 38.47665940288702, 0.},
+                                      dut_->ToInertialPosition({s_half, kRLeft, kZeroH}), kLinearTolerance));
 
   // At Right.
   // @{
-  EXPECT_TRUE(IsGeoPositionClose({-0.7677669529663687, 2.767766952966369, 0.},
-                                 dut_->ToGeoPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
-  EXPECT_TRUE(IsGeoPositionClose({34.941125496954285, 37.76955262170047, 0.},
-                                 dut_->ToGeoPosition({s_half, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({-0.7677669529663687, 2.767766952966369, 0.},
+                                      dut_->ToInertialPosition({s_start, kRRight, kZeroH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose({34.941125496954285, 37.76955262170047, 0.},
+                                      dut_->ToInertialPosition({s_half, kRRight, kZeroH}), kLinearTolerance));
   // @}
 }
 

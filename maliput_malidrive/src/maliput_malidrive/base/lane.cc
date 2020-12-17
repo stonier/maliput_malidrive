@@ -109,11 +109,11 @@ maliput::api::RBounds Lane::do_segment_bounds(double s) const {
           width * (static_cast<double>(left_lanes_count) + 0.5)};
 }
 
-maliput::api::GeoPosition Lane::DoToGeoPosition(const maliput::api::LanePosition& lane_pos) const {
+maliput::api::InertialPosition Lane::DoToInertialPosition(const maliput::api::LanePosition& lane_pos) const {
   const double p = p_from_s_(s_range_validation_(lane_pos.s()));
   const Vector3 inertial_position = road_curve_->W({p, to_reference_r(p, lane_pos.r()), lane_pos.h()});
-  const maliput::api::GeoPosition xodr_inertial_pos(inertial_position.x(), inertial_position.y(),
-                                                    inertial_position.z());
+  const maliput::api::InertialPosition xodr_inertial_pos(inertial_position.x(), inertial_position.y(),
+                                                         inertial_position.z());
   return xodr_inertial_pos;
 }
 
@@ -158,8 +158,9 @@ Vector3 Lane::InertialFrameToLaneFrame(const Vector3& xyz) const {
   return {p, r_hat.dot(w_delta) - lane_offset_->f(p), h_hat.dot(w_delta)};
 }
 
-maliput::api::LanePositionResult Lane::DoToLanePosition(const maliput::api::GeoPosition& geo_pos_world) const {
-  const maliput::math::Vector3 xyz = geo_pos_world.xyz();
+maliput::api::LanePositionResult Lane::DoToLanePosition(
+    const maliput::api::InertialPosition& inertial_pos_world) const {
+  const maliput::math::Vector3 xyz = inertial_pos_world.xyz();
   const maliput::math::Vector3 unconstrained_prh{InertialFrameToLaneFrame(xyz)};
   MALIDRIVE_IS_IN_RANGE(unconstrained_prh[0], p0_, p1_);
   const double s = s_from_p_(unconstrained_prh[0]);
@@ -171,8 +172,8 @@ maliput::api::LanePositionResult Lane::DoToLanePosition(const maliput::api::GeoP
 
   maliput::api::LanePositionResult result;
   result.lane_position = {s, r, h};
-  result.nearest_position = ToGeoPosition(result.lane_position);
-  result.distance = (geo_pos_world.xyz() - result.nearest_position.xyz()).norm();
+  result.nearest_position = ToInertialPosition(result.lane_position);
+  result.distance = (inertial_pos_world.xyz() - result.nearest_position.xyz()).norm();
   return result;
 }
 
