@@ -123,9 +123,9 @@ GTEST_TEST(RoadGeometryFigure8Trafficlights, RoundTripPosition) {
   const maliput::api::LanePosition position(0., 0., 0.);
   const maliput::api::LaneId lane_id("1_0_-1");
   auto lane = road_network->road_geometry()->ById().GetLane(lane_id);
-  auto geo_position = lane->ToGeoPosition(position);
+  auto inertial_position = lane->ToInertialPosition(position);
 
-  auto result = road_network->road_geometry()->ToRoadPosition(geo_position);
+  auto result = road_network->road_geometry()->ToRoadPosition(inertial_position);
   EXPECT_EQ(lane_id, result.road_position.lane->id());
   EXPECT_TRUE(maliput::api::test::IsLanePositionClose(position, result.road_position.pos, constants::kLinearTolerance));
 }

@@ -226,10 +226,10 @@ class MalidriveExtensiveQueriesTest : public ::testing::Test {
 
       const double lane_frame_d = (lane_pos_0.srh() - lane_pos_1.srh()).norm();
 
-      const maliput::api::GeoPosition geo_pos_0 = lane->ToGeoPosition(lane_pos_0);
-      const maliput::api::GeoPosition geo_pos_1 = lane->ToGeoPosition(lane_pos_1);
+      const maliput::api::InertialPosition inertial_pos_0 = lane->ToInertialPosition(lane_pos_0);
+      const maliput::api::InertialPosition inertial_pos_1 = lane->ToInertialPosition(lane_pos_1);
 
-      const double world_frame_d = (geo_pos_0.xyz() - geo_pos_1.xyz()).norm();
+      const double world_frame_d = (inertial_pos_0.xyz() - inertial_pos_1.xyz()).norm();
 
       // Lane Frame is not isotropic, but we can consider the worst case
       // scenario to compare RoadGeometry linear tolerance. Computed distance in
