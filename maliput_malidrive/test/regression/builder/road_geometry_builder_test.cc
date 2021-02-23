@@ -142,6 +142,7 @@ struct RoadGeometryBuilderTestParameters {
 
   std::string road_geometry_id{};
   std::string path_to_xodr_file{};
+  std::string build_policy{};
   std::vector<RoadAttributes> roads{};
   std::map<JunctionId, std::vector<std::pair<SegmentAttributes, std::vector<LaneAttributes>>>>
       junctions_segments_lanes_ids;
@@ -426,6 +427,57 @@ class RoadGeometryBuilderBaseTest : public ::testing::TestWithParam<RoadGeometry
   std::unique_ptr<xodr::DBManager> manager_;
   std::unique_ptr<builder::RoadCurveFactoryBase> factory_;
 };
+
+// @{ Runs the Builder with a sequential lane building process.
+class RoadGeometryBuilderSequentialBuildPolicyTest : public RoadGeometryBuilderBaseTest {
+ protected:
+  void SetUp() override {
+    RoadGeometryBuilderBaseTest::SetUp();
+    road_geometry_configuration_.build_policy.type = BuildPolicy::Type::kSequential;
+  }
+};
+
+TEST_P(RoadGeometryBuilderSequentialBuildPolicyTest, JunctionSegmentLaneTest) { RunTest(); }
+
+INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderSequentialBuildPolicyTestGroup, RoadGeometryBuilderSequentialBuildPolicyTest,
+                        ::testing::ValuesIn(InstantiateBuilderParameters()));
+// @}
+
+// @{ Runs the Builder with a parallel lane building process using an automatic selection of the number of threads.
+class RoadGeometryBuilderParallelBuildPolicyAutomaticThreadsTest : public RoadGeometryBuilderBaseTest {
+ protected:
+  void SetUp() override {
+    RoadGeometryBuilderBaseTest::SetUp();
+    road_geometry_configuration_.build_policy.type = BuildPolicy::Type::kParallel;
+    // Number of threads will be delimited by the hardward capacity minus one.
+    road_geometry_configuration_.build_policy.num_threads = std::nullopt;
+  }
+};
+
+TEST_P(RoadGeometryBuilderParallelBuildPolicyAutomaticThreadsTest, JunctionSegmentLaneTest) { RunTest(); }
+
+INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderParallelBuildPolicyAutomaticThreadsTestGroup,
+                        RoadGeometryBuilderParallelBuildPolicyAutomaticThreadsTest,
+                        ::testing::ValuesIn(InstantiateBuilderParameters()));
+// @}
+
+// @{ Runs the Builder with a parallel lane building process using a manual selection of the number of threads.
+class RoadGeometryBuilderParallelBuildPolicyManualThreadsTest : public RoadGeometryBuilderBaseTest {
+ protected:
+  void SetUp() override {
+    RoadGeometryBuilderBaseTest::SetUp();
+    road_geometry_configuration_.build_policy.type = BuildPolicy::Type::kParallel;
+    road_geometry_configuration_.build_policy.num_threads = kNumThreads;
+  }
+  static constexpr int kNumThreads{10};
+};
+
+TEST_P(RoadGeometryBuilderParallelBuildPolicyManualThreadsTest, JunctionSegmentLaneTest) { RunTest(); }
+
+INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderParallelBuildPolicyManualThreadsTestGroup,
+                        RoadGeometryBuilderParallelBuildPolicyManualThreadsTest,
+                        ::testing::ValuesIn(InstantiateBuilderParameters()));
+// @}
 
 // @{ Runs the Builder with a manual tolerance selection.
 class RoadGeometryBuilderManualToleranceSelectionTest : public RoadGeometryBuilderBaseTest {

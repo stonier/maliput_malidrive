@@ -53,6 +53,87 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
     MalidriveXodrLaneProperties xodr_lane;
   };
 
+  // Holds the attributes needed to build all the Lanes of a Segment.
+  struct SegmentConstructionAttributes {
+    const xodr::RoadHeader* road_header{};
+    const xodr::LaneSection* lane_section{};
+    int lane_section_index{};
+  };
+
+  // Holds the lane construction task result.
+  struct LaneConstructionResult {
+    Segment* segment{};
+    std::unique_ptr<Lane> lane{};
+    MalidriveXodrLaneProperties xodr_lane_properties{nullptr /*road_header*/, nullptr /*lane_section*/,
+                                                     0 /*lane_section_index*/, nullptr /*lane*/};
+  };
+
+  // Functor for creating lanes of an entire junction.
+  struct LanesBuilder {
+    // Constructs a LanesBuilder.
+    // `junction_segments_attributes_in` Contains all the attributes needed to build all the Lanes of a given Junction.
+    // `rg_in` Is a pointer to the RoadGeometry.
+    // `factory_in` Is a pointer to the RoadCurveFactoryBase.
+    //
+    // @throws maliput::common::assertion_error When `rg` is nullptr.
+    // @throws maliput::common::assertion_error When `factory` is nullptr.
+    LanesBuilder(const std::pair<maliput::geometry_base::Junction*,
+                                 std::map<Segment*, RoadGeometryBuilder::SegmentConstructionAttributes>>&
+                     junction_segments_attributes_in,
+                 RoadGeometry* rg_in, const RoadCurveFactoryBase* factory_in)
+        : junction_segments_attributes(junction_segments_attributes_in), factory(factory_in), rg(rg_in) {
+      MALIDRIVE_THROW_UNLESS(rg != nullptr);
+      MALIDRIVE_THROW_UNLESS(factory != nullptr);
+    }
+
+    // Returns A vector containing all the created Lanes and its properties.
+    std::vector<RoadGeometryBuilder::LaneConstructionResult> operator()();
+
+    // Contains all the attributes needed to build all the lanes of a given junction.
+    const std::pair<maliput::geometry_base::Junction*,
+                    std::map<Segment*, RoadGeometryBuilder::SegmentConstructionAttributes>>
+        junction_segments_attributes;
+
+    const RoadCurveFactoryBase* factory{};
+    RoadGeometry* rg{};
+  };
+
+  // Builds a Lane and returns within a LaneConstructionResult that holds extra attributes related to the lane.
+  // `lane` must not be nullptr.
+  // `road_header` must not be nullptr.
+  // `lane_section` must not be nullptr.
+  // `xodr_lane_section_index` must be non-negative.
+  // `factory` must not be nullptr.
+  // `segment` must not be nullptr.
+  // `adjacent_lane_functions` holds the offset and width functions of the immediate inner lane, must not be nullptr.
+  //
+  // @throws maliput::common::assertion_error When aforementioned conditions aren't met.
+  static LaneConstructionResult BuildLane(const xodr::Lane* lane, const xodr::RoadHeader* road_header,
+                                          const xodr::LaneSection* lane_section, int xodr_lane_section_index,
+                                          const RoadCurveFactoryBase* factory, Segment* segment,
+                                          road_curve::LaneOffset::AdjacentLaneFunctions* adjacent_lane_functions);
+  // Builds malidrive::Lanes from the XODR `lane_section` and returns a vector of
+  // LaneConstructionResult objects containing the built Lane and properties needed to later on
+  // add the Lane to its correspondant Segment.
+  // While the Lanes are built from the center to the external lanes to correctly compute their
+  // lane offset, the returned vector is filled with the Lanes in right-to-left order of the Segment.
+  //
+  // `road_header` must not be nullptr.
+  // `lane_section` must not be nullptr.
+  // `xodr_lane_section_index` is the index of the LaneSection within the road and mustn't be negative.
+  // `rg` must not be nullptr.
+  // `factory` must not be nullptr.
+  // `segment` must not be nullptr.
+  //
+  // @throws maliput::common::assertion_error When either `segment`,
+  //         `lane_section`, `road_header` or `rg` are nullptr.
+
+  static std::vector<LaneConstructionResult> BuildLanesForSegment(const xodr::RoadHeader* road_header,
+                                                                  const xodr::LaneSection* lane_section,
+                                                                  int xodr_lane_section_index,
+                                                                  const RoadCurveFactoryBase* factory, RoadGeometry* rg,
+                                                                  Segment* segment);
+
   // Builds a RoadCurve.
   //
   // `road_header` contains the geometry description of the curve model.
@@ -63,25 +144,6 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   std::unique_ptr<road_curve::RoadCurve> BuildRoadCurve(
       const xodr::RoadHeader& road_header,
       const std::vector<xodr::DBManager::XodrGeometriesToSimplify>& geometries_to_simplify);
-
-  // Builds malidrive::Lanes from the XODR `lanes` and adds them to `segment`.
-  // `xodr_track_id` is road's ID, `xodr_lane_section_index` is the index of
-  // the LaneSection within the road.
-  // `lanes` must be sorted increasing Xodr Lane's ID.
-  // It is expected to have right and left lanes at a `lane_section`.
-  // When passing right lanes, set `reverse_build` to `true` to correctly
-  // build Lanes and add them to the `segment`.
-  //
-  // `segment` must not be nullptr.
-  // `lane_section` must not be nullptr.
-  // `road_header` must not be nullptr.
-  // `rg` must not be nullptr.
-  //
-  // @throws maliput::common::assertion_error When either `segment`,
-  //         `lane_section`, `road_header` or `rg` are nullptr.
-  void BuildLanesForSegment(const std::vector<xodr::Lane>& lanes, int xodr_lane_section_index,
-                            const xodr::LaneSection* lane_section, const xodr::RoadHeader* road_header,
-                            bool reverse_build, Segment* segment, RoadGeometry* rg);
 
   // Returns a maliput::geometry_base::Junction whose ID will be "`xodr_track_id`_`lane_section_index`.
   //
@@ -149,6 +211,29 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   std::vector<maliput::api::LaneEnd> FindConnectingLaneEndsForLaneEnd(
       const maliput::api::LaneEnd& lane_end, const MalidriveXodrLaneProperties& xodr_lane_properties, RoadGeometry* rg);
 
+  // Returns the Lanes of the RoadGeometry created from multiple threads.
+  // Each thread will take care of build all the Lanes of a particualar junction.
+  //
+  // `num_of_threads` Is the number of threads.
+  // `rg` Is a pointer to the RoadGeometry.
+  //
+  // @throws maliput::common::assertion_error When `rg` is nullptr or num_of_threads is less than 1.
+  std::vector<LaneConstructionResult> LanesBuilderParallelPolicy(std::size_t num_of_threads, RoadGeometry* rg);
+
+  // Returns the Lanes of the RoadGeometry sequentally created.
+  //
+  // `rg` Is a pointer to the RoadGeometry.
+  //
+  // @throws maliput::common::assertion_error When `rg` is nullptr.
+  std::vector<LaneConstructionResult> LanesBuilderSequentialPolicy(RoadGeometry* rg);
+
+  // Builds all the Lanes of the RoadGeometry and adds them to their correspondent segments.
+  //
+  // `rg` Is a pointer to the RoadGeometry.
+  //
+  // @throws maliput::common::assertion_error When `rg` is nullptr.
+  void FillSegmentsWithLanes(RoadGeometry* rg);
+
   const RoadGeometryConfiguration::SimplificationPolicy simplification_policy_{};
   const RoadGeometryConfiguration::ToleranceSelectionPolicy tolerance_selection_policy_{};
   std::unique_ptr<xodr::DBManager> manager_;
@@ -156,6 +241,9 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   // Key on LaneId to ensure iteration over this map is deterministic. This
   // ensures default branch point selection is deterministic.
   std::map<maliput::api::LaneId, MatchingLanes> lane_xodr_lane_properties_;
+  // Map holding all the construction attributes used to build the segments and lanes of each junction.
+  std::map<maliput::geometry_base::Junction*, std::map<Segment*, SegmentConstructionAttributes>>
+      junctions_segments_attributes_;
 };
 
 }  // namespace builder
