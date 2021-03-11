@@ -231,8 +231,9 @@ class MalidriveFlatLineLaneFullyInitializedTest : public LaneTest {
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
@@ -259,6 +260,7 @@ class MalidriveFlatLineLaneFullyInitializedTest : public LaneTest {
   const double kRLeft{1.};
   const double kRRight{-2.};
   const double kH{0};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   std::unique_ptr<RoadGeometry> road_geometry_;
   const Lane* dut_{};
 };
@@ -440,13 +442,81 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, EvalMotionDerivatives) {
   //@}
 }
 
+// Initializes a single flat line Lane in a single Junction - Segment environment.
+// Provides a non-zero Inertial to Backend Frame translation.
+class MalidriveFlatLineLaneFullyInitializedWithInertialToBackendFrameTranslationTest : public LaneTest {
+ protected:
+  void SetUp() override {
+    auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
+    road_curve_ = std::make_unique<road_curve::RoadCurve>(
+        kLinearTolerance, kScaleLength,
+        std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
+        MakeZeroCubicPolynomial(kP0, kP1, kLinearTolerance), MakeZeroCubicPolynomial(kP0, kP1, kLinearTolerance));
+    reference_line_offset_ = MakeZeroCubicPolynomial(kP0, kP1, kLinearTolerance);
+    const road_curve::RoadCurve* road_curve_ptr = road_curve_.get();
+    const road_curve::Function* reference_line_offset_ptr = reference_line_offset_.get();
+    auto junction = std::make_unique<Junction>(maliput::api::JunctionId{"dut"});
+    auto segment =
+        std::make_unique<Segment>(maliput::api::SegmentId{"dut"}, road_curve_ptr, reference_line_offset_ptr, kP0, kP1);
+    auto lane = std::make_unique<Lane>(kId, kXordTrack, kXodrLaneId, kElevationBounds, road_curve_ptr,
+                                       MakeConstantCubicPolynomial(kWidth, kP0, kP1, kLinearTolerance),
+                                       MakeConstantCubicPolynomial(kLaneOffset, kP0, kP1, kLinearTolerance), kP0, kP1);
+    dut_ = segment->AddLane(std::move(lane));
+    junction->AddSegment(std::move(segment));
+    road_geometry_->AddJunction(std::move(junction));
+  }
+
+  const double kAngularTolerance{1e-6};
+  const double kSStart{0.};
+  const double kSHalf{50.};
+  const double kSEnd{100.};
+  const double kRCenterline{0.};
+  const double kRLeft{1.};
+  const double kRRight{-2.};
+  const double kH{0};
+  const Vector3 kInertialToBackendFrameTranslation{1., 2., .5};
+  std::unique_ptr<RoadGeometry> road_geometry_;
+  const Lane* dut_{};
+};
+
+TEST_F(MalidriveFlatLineLaneFullyInitializedWithInertialToBackendFrameTranslationTest, ToInertialPosition) {
+  // At centerline.
+  //@{
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(3.9289321881345254, 21.071067811865476, 0.5),
+                                      dut_->ToInertialPosition({kSStart, kRCenterline, kH}), kLinearTolerance));
+  EXPECT_TRUE(IsInertialPositionClose(InertialPosition(74.63961030678928, 91.78174593052022, 0.5),
+                                      dut_->ToInertialPosition({kSEnd, kRCenterline, kH}), kLinearTolerance));
+  //@}
+}
+
+TEST_F(MalidriveFlatLineLaneFullyInitializedWithInertialToBackendFrameTranslationTest, ToLanePosition) {
+  LanePositionResult expected_result;
+
+  // At centerline.
+  //@{
+  expected_result.lane_position = LanePosition{kSStart, kRCenterline, kH};
+  expected_result.nearest_position = InertialPosition{3.9289321881345254, 21.071067811865476, 0.5};
+  expected_result.distance = 0.;
+  IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
+
+  expected_result.lane_position = LanePosition{kSEnd, kRCenterline, kH};
+  expected_result.nearest_position = InertialPosition{74.63961030678928, 91.78174593052022, 0.5};
+  expected_result.distance = 0.;
+  IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
+  //@}
+}
+
 // Initializes a single flat arc Lane in a single Junction - Segment environment.
 class MalidriveFlatArcLaneFullyInitializedTest : public LaneTest {
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::ArcGroundCurve>(kLinearTolerance, kXy0, kStartHeading, kCurvature, kArcLength, kP0,
@@ -478,6 +548,7 @@ class MalidriveFlatArcLaneFullyInitializedTest : public LaneTest {
   const double kRLeft{1.};
   const double kRRight{-2.};
   const double kH{0};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   std::unique_ptr<RoadGeometry> road_geometry_;
   const Lane* dut_{};
 };
@@ -675,8 +746,9 @@ class MalidriveFlatSLaneFullyInitializedTest : public ::testing::Test {
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kParserSTolerance);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     std::vector<std::unique_ptr<road_curve::GroundCurve>> ground_curves;
     ground_curves.push_back(std::make_unique<road_curve::ArcGroundCurve>(kLinearTolerance, kXY0A, kAStartHeading,
                                                                          kACurvature, kALength90DegLeft, kP0A, kP1A));
@@ -707,6 +779,7 @@ class MalidriveFlatSLaneFullyInitializedTest : public ::testing::Test {
   const double kLinearTolerance{1e-6};
   const double kAngularTolerance{1e-6};
   const double kScaleLength{1.};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   // Lane.
   const maliput::api::LaneId kId{"dut"};
   const int kXordTrack{1};
@@ -1006,8 +1079,9 @@ class MalidriveLineLaneWithElevationFullyInitializedTest : public ::testing::Tes
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
@@ -1047,6 +1121,7 @@ class MalidriveLineLaneWithElevationFullyInitializedTest : public ::testing::Tes
   const double kRLeft{1.};
   const double kRRight{-2.};
   const double kZeroH{0};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   const Lane* dut_{};
   const ElevationValues params_ = GetParam();
 
@@ -1325,8 +1400,9 @@ class MalidriveArcLaneWithElevationFullyInitializedTest : public ::testing::Test
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::ArcGroundCurve>(kLinearTolerance, kXy0, kStartHeading, kCurvature, kArcLength, kP0,
@@ -1372,6 +1448,7 @@ class MalidriveArcLaneWithElevationFullyInitializedTest : public ::testing::Test
   const double kRLeft{1.};
   const double kRRight{-2.};
   const double kZeroH{0};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
 
   const ArcElevationValues params_ = GetParam();
   // The following constant has been empirically derived.
@@ -1592,8 +1669,9 @@ class MalidriveLineLaneWithSuperelevationFullyInitializedTest
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     const auto superelevation_coefficients{GetParam().pol_coeff};
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
@@ -1644,6 +1722,7 @@ class MalidriveLineLaneWithSuperelevationFullyInitializedTest
   const double kRLeft{1.};
   const double kRRight{-2.};
   const double kZeroH{0};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   const Lane* dut_{};
   const std::array<std::array<InertialPosition, 3>, 3> kExpectedInertialPositions = GetParam().inertial_positions;
   const int AtCenterLine = 0;
@@ -1913,8 +1992,9 @@ class MalidriveFlatLineVariableWidthLaneFullyInitializedTest : public ::testing:
  protected:
   void SetUp() override {
     auto manager = xodr::LoadDataBaseFromStr(kXODRHeaderTemplate, kUnarmedSToleranceParserTest);
-    road_geometry_ = std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager),
-                                                    kLinearTolerance, kAngularTolerance, kScaleLength);
+    road_geometry_ =
+        std::make_unique<RoadGeometry>(maliput::api::RoadGeometryId("sample_rg"), std::move(manager), kLinearTolerance,
+                                       kAngularTolerance, kScaleLength, kInertialToBackendFrameTranslation);
     road_curve_ = std::make_unique<road_curve::RoadCurve>(
         kLinearTolerance, kScaleLength,
         std::make_unique<road_curve::LineGroundCurve>(kLinearTolerance, kXy0, kDXy, kP0, kP1),
@@ -1965,6 +2045,7 @@ class MalidriveFlatLineVariableWidthLaneFullyInitializedTest : public ::testing:
   const double kRLeft{0.5};
   const double kRRight{-0.5};
   const double kZeroH{0};
+  const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   const Lane* dut_{};
   const road_curve::Function* lane_width_{};
 
