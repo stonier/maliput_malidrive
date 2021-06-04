@@ -31,7 +31,6 @@
 #include "maliput_malidrive/builder/rule_registry_builder.h"
 #include "maliput_malidrive/builder/speed_limit_builder.h"
 #include "maliput_malidrive/builder/xodr_parser_configuration.h"
-
 #include "maliput_malidrive/common/macros.h"
 #include "maliput_malidrive/constants.h"
 #include "maliput_malidrive/xodr/parser_configuration.h"
