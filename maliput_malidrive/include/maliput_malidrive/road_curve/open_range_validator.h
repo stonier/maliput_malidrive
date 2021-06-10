@@ -17,31 +17,37 @@ namespace road_curve {
 class OpenRangeValidator {
  public:
   MALIDRIVE_DEFAULT_COPY_AND_MOVE_AND_ASSIGN(OpenRangeValidator)
-  OpenRangeValidator() = delete;
 
-  /// Constructs the functor.
-  ///
+  /// Creates a OpenRangeValidator instance that uses a relative epsilon to validate the values.
+  /// This relative epsilon is computed by multiplying `epsilon` by the range.
   /// @param min lower extreme of the range.
   /// @param max upper extreme of the range.
   /// @param tolerance is the range extension to be accepted.
-  /// @param epsilon is minimum difference that separates a number within the
-  ///        range to be distinct from range extremes (`min` and `max`).
+  /// @param epsilon is the relative minimum difference that separates a number within
+  ///                range to be distinct from extremes. It is relative to the range.
+  /// @returns A OpenRangeValidator instance.
   /// @throws maliput::common::assertion_error When `tolerance` is non positive.
   /// @throws maliput::common::assertion_error When `epsilon` is not in
   ///         [0, tolerance].
   /// @throws maliput::common::assertion_error When `min` + `epsilon` > `max` or
   ///         `max` - `epsilon` < `min`
-  OpenRangeValidator(double min, double max, double tolerance, double epsilon)
-      : min_(min), max_(max), tolerance_(tolerance), epsilon_(epsilon) {
-    MALIDRIVE_THROW_UNLESS(tolerance_ > 0.);
-    MALIDRIVE_IS_IN_RANGE(epsilon_, 0., tolerance_);
-    MALIDRIVE_VALIDATE((min_ + epsilon_) <= max_, maliput::common::assertion_error,
-                       std::string("Open range lower bound <") + std::to_string((min_ + epsilon_)) +
-                           "> is greater than <" + std::to_string(max_) + ">");
-    MALIDRIVE_VALIDATE(min <= (max_ - epsilon_), maliput::common::assertion_error,
-                       std::string("Open range upper bound <") + std::to_string((max_ - epsilon_)) +
-                           "> is less than <" + std::to_string(min) + ">");
-  }
+  static OpenRangeValidator GetRelativeEpsilonValidator(double min, double max, double tolerance, double epsilon);
+
+  /// Creates a OpenRangeValidator instance that uses a `epsilon` as the absolute epsilon to validate the values.
+  /// @param min lower extreme of the range.
+  /// @param max upper extreme of the range.
+  /// @param tolerance is the range extension to be accepted.
+  /// @param epsilon is minimum difference that separates a number within the
+  ///        range to be distinct from range extremes (`min` and `max`).
+  /// @returns A OpenRangeValidator instance.
+  /// @throws maliput::common::assertion_error When `tolerance` is non positive.
+  /// @throws maliput::common::assertion_error When `epsilon` is not in
+  ///         [0, tolerance].
+  /// @throws maliput::common::assertion_error When `min` + `epsilon` > `max` or
+  ///         `max` - `epsilon` < `min`
+  static OpenRangeValidator GetAbsoluteEpsilonValidator(double min, double max, double tolerance, double epsilon);
+
+  OpenRangeValidator() = delete;
 
   /// Evaluates whether `s` is in range or not.
   /// @returns `s` when it is within the open range. If `s` is equal to either
@@ -51,6 +57,24 @@ class OpenRangeValidator {
   double operator()(double s) const;
 
  private:
+  // The provided epsilon can be used relatively or absolutely.
+  enum class EpsilonUse { kAbsolute = 0, kRelative };
+
+  // Constructs the functor.
+  //
+  // @param min lower extreme of the range.
+  // @param max upper extreme of the range.
+  // @param tolerance is the range extension to be accepted.
+  // @param epsilon is minimum difference that separates a number within the
+  //        range to be distinct from range extremes (`min` and `max`).
+  // @param epsilon_mode selects how `epsilon` will be used: absolute or relative.
+  // @throws maliput::common::assertion_error When `tolerance` is non positive.
+  // @throws maliput::common::assertion_error When `epsilon` is not in
+  //         [0, tolerance].
+  // @throws maliput::common::assertion_error When `min` + `epsilon` > `max` or
+  //         `max` - `epsilon` < `min`
+  OpenRangeValidator(double min, double max, double tolerance, double epsilon, const EpsilonUse& epsilon_mode);
+
   double min_{};
   double max_{};
   double tolerance_{};
