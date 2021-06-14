@@ -111,6 +111,7 @@ install (FILES resources/ArcLane.xodr
                resources/SpiralRoad.xodr
                resources/SShapeRoad.xodr
                resources/SShapeSuperelevatedRoad.xodr
+               resources/StraightForward.xodr
                resources/TShapeRoad.xodr
                resources/TShapeRoad.yaml
          DESTINATION ${OPENDRIVE_SAMPLES_PATH})
