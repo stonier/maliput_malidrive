@@ -1007,20 +1007,20 @@ INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderSurfaceBoundariesTestGroup, RoadGeome
 
 // Holds the parameters for checking the road geometry when non-drivable lanes are omitted.
 struct RoadGeometryOmittingNonDrivableLanesParameters {
-  using LaneIdLanePosInertialPos =
-      std::pair<LaneId, std::pair<maliput::api::LanePosition, maliput::api::InertialPosition>>;
-
   MALIDRIVE_DEFAULT_COPY_AND_MOVE_AND_ASSIGN(RoadGeometryOmittingNonDrivableLanesParameters)
 
   RoadGeometryOmittingNonDrivableLanesParameters() = delete;
 
   RoadGeometryOmittingNonDrivableLanesParameters(const std::string& xodr_file, bool omit_nondrivable_lanes,
-                                                 const LaneIdLanePosInertialPos& laneid_lanepos_inertialpos,
+                                                 const LaneId& lane_id, const maliput::api::LanePosition& lane_position,
+                                                 const maliput::api::InertialPosition& inertial_position,
                                                  const std::vector<LaneId>& lanes_to_left,
                                                  const std::vector<LaneId>& lanes_to_right)
       : xodr_file(xodr_file),
         omit_nondrivable_lanes(omit_nondrivable_lanes),
-        laneid_lanepos_inertialpos(laneid_lanepos_inertialpos),
+        lane_id(lane_id),
+        lane_position(lane_position),
+        inertial_position(inertial_position),
         lanes_to_left(lanes_to_left),
         lanes_to_right(lanes_to_right) {}
 
@@ -1028,12 +1028,19 @@ struct RoadGeometryOmittingNonDrivableLanesParameters {
   std::string xodr_file{};
   // Policy to whether omit the nondrivable lanes.
   bool omit_nondrivable_lanes{};
-  // Holds a LanePosition and InertialPosition pair for a particular Lane Id.
-  // The Lane Id is the key and the value is the aforementioned pair.
-  LaneIdLanePosInertialPos laneid_lanepos_inertialpos;
-  // Lanes located to the left of lane added in #laneid_lanepos_inertialpos.first;
+  // Lane id under analysis.
+  LaneId lane_id;
+  // A Lane position that belongs to #lane_id.
+  maliput::api::LanePosition lane_position;
+  // An inertial position that corresponds to #lane_position coordinate.
+  maliput::api::InertialPosition inertial_position;
+  // Lanes located to the left of #laneid.
+  // The order of the LaneIds should replicate what is expected to get when calling `maliput::api::Lane::to_left()`
+  // method.
   std::vector<LaneId> lanes_to_left;
-  // Lanes located to the right of lane added in #laneid_lanepos_inertialpos.first;
+  // Lanes located to the right of  #laneid.
+  // The order of the LaneIds should replicate what is expected to get when calling `maliput::api::Lane::to_right()`
+  // method.
   std::vector<LaneId> lanes_to_right;
 };
 
@@ -1042,16 +1049,20 @@ std::vector<RoadGeometryOmittingNonDrivableLanesParameters> InstantiateRoadGeome
       {
           {"StraightForward.xodr"},
           false /*omit_nondrivable_lanes*/,
+          LaneId("0_0_-5"),
           // The lane and inertial position were selected to proof that when
           // the non-drivable lanes are omitted there is no shifting in the offset of the lane.
-          {LaneId("0_0_-5"), {{9.499999999999886, 0., 0.}, {1.75, -490.5, 0.}}},
+          {9.499999999999886, 0., 0.} /* lane_position */,
+          {1.75, -490.5, 0.} /* inertial_position */,
           {LaneId("0_0_-4"), LaneId("0_0_-3"), LaneId("0_0_-2"), LaneId("0_0_-1")},
           {LaneId("0_0_-6"), LaneId("0_0_-7"), LaneId("0_0_-8")},
       },
       {
           {"StraightForward.xodr"},
           true /*omit_nondrivable_lanes*/,
-          {LaneId("0_0_-5"), {{9.499999999999886, 0., 0.}, {1.75, -490.5, 0.}}},
+          LaneId("0_0_-5"),
+          {9.499999999999886, 0., 0.} /* lane_position */,
+          {1.75, -490.5, 0.} /* inertial_position */,
           {LaneId("0_0_-4")},
           {/* No lanes to the right */},
       },
@@ -1083,8 +1094,7 @@ class RoadGeometryOmittingNonDrivableLanesTest
                                                     road_geometry_configuration_.angular_tolerance))();
 
     // Fill useful pointers;
-    const LaneId& lane_id = GetParam().laneid_lanepos_inertialpos.first;
-    lane_ = dut_->ById().GetLane(lane_id);
+    lane_ = dut_->ById().GetLane(GetParam().lane_id);
     ASSERT_TRUE(lane_ != nullptr);
   }
 
@@ -1098,7 +1108,6 @@ TEST_P(RoadGeometryOmittingNonDrivableLanesTest, LanesToLeft) {
   const std::vector<LaneId>& expected_lanes_to_left{GetParam().lanes_to_left};
 
   auto lefter_lane = lane_->to_left();
-
   int index{0};
   while (lefter_lane != nullptr) {
     EXPECT_EQ(expected_lanes_to_left[index], lefter_lane->id());
@@ -1111,7 +1120,6 @@ TEST_P(RoadGeometryOmittingNonDrivableLanesTest, LanesToRight) {
   const std::vector<LaneId>& expected_lanes_to_right{GetParam().lanes_to_right};
 
   auto righter_lane = lane_->to_right();
-
   int index{0};
   while (righter_lane != nullptr) {
     EXPECT_EQ(expected_lanes_to_right[index], righter_lane->id());
@@ -1121,18 +1129,16 @@ TEST_P(RoadGeometryOmittingNonDrivableLanesTest, LanesToRight) {
 }
 
 TEST_P(RoadGeometryOmittingNonDrivableLanesTest, InertialPositionAndRoundTripPosition) {
-  const maliput::api::LanePosition& lane_pos = GetParam().laneid_lanepos_inertialpos.second.first;
-  const maliput::api::InertialPosition& expected_inertial_pos = GetParam().laneid_lanepos_inertialpos.second.second;
-
   // Inertial position
-  const auto inertial_position = lane_->ToInertialPosition(lane_pos);
-  EXPECT_TRUE(maliput::api::test::IsInertialPositionClose(expected_inertial_pos, inertial_position,
+  const auto inertial_position = lane_->ToInertialPosition(GetParam().lane_position);
+  EXPECT_TRUE(maliput::api::test::IsInertialPositionClose(GetParam().inertial_position, inertial_position,
                                                           constants::kLinearTolerance));
 
   // Round trip
   auto result = dut_->ToRoadPosition(inertial_position);
   EXPECT_EQ(lane_->id(), result.road_position.lane->id());
-  EXPECT_TRUE(maliput::api::test::IsLanePositionClose(lane_pos, result.road_position.pos, constants::kLinearTolerance));
+  EXPECT_TRUE(maliput::api::test::IsLanePositionClose(GetParam().lane_position, result.road_position.pos,
+                                                      constants::kLinearTolerance));
 }
 
 INSTANTIATE_TEST_CASE_P(RoadGeometryOmittingNonDrivableLanesTestGroup, RoadGeometryOmittingNonDrivableLanesTest,
