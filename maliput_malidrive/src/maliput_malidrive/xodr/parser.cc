@@ -864,10 +864,11 @@ Junction NodeParser::As() const {
 
   tinyxml2::XMLElement* connection_element(element_->FirstChildElement(Connection::kConnectionTag));
   if (!connection_element) {
-    const std::string msg{"Junction (" + id.value() + ") has no connections:\n" + ConvertXMLNodeToText(element_)};
+    std::string msg{"Junction (" + id.value() + ") has no connections:\n" + ConvertXMLNodeToText(element_)};
     if (!parser_configuration_.allow_schema_errors) {
       MALIDRIVE_THROW_MESSAGE(msg);
     }
+    DuplicateCurlyBracesForFmtLogging(&msg);
     maliput::log()->warn(msg);
   }
   std::unordered_map<Connection::Id, Connection> connections;
@@ -887,6 +888,20 @@ std::string ConvertXMLNodeToText(tinyxml2::XMLElement* element) {
   tinyxml2::XMLPrinter printer;
   element->Accept(&printer);
   return printer.CStr();
+}
+
+void DuplicateCurlyBracesForFmtLogging(std::string* text) {
+  MALIDRIVE_THROW_UNLESS(text != nullptr);
+  // Duplicates `key` if found in `text`.
+  auto duplicates_key = [](const std::string& key, std::string* text) {
+    std::size_t last_pos = text->find(key);
+    while (last_pos != text->npos) {
+      text->insert(last_pos, key);
+      last_pos = text->find(key, last_pos + 2);
+    }
+  };
+  duplicates_key("{", text);
+  duplicates_key("}", text);
 }
 
 }  // namespace xodr
