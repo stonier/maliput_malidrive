@@ -961,6 +961,37 @@ TEST_F(DBManagerLaneLinksWithinARoad, ErrorInLaneLinkLaneSection2) {
                maliput::common::assertion_error);
 }
 
+// Allow semantic errors when lane links withing a Road aren't consistent.
+TEST_F(DBManagerLaneLinksWithinARoad, RelaxErrorsInLaneLinkVerification) {
+  constexpr bool kAllowSemanticErrors{true};
+  // Lane links of laneSection 0.
+  const OptLaneLink kLane0LeftPredecessor(std::nullopt);
+  const OptLaneLink kLane0LeftSuccessor({LaneLink::LinkAttributes::Id("1")});
+  const OptLaneLink kLane0RightPredecessor(std::nullopt);
+  const OptLaneLink kLane0RightSuccessor({LaneLink::LinkAttributes::Id("-1")});
+  // Lane links of laneSection 1.
+  const OptLaneLink kLane1LeftPredecessor({LaneLink::LinkAttributes::Id("2")});
+  const OptLaneLink kLane1LeftSuccessor({LaneLink::LinkAttributes::Id("2")});
+  const OptLaneLink kLane1RightPredecessor({LaneLink::LinkAttributes::Id("-2")});
+  const OptLaneLink kLane1RightSuccessor({LaneLink::LinkAttributes::Id("-2")});
+  const std::string xodr_description =
+      BuildXMLDescriptionFromLaneLinks({{{kLane0LeftPredecessor, LaneLink::kPredecessorTag},
+                                         {kLane0LeftSuccessor, LaneLink::kSuccessorTag},
+                                         {kLane0RightPredecessor, LaneLink::kPredecessorTag},
+                                         {kLane0RightSuccessor, LaneLink::kSuccessorTag},
+                                         {kLane1LeftPredecessor, LaneLink::kPredecessorTag},
+                                         {kLane1LeftSuccessor, LaneLink::kSuccessorTag},
+                                         {kLane1RightPredecessor, LaneLink::kPredecessorTag},
+                                         {kLane1RightSuccessor, LaneLink::kSuccessorTag}}});
+  // Semantic errors aren't allowed.
+  EXPECT_THROW(LoadDataBaseFromStr(xodr_description,
+                                   {kStrictParserSTolerance, kDontAllowSchemaErrors, kDontAllowSemanticErrors}),
+               maliput::common::assertion_error);
+  // Semantic errors are allowed.
+  EXPECT_NO_THROW(
+      LoadDataBaseFromStr(xodr_description, {kStrictParserSTolerance, kDontAllowSchemaErrors, kAllowSemanticErrors}));
+}
+
 // Template of a XODR description that contains several road headers.
 const std::string kXODRRoadHeaderTemplate = R"R(
 <?xml version='1.0' standalone='yes'?>
