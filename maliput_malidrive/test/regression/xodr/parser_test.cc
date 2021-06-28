@@ -32,6 +32,15 @@ namespace {
 
 class ParsingTests : public ::testing::Test {
  protected:
+  // Flag to not allow schema errors.
+  static constexpr bool kDontAllowSchemaErrors{false};
+  // Flag to not allow semantic errors.
+  static constexpr bool kDontAllowSemanticErrors{false};
+  // Flag to allow schema errors.
+  static constexpr bool kAllowSchemaErrors{true};
+  // Flag to allow semantic errors.
+  static constexpr bool kAllowSemanticErrors{true};
+
   tinyxml2::XMLElement* LoadXMLAndGetNodeByName(const std::string& xml_str, const std::string& node_name) {
     MALIDRIVE_THROW_UNLESS(xml_doc_.Parse(xml_str.c_str()) == tinyxml2::XML_SUCCESS);
     tinyxml2::XMLElement* p_xml = xml_doc_.FirstChildElement();
@@ -42,10 +51,6 @@ class ParsingTests : public ::testing::Test {
   }
   const std::optional<double> kNullParserSTolerance{std::nullopt};  // Disables the check because it is not needed.
   const std::optional<double> kStrictParserSTolerance{malidrive::constants::kStrictLinearTolerance};
-  // Flag to not allow schema errors.
-  const bool kDontAllowSchemaErrors{false};
-  // Flag to not allow semantic errors.
-  const bool kDontAllowSemanticErrors{false};
   tinyxml2::XMLDocument xml_doc_;
 };
 
@@ -537,7 +542,7 @@ constexpr const char* kWidthTemplate = R"R(
 TEST_F(ParsingTests, NodeParserLaneWidth) {
   const LaneWidth kExpectedLaneWidth{1.1 /* sOffset */, 2.2 /* a */, 3.3 /* b */, 4.4 /* c */, 5.5 /* d */};
 
-  const std::string xml_description = fmt::format(kWidthTemplate, kExpectedLaneWidth.offset, kExpectedLaneWidth.a,
+  const std::string xml_description = fmt::format(kWidthTemplate, kExpectedLaneWidth.s_0, kExpectedLaneWidth.a,
                                                   kExpectedLaneWidth.b, kExpectedLaneWidth.c, kExpectedLaneWidth.d);
 
   const NodeParser dut(LoadXMLAndGetNodeByName(xml_description, LaneWidth::kLaneWidthTag),
@@ -1106,6 +1111,161 @@ GTEST_TEST(TextToLoggableText, EscapingFormat) {
   std::string text{"Adapt {text} to {be} loggable."};
   DuplicateCurlyBracesForFmtLogging(&text);
   EXPECT_EQ(text, kExpectedText);
+}
+
+// Template of a XML description that contains function description that matches with ElevationProfile or Lateralprofile
+// descriptions.
+// - 1st and 2nd descriptions are equal
+// - 3rd and 4th descriptions are equal
+// - 5th description start at the same S value as 4th description.
+constexpr const char* kElevationSuperelevationTemplate = R"R(
+<root>
+  <{0}>
+    <{1} s="0.0" a="1.0" b="2.0" c="3.0" d="4.0"/>
+    <{1} s="0.0" a="1.0" b="2.0" c="3.0" d="4.0"/>
+    <{1} s="5.0" a="2.0" b="0.0" c="0.0" d="0.0"/>
+    <{1} s="5.0" a="2.0" b="0.0" c="0.0" d="0.0"/>
+    <{1} s="5.0" a="2.1" b="0.0" c="0.0" d="0.0"/>
+  </{0}>
+</root>
+)R";
+
+// Tests `ElevationProfile` and `LateralProfile` parsing when having repeated descriptions.
+// @{
+class ElevationRepeatedDescriptionsParsingTests : public ParsingTests {
+ protected:
+  const std::string xml_description =
+      fmt::format(kElevationSuperelevationTemplate, ElevationProfile::kElevationProfileTag,
+                  ElevationProfile::Elevation::kElevationTag);
+};
+
+TEST_F(ElevationRepeatedDescriptionsParsingTests, NotAllowingSemanticErrors) {
+  const NodeParser dut_strict(LoadXMLAndGetNodeByName(xml_description, ElevationProfile::kElevationProfileTag),
+                              {kNullParserSTolerance, kDontAllowSchemaErrors, kDontAllowSemanticErrors});
+  EXPECT_THROW(dut_strict.As<ElevationProfile>(), maliput::common::assertion_error);
+}
+
+TEST_F(ElevationRepeatedDescriptionsParsingTests, AllowingSemanticErrors) {
+  const NodeParser dut_permissive(LoadXMLAndGetNodeByName(xml_description, ElevationProfile::kElevationProfileTag),
+                                  {kNullParserSTolerance, kDontAllowSchemaErrors, kAllowSemanticErrors});
+  ElevationProfile elevation_profile;
+  ASSERT_NO_THROW(elevation_profile = dut_permissive.As<ElevationProfile>());
+  const ElevationProfile::Elevation kExpectedElevation0{0.0, 1.0, 2.0, 3.0, 4.0};
+  const ElevationProfile::Elevation kExpectedElevation1{5.0, 2.1, 0.0, 0.0, 0.0};
+  const ElevationProfile kExpectedElevationProfile{{kExpectedElevation0, kExpectedElevation1}};
+  EXPECT_EQ(kExpectedElevationProfile, elevation_profile);
+}
+
+class SuperelevationRepeatedDescriptionsParsingTests : public ParsingTests {
+ protected:
+  const std::string xml_description = fmt::format(kElevationSuperelevationTemplate, LateralProfile::kLateralProfileTag,
+                                                  LateralProfile::Superelevation::kSuperelevationTag);
+};
+
+TEST_F(SuperelevationRepeatedDescriptionsParsingTests, NotAllowingSemanticErrors) {
+  const NodeParser dut_strict(LoadXMLAndGetNodeByName(xml_description, LateralProfile::kLateralProfileTag),
+                              {kNullParserSTolerance, kDontAllowSchemaErrors, kDontAllowSemanticErrors});
+  EXPECT_THROW(dut_strict.As<LateralProfile>(), maliput::common::assertion_error);
+}
+
+TEST_F(SuperelevationRepeatedDescriptionsParsingTests, AllowingSemanticErrors) {
+  const NodeParser dut_permissive(LoadXMLAndGetNodeByName(xml_description, LateralProfile::kLateralProfileTag),
+                                  {kNullParserSTolerance, kDontAllowSchemaErrors, kAllowSemanticErrors});
+  LateralProfile lateral_profile;
+  ASSERT_NO_THROW(lateral_profile = dut_permissive.As<LateralProfile>());
+  const LateralProfile::Superelevation kExpectedSuperelevation0{0.0, 1.0, 2.0, 3.0, 4.0};
+  const LateralProfile::Superelevation kExpectedSuperelevation1{5.0, 2.1, 0.0, 0.0, 0.0};
+  const LateralProfile kExpectedLateralProfile{{kExpectedSuperelevation0, kExpectedSuperelevation1}};
+  EXPECT_EQ(kExpectedLateralProfile, lateral_profile);
+}
+// @}
+
+// Template of a XML description that contains a XODR Lane node with repeated width descriptions.
+// - 1st and 2nd descriptions are equal
+// - 3rd and 4th descriptions are equal
+// - 5th description start at the same S value as 4th description.
+constexpr const char* kLaneRepeatedWidthTemplate = R"R(
+<root>
+  <lane id='1' type='driving' >
+     <width sOffset="0.0" a="1.0" b="2.0" c="3.0" d="4.0"/>
+     <width sOffset="0.0" a="1.0" b="2.0" c="3.0" d="4.0"/>
+     <width sOffset="5.0" a="2.0" b="0.0" c="0.0" d="0.0"/>
+     <width sOffset="5.0" a="2.0" b="0.0" c="0.0" d="0.0"/>
+     <width sOffset="5.0" a="2.1" b="0.0" c="0.0" d="0.0"/>
+  </lane>
+</root>
+)R";
+
+// Tests `Lane` parsing when having repeated width descriptions.
+class LaneRepeatedWidthDescriptionsParsingTests : public ParsingTests {};
+
+TEST_F(LaneRepeatedWidthDescriptionsParsingTests, NotAllowingSemanticErrors) {
+  const NodeParser dut_strict(LoadXMLAndGetNodeByName(kLaneRepeatedWidthTemplate, Lane::kLaneTag),
+                              {kNullParserSTolerance, kDontAllowSchemaErrors, kDontAllowSemanticErrors});
+  EXPECT_THROW(dut_strict.As<Lane>(), maliput::common::assertion_error);
+}
+
+TEST_F(LaneRepeatedWidthDescriptionsParsingTests, AllowingSemanticErrors) {
+  const NodeParser dut_permissive(LoadXMLAndGetNodeByName(kLaneRepeatedWidthTemplate, Lane::kLaneTag),
+                                  {kNullParserSTolerance, kDontAllowSchemaErrors, kAllowSemanticErrors});
+  Lane lane;
+  ASSERT_NO_THROW(lane = dut_permissive.As<Lane>());
+  const LaneWidth kExpectedLaneWidth0{0.0, 1.0, 2.0, 3.0, 4.0};
+  const LaneWidth kExpectedLaneWidth1{5.0, 2.1, 0.0, 0.0, 0.0};
+  const Lane kExpectedLane{
+      Lane::Id("1") /* id */,
+      Lane::Type::kDriving /* type */,
+      std::nullopt /* level */,
+      {std::nullopt, std::nullopt} /* lane_link */,
+      {kExpectedLaneWidth0, kExpectedLaneWidth1} /* widths */,
+      {} /* speed */,
+      std::nullopt /* user_data */
+  };
+  EXPECT_EQ(kExpectedLane, lane);
+}
+
+// Template of a XML description that contains a XODR Lanes node with repeated laneOffset descriptions.
+constexpr const char* kLanesNodeWithRepeatedLaneOffsetTemplate = R"R(
+<root>
+  <lanes>
+    <laneOffset s="0.0" a="1.0" b="2.0" c="3.0" d="4.0"/>
+    <laneOffset s="0.0" a="1.0" b="2.0" c="3.0" d="4.0"/>
+    <laneOffset s="5.0" a="2.0" b="0.0" c="0.0" d="0.0"/>
+    <laneOffset s="5.0" a="2.0" b="0.0" c="0.0" d="0.0"/>
+    <laneOffset s="5.0" a="2.1" b="0.0" c="0.0" d="0.0"/>
+    <laneSection s='0.'>
+        <left>
+            <lane id='1' type='driving' level= '0'>
+                <width sOffset='0.' a='1.' b='2.' c='3.' d='4.'/>
+            </lane>
+        </left>
+        <center>
+            <lane id='0' type='driving' level= '0'>
+            </lane>
+        </center>
+    </laneSection>
+  </lanes>
+</root>
+)R";
+
+// Tests `Lanes` parsing when having repeated `laneOffset` descriptions.
+class LaneOffsetRepeatedWidthDescriptionsParsingTests : public ParsingTests {};
+
+TEST_F(LaneOffsetRepeatedWidthDescriptionsParsingTests, NotAllowingSemanticErrors) {
+  const NodeParser dut_strict(LoadXMLAndGetNodeByName(kLanesNodeWithRepeatedLaneOffsetTemplate, Lanes::kLanesTag),
+                              {kNullParserSTolerance, kDontAllowSchemaErrors, kDontAllowSemanticErrors});
+  EXPECT_THROW(dut_strict.As<Lanes>(), maliput::common::assertion_error);
+}
+
+TEST_F(LaneOffsetRepeatedWidthDescriptionsParsingTests, AllowingSemanticErrors) {
+  const NodeParser dut_permissive(LoadXMLAndGetNodeByName(kLanesNodeWithRepeatedLaneOffsetTemplate, Lanes::kLanesTag),
+                                  {kNullParserSTolerance, kDontAllowSchemaErrors, kAllowSemanticErrors});
+  Lanes lanes;
+  EXPECT_NO_THROW(lanes = dut_permissive.As<Lanes>());
+  const LaneOffset kExpectedLaneOffset0{0.0, 1.0, 2.0, 3.0, 4.0};
+  const LaneOffset kExpectedLaneOffset1{5.0, 2.1, 0.0, 0.0, 0.0};
+  const std::vector<LaneOffset> kExpectedLaneOffsets{kExpectedLaneOffset0, kExpectedLaneOffset1};
+  EXPECT_EQ(kExpectedLaneOffsets, lanes.lanes_offset);
 }
 
 }  // namespace
