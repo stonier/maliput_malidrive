@@ -53,6 +53,13 @@ struct ArcLengthDerivativeFunction {
       maliput::log()->warn(msg, p, p1_);
       p = p1_;
     }
+    // The integrator may exceed the minimum allowed p value for the lane offset function. See #123.
+    if (p < p0_) {
+      const std::string msg{
+          "The p value calculated by the integrator is {} and is lower than the p0 of the road curve which is: {}."};
+      maliput::log()->warn(msg, p, p0_);
+      p = p0_;
+    }
     return road_curve_->WDot({p, lane_offset_->f(p), k(1)}, lane_offset_).norm();
   }
 
@@ -107,6 +114,13 @@ struct InverseArcLengthODEFunction {
           "The p value calculated by the integrator is {} and exceeds the p1 of the road curve which is: {}."};
       maliput::log()->debug(msg, p, p1_);
       p = p1_;
+    }
+    // The integrator may exceed the minimum allowed p value for the lane offset function. See #123.
+    if (p < p0_) {
+      const std::string msg{
+          "The p value calculated by the integrator is {} and is lower than the p0 of the road curve which is: {}."};
+      maliput::log()->warn(msg, p, p0_);
+      p = p0_;
     }
     return 1.0 / road_curve_->WDot({p, lane_offset_->f(p), k(1)}, lane_offset_).norm();
   }
