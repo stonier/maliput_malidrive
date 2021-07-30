@@ -304,5 +304,21 @@ std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const Lane* lane);
 /// @throws maliput::common::assertion_error When `lane` is nullptr.
 std::pair<std::string, std::optional<std::string>> VehicleUsageAndExclusiveRuleStateValues(const Lane* lane);
 
+/// Finds the local minimum of the cubic polynomial.
+///
+/// @f$ f(p) = a p^3 + b p^2 + c p + d / p,a,b,c ∈ ℝ @f$.
+///
+/// Note:
+/// 1 - Local minimum is only related to cubic polynomial. So when a = 0 and the parabola is ascending (b > 0) it
+///     will return the absolute minimum.
+/// 2 - There is no need to know `d` coefficient to get the minimum local, but it is
+///     asked just for consistency.
+/// @param a Cubic coefficient.
+/// @param b Quadratic coefficient.
+/// @param c Linear coefficient.
+/// @param d Constant coefficient.
+/// @returns The p value that matches a local min in the cubic, if exists.
+std::optional<double> FindLocalMinFromCubicPol(double a, double b, double c, double d);
+
 }  // namespace builder
 }  // namespace malidrive

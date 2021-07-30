@@ -1,10 +1,12 @@
 // Copyright 2020 Toyota Research Institute
 #include "maliput_malidrive/builder/builder_tools.h"
 
+#include <algorithm>
 #include <map>
 
 #include <maliput/api/lane.h>
 #include <maliput/common/logger.h>
+#include <maliput/common/maliput_unused.h>
 #include <tinyxml2.h>
 
 #include "maliput_malidrive/base/road_geometry.h"
@@ -404,7 +406,7 @@ std::vector<rules::XodrSpeedProperties> GetMaxSpeedLimitFor(const Lane* lane) {
   } else if (!speed_data_from_road.empty()) {
     speed_data = std::move(speed_data_from_road);
   }
-  // Check if there is a gap at the beggining and complete it with constants::kDefaultMaxSpeedLimit.
+  // Check if there is a gap at the beginning and complete it with constants::kDefaultMaxSpeedLimit.
   if (speed_data.empty() || speed_data[0].s_start != s_track_start) {
     speed_data.insert(speed_data.begin(), {constants::kDefaultMaxSpeedLimit, s_track_start,
                                            speed_data.empty() ? s_track_end : speed_data[0].s_start});
@@ -416,6 +418,40 @@ std::pair<std::string, std::optional<std::string>> VehicleUsageAndExclusiveRuleS
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   const xodr::Lane& xodr_lane = GetXodrLaneFromMalidriveLane(lane);
   return std::make_pair(VehicleUsageValueForXodrLane(xodr_lane), VehicleExclusiveValueForXodrLane(xodr_lane));
+}
+
+std::optional<double> FindLocalMinFromCubicPol(double a, double b, double c, double d) {
+  maliput::common::unused(d);
+  std::optional<double> p_local_min{std::nullopt};
+  if (std::abs(a) < constants::kStrictLinearTolerance) {
+    // Quadratic polynomial
+    if (std::abs(b) < constants::kStrictLinearTolerance) {
+      // Linear polynomial doesn't have a local min.
+      return p_local_min;
+    }
+    if (b > 0) {
+      // Only when the parabola ascends could we have a "local minimum" value.
+      p_local_min = -c / (2 * b);
+    }
+  } else {
+    // Cubic polynomial
+    const double det = b * b - 3 * a * c;
+    if (det > constants::kStrictLinearTolerance) {
+      // If b^2 – 3ac is nonpositive, the cubic function is strictly monotonic, so local min couldn't be found.
+      const double x1 = (-b + std::sqrt(det)) / (3 * a);
+      const double x2 = (-b - std::sqrt(det)) / (3 * a);
+      for (const auto& p_local : {x1, x2}) {
+        // f_2_p_local would be the second derivative of f(p) evaluated at p_local.
+        // This would tell us if it is a local min or local max.
+        const double f_2_p_local = 6 * a * p_local + 2 * b;
+        if (f_2_p_local > 0) {
+          p_local_min = p_local;
+          break;
+        }
+      }
+    }
+  }
+  return p_local_min;
 }
 
 }  // namespace builder

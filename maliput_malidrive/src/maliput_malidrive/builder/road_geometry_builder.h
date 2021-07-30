@@ -83,16 +83,23 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   struct LanesBuilder {
     // Constructs a LanesBuilder.
     // `junction_segments_attributes_in` Contains all the attributes needed to build all the Lanes of a given Junction.
-    // `rg_in` Is a pointer to the RoadGeometry.
     // `factory_in` Is a pointer to the RoadCurveFactoryBase.
+    // `rg_config_in` road geometry configuration.
+    // `rg_in` Is a pointer to the RoadGeometry.
+    //
+    // Note: All input parameters are aliased and thus must remain valid for the duration of this class instance.
     //
     // @throws maliput::common::assertion_error When `rg` is nullptr.
     // @throws maliput::common::assertion_error When `factory` is nullptr.
     LanesBuilder(const std::pair<maliput::geometry_base::Junction*,
                                  std::map<Segment*, RoadGeometryBuilder::SegmentConstructionAttributes>>&
                      junction_segments_attributes_in,
-                 RoadGeometry* rg_in, const RoadCurveFactoryBase* factory_in)
-        : junction_segments_attributes(junction_segments_attributes_in), factory(factory_in), rg(rg_in) {
+                 const RoadCurveFactoryBase* factory_in, const RoadGeometryConfiguration& rg_config_in,
+                 RoadGeometry* rg_in)
+        : junction_segments_attributes(junction_segments_attributes_in),
+          factory(factory_in),
+          rg_config(rg_config_in),
+          rg(rg_in) {
       MALIDRIVE_THROW_UNLESS(rg != nullptr);
       MALIDRIVE_THROW_UNLESS(factory != nullptr);
     }
@@ -106,6 +113,7 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
         junction_segments_attributes;
 
     const RoadCurveFactoryBase* factory{};
+    const RoadGeometryConfiguration& rg_config;
     RoadGeometry* rg{};
   };
 
@@ -115,13 +123,15 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   // `lane_section` must not be nullptr.
   // `xodr_lane_section_index` must be non-negative.
   // `factory` must not be nullptr.
+  // `rg_config` road geometry configuration.
   // `segment` must not be nullptr.
   // `adjacent_lane_functions` holds the offset and width functions of the immediate inner lane, must not be nullptr.
   //
   // @throws maliput::common::assertion_error When aforementioned conditions aren't met.
   static LaneConstructionResult BuildLane(const xodr::Lane* lane, const xodr::RoadHeader* road_header,
                                           const xodr::LaneSection* lane_section, int xodr_lane_section_index,
-                                          const RoadCurveFactoryBase* factory, Segment* segment,
+                                          const RoadCurveFactoryBase* factory,
+                                          const RoadGeometryConfiguration& rg_config, Segment* segment,
                                           road_curve::LaneOffset::AdjacentLaneFunctions* adjacent_lane_functions);
   // Builds malidrive::Lanes from the XODR `lane_section` and returns a vector of
   // LaneConstructionResult objects containing the built Lane and properties needed to later on
@@ -134,6 +144,7 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   // `xodr_lane_section_index` is the index of the LaneSection within the road and mustn't be negative.
   // `rg` must not be nullptr.
   // `factory` must not be nullptr.
+  // `rg_config` road geometry configuration.
   // `segment` must not be nullptr.
   //
   // @throws maliput::common::assertion_error When either `segment`,
@@ -141,8 +152,29 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
   static std::vector<LaneConstructionResult> BuildLanesForSegment(const xodr::RoadHeader* road_header,
                                                                   const xodr::LaneSection* lane_section,
                                                                   int xodr_lane_section_index,
-                                                                  const RoadCurveFactoryBase* factory, RoadGeometry* rg,
-                                                                  Segment* segment);
+                                                                  const RoadCurveFactoryBase* factory,
+                                                                  const RoadGeometryConfiguration& rg_config,
+                                                                  RoadGeometry* rg, Segment* segment);
+
+  // Analyzes the width description of the Lane and looks for negative width values.
+  // In order to guarantee non-negative values, each piece of the piecewise-defined lane width function must comply
+  // with:
+  //   1. Non-negative sign of the width at the beginning of the lane width function.
+  //   2. Non-negative sign of the width at the end of the lane width function.
+  //   3. If a local minimum is found in the range of the lane width function, then the function
+  //      evaluated at that local minimum should be non-negative.
+  //
+  // `lane_widths` Width descriptions of a lane.
+  // `lane_id` ID of the lane.
+  // `xodr_lane_length` Length of the Lane, matches LaneSection length.
+  // `linear_tolerance` Linear tolerance.
+  // `allow_negative_width` If false it throws when negative width is found, otherwise it logs a detailed warning.
+  //
+  // @throws maliput::common::assertion_error When negatives width values are found and `allow_negative_width` is set
+  // false.
+  static void VerifyNonNegativeLaneWidth(const std::vector<xodr::LaneWidth>& lane_widths,
+                                         const maliput::api::LaneId& lane_id, double xodr_lane_length,
+                                         double linear_tolerance, bool allow_negative_width);
 
   // Builds a RoadCurve.
   //

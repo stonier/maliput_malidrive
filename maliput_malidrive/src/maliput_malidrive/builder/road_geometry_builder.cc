@@ -93,10 +93,91 @@ RoadGeometryBuilder::RoadGeometryBuilder(std::unique_ptr<xodr::DBManager> manage
           : "Manual");
 }
 
+void RoadGeometryBuilder::VerifyNonNegativeLaneWidth(const std::vector<xodr::LaneWidth>& lane_widths,
+                                                     const maliput::api::LaneId& lane_id, double xodr_lane_length,
+                                                     double linear_tolerance, bool allow_negative_width) {
+  const int num_polynomials = static_cast<int>(lane_widths.size());
+  for (int i = 0; i < num_polynomials; i++) {
+    if (lane_widths[i].a >= 0 && lane_widths[i].b >= 0 && lane_widths[i].c >= 0 && lane_widths[i].d >= 0) {
+      // If all coefficients are non-negative, given that the function will be evaluated for non-negative p then
+      // we can assume that it is a valid function before moving forward with the analysis.
+      continue;
+    }
+    const bool end{i == num_polynomials - 1};
+    // Start p value for the i-th lane width function in its range.
+    const double p0{0.};
+    // End p value for the i-th lane width function.
+    const double p1{end ? (xodr_lane_length - lane_widths[i].s_0) : (lane_widths[i + 1].s_0 - lane_widths[i].s_0)};
+    if (p1 - p0 < 0) {
+      // If there is no range or it isn't valid then this verification is pointless.
+      // This case will be taken into account down the river by the builder:
+      // See `malidrive::builder::RoadCurveFactory::MakeLaneWidth`.
+      continue;
+    }
+    // clang-format off
+    auto eval_cubic_polynomial = [& lane_width = lane_widths[i]](double p) {
+      return lane_width.d * p * p * p + lane_width.c * p * p + lane_width.b * p + lane_width.a;
+    };
+    // clang-format on
+
+    // Verifies the image of the functions at p0 and p1.
+    const double f_p0 = eval_cubic_polynomial(p0);
+    const double f_p1 = eval_cubic_polynomial(p1);
+    bool non_negative_limits{true};
+    if (f_p0 < -linear_tolerance / 2.) {
+      non_negative_limits = false;
+      const std::string msg{"Lane " + lane_id.string() + " 's LaneWidth[" + std::to_string(i) +
+                            "] function which range is [" + std::to_string(p0) + " , " + std::to_string(p1) +
+                            "] is negative at the beginning of the range, at [lane_width_s = " + std::to_string(p0) +
+                            " | lane_s = " + std::to_string(lane_widths[i].s_0 + p0) +
+                            "] with a width value of: " + std::to_string(f_p0)};
+      maliput::log()->warn(msg);
+      if (!allow_negative_width) {
+        MALIPUT_THROW_MESSAGE(msg);
+      }
+    }
+    if (f_p1 < -linear_tolerance / 2.) {
+      non_negative_limits = false;
+      const std::string msg{"Lane " + lane_id.string() + " 's LaneWidth[" + std::to_string(i) +
+                            "] function which range is [" + std::to_string(p0) + " , " + std::to_string(p1) +
+                            "] is negative at the end of the range, at [lane_width_s = " + std::to_string(p1) +
+                            " | lane_s = " + std::to_string(lane_widths[i].s_0 + p1) +
+                            "] with a width value of: " + std::to_string(f_p1)};
+      maliput::log()->warn(msg);
+      if (!allow_negative_width) {
+        MALIPUT_THROW_MESSAGE(msg);
+      }
+    }
+    if (non_negative_limits) {
+      // Once it is confirmed that we have non-negative width at the ends of the range we can analyze the
+      // cubic locals to verify that there is no negative values in between.
+      // Only when having a local min between p0 and p1 we can say that there may be a negative range, given that a
+      // local min will make the polynomial to decrease in image. If there is a local min located in the range, we
+      // have to verify then if that local min is located above or below of abscissa axis.
+      const std::optional<double> p_local_min{
+          FindLocalMinFromCubicPol(lane_widths[i].d, lane_widths[i].c, lane_widths[i].b, lane_widths[i].a)};
+      if (p_local_min.has_value() && p_local_min.value() >= p0 && p_local_min.value() <= p1) {
+        const double min_width = eval_cubic_polynomial(p_local_min.value());
+        if (min_width < -linear_tolerance / 2.) {
+          const std::string msg{"Lane " + lane_id.string() + " 's LaneWidth[" + std::to_string(i) +
+                                "] function which range is [" + std::to_string(p0) + " , " + std::to_string(p1) +
+                                "] presents negative values with a minimum value of [ " + std::to_string(min_width) +
+                                "] located at [lane_width_s = " + std::to_string(p_local_min.value()) +
+                                " | lane_s = " + std::to_string(p_local_min.value() + lane_widths[i].s_0) + "]"};
+          maliput::log()->warn(msg);
+          if (!allow_negative_width) {
+            MALIPUT_THROW_MESSAGE(msg);
+          }
+        }
+      }
+    }
+  }
+}
+
 RoadGeometryBuilder::LaneConstructionResult RoadGeometryBuilder::BuildLane(
     const xodr::Lane* lane, const xodr::RoadHeader* road_header, const xodr::LaneSection* lane_section,
-    int xodr_lane_section_index, const RoadCurveFactoryBase* factory, Segment* segment,
-    road_curve::LaneOffset::AdjacentLaneFunctions* adjacent_lane_functions) {
+    int xodr_lane_section_index, const RoadCurveFactoryBase* factory, const RoadGeometryConfiguration& rg_config,
+    Segment* segment, road_curve::LaneOffset::AdjacentLaneFunctions* adjacent_lane_functions) {
   MALIDRIVE_THROW_UNLESS(lane != nullptr);
   MALIDRIVE_THROW_UNLESS(road_header != nullptr);
   MALIDRIVE_THROW_UNLESS(lane_section != nullptr);
@@ -116,8 +197,7 @@ RoadGeometryBuilder::LaneConstructionResult RoadGeometryBuilder::BuildLane(
 
   //@{
 
-  maliput::log()->trace("Creating LaneWidth for lane id {}_{}_{}", road_header->id.string(),
-                        std::to_string(xodr_lane_section_index), lane->id.string());
+  maliput::log()->trace("Creating LaneWidth for lane id {}_{}_{}", lane_id.string());
 
   const double xodr_p_0_lane{lane_section->s_0};
   const double xodr_p_1_lane{lane_section->s_0 + road_header->GetLaneSectionLength(xodr_lane_section_index)};
@@ -130,12 +210,17 @@ RoadGeometryBuilder::LaneConstructionResult RoadGeometryBuilder::BuildLane(
   const double road_curve_p_0_lane{segment->road_curve()->PFromP(xodr_p_0_lane)};
   const double road_curve_p_1_lane{segment->road_curve()->PFromP(xodr_p_1_lane)};
   // Build a road_curve::CubicPolynomial for the lane width.
+  const bool allow_negative_width{(rg_config.standard_strictness_policy &
+                                   RoadGeometryConfiguration::StandardStrictnessPolicy::kAllowSemanticErrors) ==
+                                  RoadGeometryConfiguration::StandardStrictnessPolicy::kAllowSemanticErrors};
+  VerifyNonNegativeLaneWidth(lane->width_description, lane_id,
+                             road_header->GetLaneSectionLength(xodr_lane_section_index), factory->linear_tolerance(),
+                             allow_negative_width);
   std::unique_ptr<road_curve::Function> lane_width = std::make_unique<road_curve::ScaledDomainFunction>(
       factory->MakeLaneWidth(lane->width_description, xodr_p_0_lane, xodr_p_1_lane), road_curve_p_0_lane,
       road_curve_p_1_lane, factory->linear_tolerance());
 
-  maliput::log()->trace("Creating LaneOffset for lane id {}_{}_{}", road_header->id.string(),
-                        std::to_string(xodr_lane_section_index), lane->id.string());
+  maliput::log()->trace("Creating LaneOffset for lane id {}", lane_id.string());
   // Build a road_curve::CubicPolynomial for the lane offset.
   const bool no_adjacent_lane{adjacent_lane_functions->width == nullptr && adjacent_lane_functions->offset == nullptr};
   std::unique_ptr<road_curve::Function> lane_offset = std::make_unique<road_curve::ScaledDomainFunction>(
@@ -148,8 +233,7 @@ RoadGeometryBuilder::LaneConstructionResult RoadGeometryBuilder::BuildLane(
   //@}
   adjacent_lane_functions->width = lane_width.get();
   adjacent_lane_functions->offset = lane_offset.get();
-  maliput::log()->trace("Building lane id {}_{}_{}", road_header->id.string(), std::to_string(xodr_lane_section_index),
-                        lane->id.string());
+  maliput::log()->trace("Building lane id {}", lane_id.string());
   auto built_lane =
       std::make_unique<Lane>(lane_id, xodr_track_id, xodr_lane_id, elevation_bounds, segment->road_curve(),
                              std::move(lane_width), std::move(lane_offset), road_curve_p_0_lane, road_curve_p_1_lane);
@@ -166,7 +250,7 @@ std::vector<RoadGeometryBuilder::LaneConstructionResult> RoadGeometryBuilder::La
   std::vector<std::future<std::vector<RoadGeometryBuilder::LaneConstructionResult>>> lanes_construction_results;
   for (const auto& junction_segments_attributes : junctions_segments_attributes_) {
     lanes_construction_results.push_back(
-        task_executor.Queue(LanesBuilder(junction_segments_attributes, rg, factory_.get())));
+        task_executor.Queue(LanesBuilder(junction_segments_attributes, factory_.get(), rg_config_, rg)));
   }
   // The threads are on hold until start method is called.
   task_executor.Start();
@@ -190,7 +274,7 @@ std::vector<RoadGeometryBuilder::LaneConstructionResult> RoadGeometryBuilder::La
       // Process lanes of the lane section.
       auto lanes_result = BuildLanesForSegment(
           segment_attributes.second.road_header, segment_attributes.second.lane_section,
-          segment_attributes.second.lane_section_index, factory_.get(), rg, segment_attributes.first);
+          segment_attributes.second.lane_section_index, factory_.get(), rg_config_, rg, segment_attributes.first);
       built_lanes_result.insert(built_lanes_result.end(), std::make_move_iterator(lanes_result.begin()),
                                 std::make_move_iterator(lanes_result.end()));
     }
@@ -202,9 +286,9 @@ std::vector<RoadGeometryBuilder::LaneConstructionResult> RoadGeometryBuilder::La
   std::vector<LaneConstructionResult> built_lanes_result;
   for (const auto& segment_attributes : junction_segments_attributes.second) {
     // Process lanes of the lane section.
-    auto lanes_result =
-        BuildLanesForSegment(segment_attributes.second.road_header, segment_attributes.second.lane_section,
-                             segment_attributes.second.lane_section_index, factory, rg, segment_attributes.first);
+    auto lanes_result = BuildLanesForSegment(
+        segment_attributes.second.road_header, segment_attributes.second.lane_section,
+        segment_attributes.second.lane_section_index, factory, rg_config, rg, segment_attributes.first);
     built_lanes_result.insert(built_lanes_result.end(), std::make_move_iterator(lanes_result.begin()),
                               std::make_move_iterator(lanes_result.end()));
   }
@@ -430,7 +514,8 @@ std::unique_ptr<road_curve::RoadCurve> RoadGeometryBuilder::BuildRoadCurve(
 
 std::vector<RoadGeometryBuilder::LaneConstructionResult> RoadGeometryBuilder::BuildLanesForSegment(
     const xodr::RoadHeader* road_header, const xodr::LaneSection* lane_section, int xodr_lane_section_index,
-    const RoadCurveFactoryBase* factory, RoadGeometry* rg, Segment* segment) {
+    const RoadCurveFactoryBase* factory, const RoadGeometryConfiguration& rg_config, RoadGeometry* rg,
+    Segment* segment) {
   MALIDRIVE_THROW_UNLESS(lane_section != nullptr);
   MALIDRIVE_THROW_UNLESS(road_header != nullptr);
   MALIDRIVE_THROW_UNLESS(segment != nullptr);
@@ -449,15 +534,17 @@ std::vector<RoadGeometryBuilder::LaneConstructionResult> RoadGeometryBuilder::Bu
   for (auto lane_it = lane_section->right_lanes.crbegin(); lane_it != lane_section->right_lanes.crend(); ++lane_it) {
     maliput::log()->trace("Building Lane ID: {}_{}_{}.", road_header->id.string(), xodr_lane_section_index,
                           lane_it->id.string());
-    LaneConstructionResult lane_construction_result = BuildLane(
-        &(*lane_it), road_header, lane_section, xodr_lane_section_index, factory, segment, &adjacent_lane_functions);
+    LaneConstructionResult lane_construction_result =
+        BuildLane(&(*lane_it), road_header, lane_section, xodr_lane_section_index, factory, rg_config, segment,
+                  &adjacent_lane_functions);
     maliput::log()->trace("Built Lane ID: {}.", lane_construction_result.lane->id().string());
     built_lanes_result.insert(built_lanes_result.begin(), std::move(lane_construction_result));
   }
   adjacent_lane_functions = road_curve::LaneOffset::AdjacentLaneFunctions{nullptr, nullptr};
   for (auto lane_it = lane_section->left_lanes.cbegin(); lane_it != lane_section->left_lanes.cend(); ++lane_it) {
-    LaneConstructionResult lane_construction_result = BuildLane(
-        &(*lane_it), road_header, lane_section, xodr_lane_section_index, factory, segment, &adjacent_lane_functions);
+    LaneConstructionResult lane_construction_result =
+        BuildLane(&(*lane_it), road_header, lane_section, xodr_lane_section_index, factory, rg_config, segment,
+                  &adjacent_lane_functions);
     maliput::log()->trace("Built Lane ID: {}.", lane_construction_result.lane->id().string());
     built_lanes_result.push_back(std::move(lane_construction_result));
   }
