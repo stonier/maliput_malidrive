@@ -60,8 +60,8 @@ class MockLane : public maliput::geometry_base::Lane {
 
 class MockRoadGeometryBuilderBase : public RoadGeometryBuilderBase {
  public:
-  MockRoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration)
-      : RoadGeometryBuilderBase(road_geometry_configuration) {}
+  MockRoadGeometryBuilderBase() = default;
+
   std::unique_ptr<const maliput::api::RoadGeometry> operator()() override { return {}; }
 
   void EXPECT_TRUE_IsLaneEndOnASide(const maliput::api::BranchPoint* bp, const maliput::api::LaneEnd& lane_end) {
@@ -101,15 +101,8 @@ class MockRoadGeometryBuilderBase : public RoadGeometryBuilderBase {
 
 class RoadGeometryBuilderBaseTest : public ::testing::Test {
  protected:
-  void SetUp() override { dut = std::make_unique<MockRoadGeometryBuilderBase>(kRoadGeometryConfiguration); }
+  void SetUp() override { dut = std::make_unique<MockRoadGeometryBuilderBase>(); }
 
-  const RoadGeometryConfiguration kRoadGeometryConfiguration{maliput::api::RoadGeometryId("dumb_id"),
-                                                             "path",
-                                                             constants::kLinearTolerance,
-                                                             constants::kAngularTolerance,
-                                                             constants::kScaleLength,
-                                                             maliput::math::Vector3{0., 0., 0.},
-                                                             InertialToLaneMappingConfig(1e-3, 10)};
   std::unique_ptr<MockRoadGeometryBuilderBase> dut;
 };
 

@@ -3,6 +3,7 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include <maliput/geometry_base/junction.h>
@@ -10,7 +11,6 @@
 
 #include "maliput_malidrive/base/inertial_to_lane_mapping_config.h"
 #include "maliput_malidrive/builder/id_providers.h"
-#include "maliput_malidrive/builder/road_geometry_configuration.h"
 
 namespace malidrive {
 namespace builder {
@@ -85,24 +85,8 @@ class RoadGeometryBuilderBase {
  public:
   MALIDRIVE_NO_COPY_NO_MOVE_NO_ASSIGN(RoadGeometryBuilderBase)
 
-  RoadGeometryBuilderBase() = delete;
+  RoadGeometryBuilderBase() = default;
   virtual ~RoadGeometryBuilderBase() = default;
-
-  /// Builder interface to construct a RoadGeometry whose ID is
-  /// `road_geometry_configuration.id`.
-  ///
-  /// Resulting maliput::api::RoadGeometry will have `linear_tolerance`,
-  /// `angular_tolerance` and `scale_length` properties set by the
-  /// `road_geometry_configuration`.
-  ///
-  /// Note: the `opendrive_file` parameter of `road_geometry_configuration` is
-  /// ignored because a manager is expected to emerge .
-  ///
-  /// @throws maliput::common::assertion_error When
-  /// `road_geometry_configuration.linear_tolerance`,
-  /// `road_geometry_configuration.angular_tolerance` or
-  /// `road_geometry_configuration.scale_length` are negative.
-  RoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration);
 
   /// Creates a maliput equivalent backend (malidrive::RoadGeometry).
   virtual std::unique_ptr<const maliput::api::RoadGeometry> operator()() = 0;
@@ -159,19 +143,7 @@ class RoadGeometryBuilderBase {
       const maliput::api::LaneEnd& lane_end,
       const std::vector<std::unique_ptr<maliput::geometry_base::BranchPoint>>& bps);
 
-  const InertialToLaneMappingConfig inertial_to_lane_mapping_config_;
-  const maliput::api::RoadGeometryId id_;
-  const BuildPolicy build_policy_{};
-
-  // @{ Tolerance, scale length and Inertial to Backend Frame translation values
-  //    used to construct the RoadGeometry.
-  double linear_tolerance_{};
-  double angular_tolerance_{};
-  double scale_length_{};
-  maliput::math::Vector3 inertial_to_backend_frame_translation_{};
-  // @}
-
-  UniqueIntegerProvider branch_point_indexer_;
+  UniqueIntegerProvider branch_point_indexer_{0 /* base ID */};
   std::vector<std::unique_ptr<maliput::geometry_base::BranchPoint>> bps_{};
   std::map<maliput::api::JunctionId, maliput::geometry_base::Junction*> junctions_{};
 };

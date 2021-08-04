@@ -30,15 +30,26 @@ class RoadGeometryBuilder : public RoadGeometryBuilderBase {
 
   RoadGeometryBuilder() = delete;
 
-  /// Builds a RoadGeometry using malidrive2 backend.
+  /// Builds a RoadGeometry using malidrive2 backend whose ID is
+  /// `road_geometry_configuration.id`.
   ///
   /// `manager` must not be nullptr. Ownership will be transferred to the
   /// resulting RoadGeometry.
   ///
   /// `factory` must not be nullptr. Used to create the road curve for the lanes.
   ///
-  /// @throws maliput::common::assertion_error When `manager` or `factory` are
-  /// nullptr.
+  /// Resulting maliput::api::RoadGeometry will have `linear_tolerance`,
+  /// `angular_tolerance` and `scale_length` properties set by the
+  /// `road_geometry_configuration`.
+  ///
+  /// Note: the `opendrive_file` parameter of `road_geometry_configuration` is
+  /// ignored because a manager is expected to emerge.
+  ///
+  /// @throws maliput::common::assertion_error When
+  /// `road_geometry_configuration.linear_tolerance`,
+  /// `road_geometry_configuration.angular_tolerance` or
+  /// `road_geometry_configuration.scale_length` are negative.
+  /// `manager` or `factory` are nullptr.
   /// @see RoadGeometryBuilderBase::RoadGeometryBuilderBase() for further details.
   RoadGeometryBuilder(std::unique_ptr<xodr::DBManager> manager,
                       const RoadGeometryConfiguration& road_geometry_configuration,

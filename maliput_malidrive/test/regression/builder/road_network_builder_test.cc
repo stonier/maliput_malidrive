@@ -26,6 +26,7 @@
 #include <maliput/base/traffic_light_book.h>
 
 #include "maliput_malidrive/builder/road_geometry_builder.h"
+#include "maliput_malidrive/builder/road_network_configuration.h"
 #include "maliput_malidrive/builder/rule_tools.h"
 #include "maliput_malidrive/constants.h"
 #include "maliput_malidrive/loader/loader.h"
@@ -253,8 +254,8 @@ TEST_P(RoadNetworkBuilderTest, RoadGeometryBuilding) {
   ASSERT_NE(rg_config_opt, std::nullopt);
   RoadGeometryConfiguration road_geometry_configuration{rg_config_opt.value()};
   road_geometry_configuration.opendrive_file = utility::FindResource(road_geometry_configuration.opendrive_file);
-  const std::unique_ptr<maliput::api::RoadNetwork> dut = builder::RoadNetworkBuilder(
-      {road_geometry_configuration, std::nullopt, std::nullopt, std::nullopt, std::nullopt})();
+  const std::unique_ptr<maliput::api::RoadNetwork> dut =
+      builder::RoadNetworkBuilder(road_geometry_configuration.ToStringMap())();
   ASSERT_NE(dynamic_cast<const malidrive::RoadGeometry*>(dut->road_geometry()), nullptr);
   EXPECT_EQ(road_geometry_configuration.id, dut->road_geometry()->id());
   EXPECT_NO_THROW(maliput::api::ValidateRoadNetwork(
@@ -280,9 +281,9 @@ class RuleRegistryBuildTest : public BuilderTest {
     const std::string kTShapeRoadYAMLPath{utility::FindResource("odr/TShapeRoad.yaml")};
     RoadGeometryConfiguration road_geometry_configuration{GetRoadGeometryConfigurationFor("TShapeRoad.xodr").value()};
     road_geometry_configuration.opendrive_file = utility::FindResource("odr/TShapeRoad.xodr");
-    const RoadNetworkConfiguration road_network_configuration{road_geometry_configuration, kTShapeRoadYAMLPath,
-                                                              kTShapeRoadYAMLPath, kTShapeRoadYAMLPath};
-    rn_ = loader::Load<builder::RoadNetworkBuilder>(road_network_configuration);
+    RoadNetworkConfiguration road_network_configuration{road_geometry_configuration, kTShapeRoadYAMLPath,
+                                                        kTShapeRoadYAMLPath, kTShapeRoadYAMLPath, std::nullopt};
+    rn_ = loader::Load<builder::RoadNetworkBuilder>(road_network_configuration.ToStringMap());
     ASSERT_NE(rn_.get(), nullptr);
   }
 
@@ -372,7 +373,7 @@ TEST_F(BuilderTest, CustomRoadNetworkEntitiesLoadersTest) {
   const RoadNetworkConfiguration road_network_configuration{
       road_geometry_configuration, kTShapeRoadYAMLPath, kTShapeRoadYAMLPath, kTShapeRoadYAMLPath, kTShapeRoadYAMLPath};
 
-  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_network_configuration);
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_network_configuration.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   const auto* rulebook = rn->rulebook();
@@ -420,9 +421,9 @@ TEST_F(BuilderTest, StubProperties) {
   RoadGeometryConfiguration road_geometry_configuration{GetRoadGeometryConfigurationFor("TShapeRoad.xodr").value()};
   road_geometry_configuration.opendrive_file = utility::FindResource("odr/TShapeRoad.xodr");
   const RoadNetworkConfiguration road_network_configuration{road_geometry_configuration, kTShapeRoadYAMLPath,
-                                                            kTShapeRoadYAMLPath, kTShapeRoadYAMLPath};
+                                                            kTShapeRoadYAMLPath, kTShapeRoadYAMLPath, std::nullopt};
 
-  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_network_configuration);
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_network_configuration.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   // TODO(agalbachicar)   Think of a way to test an empty Intersection vector.
@@ -564,7 +565,7 @@ std::vector<DirectionUsageTruthTable> InstantiateDirectionUsageBuilderParameters
 
 // Evaluates DirectionUsageRules construction.
 TEST_P(DirectionUsageTest, DirectionUsageRuleTest) {
-  auto rn = loader::Load<builder::RoadNetworkBuilder>({road_geometry_configuration_});
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_geometry_configuration_.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   // { @ Code in this block must be removed once the old DirectionUsageRules are deprecated.
@@ -737,7 +738,7 @@ class VehicleRulesTest : public ::testing::TestWithParam<VehicleRulesTruthTable>
 // Evaluates that all lanes have a VehicleUsageRule with the appropriate discrete value. Rule coverage zone must be
 // always the full lane length.
 TEST_P(VehicleRulesTest, VehicleRulesTest) {
-  auto rn = loader::Load<builder::RoadNetworkBuilder>({road_geometry_configuration_});
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_geometry_configuration_.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   auto test_rule = [&](const DiscreteValueRule& rule, const VehicleRulesReferenceValue& reference_value) {
@@ -837,7 +838,7 @@ std::vector<VehicleRulesStateProviderTruthTable> InstantiateVehicleRulesStatePro
 // Evaluates that the rule state provider has an entry for each rule, next
 // is nullopt and the current state is the first state in rule's values.
 TEST_P(VehicleRulesStateProviderTest, DiscreteValueRuleStateProviderTest) {
-  auto rn = loader::Load<builder::RoadNetworkBuilder>({road_geometry_configuration_});
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_geometry_configuration_.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   for (const VehicleRulesStateProviderReferenceValue& reference_value : reference_values_) {
@@ -1034,7 +1035,7 @@ INSTANTIATE_TEST_CASE_P(SpeedLimitRuleBuilderTestGroup, SpeedLimitRuleBuilderTes
                         ::testing::ValuesIn(SpeedLimitRuleTestParameters()));
 
 TEST_P(SpeedLimitRuleBuilderTest, SpeedLimitRulesTest) {
-  auto rn = loader::Load<builder::RoadNetworkBuilder>({road_geometry_configuration_});
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_geometry_configuration_.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   // { @ Code in this block must be removed once the old SpeedLimitRules are deprecated.
@@ -1159,7 +1160,7 @@ std::vector<RangeValueRuleStateProviderTruthTable> RangeValueRuleStateProviderTe
 // Evaluates that the rule state provider has an entry for each rule, next
 // is nullopt and the current state is the first state in rule's values.
 TEST_P(RangeValueRuleStateProviderTest, RangeValueRuleStateProviderTest) {
-  auto rn = loader::Load<builder::RoadNetworkBuilder>({road_geometry_configuration_});
+  auto rn = loader::Load<builder::RoadNetworkBuilder>(road_geometry_configuration_.ToStringMap());
   ASSERT_NE(rn.get(), nullptr);
 
   for (const RangeValueRuleStateProviderReferenceValue& reference_value : reference_values_) {
