@@ -28,12 +28,34 @@ struct BuildPolicy {
   /// @throws maliput::common::assertion_error When `type` isn't a valid Type.
   static BuildPolicy::Type FromStrToType(const std::string& type);
 
+  /// Converts a Type to a string.
+  ///
+  /// @param type Type to be translated to a string. Enumerator's name matches the string except
+  /// without the leading 'k' and is all lower case.
+  /// @returns A string.
+  static std::string FromTypeToStr(const BuildPolicy::Type& type);
+
   Type type{Type::kSequential};
   std::optional<int> num_threads{};
 };
 
 /// RoadGeometry construction parameters.
 struct RoadGeometryConfiguration {
+  /// @{ RoadGeometry parameters.
+  static constexpr char const* kStrRoadGeometryId = "road_geometry_id";
+  static constexpr char const* kStrOpendriveFile = "opendrive_file";
+  static constexpr char const* kStrLinearTolerance = "linear_tolerance";
+  static constexpr char const* kStrAngularTolerance = "angular_tolerance";
+  static constexpr char const* kStrScaleLength = "scale_length";
+  static constexpr char const* kStrInertialToBackendFrameTranslation = "inertial_to_backend_frame_translation";
+  static constexpr char const* kStrBuildPolicy = "build_policy";
+  static constexpr char const* kStrNumThreads = "num_threads";
+  static constexpr char const* kStrSimplificationPolicy = "simplification_policy";
+  static constexpr char const* kStrToleranceSelectionPolicy = "tolerance_selection_policy";
+  static constexpr char const* kStrStandardStrictnessPolicy = "standard_strictness_policy";
+  static constexpr char const* kStrOmitNonDrivableLanes = "omit_nondrivable_lanes";
+  /// @}
+
   /// Level of flexibility in terms of adhering to the OpenDrive standard
   /// when constructing a RoadGeometry. This is useful when working with
   /// .xodr files that violate the OpenDrive standard. The policy is
@@ -66,6 +88,13 @@ struct RoadGeometryConfiguration {
   /// @throws maliput::common::assertion_error When `policy` isn't a valid SimplificationPolicy.
   static SimplificationPolicy FromStrToSimplificationPolicy(const std::string& policy);
 
+  /// Converts a SimplificationPolicy to a string.
+  ///
+  /// @param policy SimplificationPolicy to be translated to a string. Enumerator's name matches the string except
+  /// without the leading 'k' and is all lower case.
+  /// @returns A string.
+  static std::string FromSimplificationPolicyToStr(const SimplificationPolicy& policy);
+
   /// Converts a string to a ToleranceSelectionPolicy.
   ///
   /// @param policy String to be translated to a ToleranceSelectionPolicy. Valid strings match the enumerator's name
@@ -73,6 +102,13 @@ struct RoadGeometryConfiguration {
   /// @returns A ToleranceSelectionPolicy value.
   /// @throws maliput::common::assertion_error When `policy` isn't a valid ToleranceSelectionPolicy.
   static ToleranceSelectionPolicy FromStrToToleranceSelectionPolicy(const std::string& policy);
+
+  /// Converts a ToleranceSelectionPolicy to a string.
+  ///
+  /// @param policy ToleranceSelectionPolicy to be translated to a string. Enumerator's name matches the string except
+  /// without the leading 'k' and is all lower case.
+  /// @returns A string.
+  static std::string FromToleranceSelectionPolicyToStr(const ToleranceSelectionPolicy& policy);
 
   /// Converts a string to a StandardStrictnessPolicy.
   ///
@@ -89,14 +125,50 @@ struct RoadGeometryConfiguration {
   /// @returns A string value.
   static std::string FromStandardStrictnessPolicyToStr(const StandardStrictnessPolicy& policy);
 
-  // Designed for use with uniform initialization.
-  maliput::api::RoadGeometryId id;
-  std::string opendrive_file;
+  /// Default constructor.
+  RoadGeometryConfiguration() = default;
+
+  /// Creates a RoadGeometryConfiguration.
+  ///
+  /// @param road_geometry_id Id of the RoadGeometry
+  /// @param opendrive_file Path to the XODR file to be loaded.
+  /// @param linear_tolerance RoadGeometry's linear tolerance.
+  /// @param angular_tolerance RoadGeometry's angular tolerance.
+  /// @param scale_length RoadGeometry's scale length.
+  /// @param inertial_to_backend_frame_translation Translation from maliput to malidrive inertial frame.
+  /// @param build_policy Build policy.
+  /// @param simplification_policy Simplification policy.
+  /// @param tolerance_selection_policy Tolerance selection policy.
+  /// @param standard_strictness_policy Standard strictness policy.
+  /// @param omit_nondrivable_lanes True for omitting building non-drivable lanes.
+  ///
+  /// Note: The validation of parameters like linear_tolerance, angular_tolerance and scale_length are verified by the
+  /// builder.
+  ///       @see malidrive::builder::RoadGeometryBuilder.
+  RoadGeometryConfiguration(const maliput::api::RoadGeometryId& road_geometry_id, const std::string& opendrive_file,
+                            double linear_tolerance, double angular_tolerance, double scale_length,
+                            const maliput::math::Vector3& inertial_to_backend_frame_translation,
+                            const InertialToLaneMappingConfig& inertial_to_lane_mapping_config,
+                            const BuildPolicy& build_policy, const SimplificationPolicy& simplification_policy,
+                            const ToleranceSelectionPolicy& tolerance_selection_policy,
+                            const StandardStrictnessPolicy& standard_strictness_policy, bool omit_nondrivable_lanes);
+
+  /// Creates a RoadGeometryConfiguration out of a string dictionary which contains parameters to be passed to the
+  /// RoadGeometryBuilder.
+  /// @param road_geometry_configuration A string-string map containing the configuration for the builder.
+  RoadGeometryConfiguration(const std::map<std::string, std::string>& road_geometry_configuration);
+
+  /// @returns A string-string map containing the RoadGeometry configuration.
+  std::map<std::string, std::string> ToStringMap() const;
+
+  /// @{ RoadGeometry parameters.
+  maliput::api::RoadGeometryId id{"maliput"};
+  std::string opendrive_file{""};
   double linear_tolerance{constants::kLinearTolerance};
   double angular_tolerance{constants::kAngularTolerance};
   double scale_length{constants::kScaleLength};
   maliput::math::Vector3 inertial_to_backend_frame_translation{0., 0., 0.};
-  InertialToLaneMappingConfig inertial_to_lane_mapping_config;
+  InertialToLaneMappingConfig inertial_to_lane_mapping_config{constants::kExplorationRadius, constants::kNumIterations};
   BuildPolicy build_policy{BuildPolicy::Type::kSequential};
   SimplificationPolicy simplification_policy{SimplificationPolicy::kNone};
   ToleranceSelectionPolicy tolerance_selection_policy{ToleranceSelectionPolicy::kAutomaticSelection};
@@ -119,6 +191,7 @@ struct RoadGeometryConfiguration {
   // Lane 1 will not be considered but lane 2 yes. However, because of omitting
   // lane 1, the lane 2 will have an incorrect lane offset function.
   bool omit_nondrivable_lanes{true};
+  /// @}
 };
 
 // Union operator.
