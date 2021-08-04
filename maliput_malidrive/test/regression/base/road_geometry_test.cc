@@ -9,6 +9,7 @@
 
 #include "maliput_malidrive/builder/road_geometry_configuration.h"
 #include "maliput_malidrive/builder/road_network_builder.h"
+#include "maliput_malidrive/builder/road_network_configuration.h"
 #include "maliput_malidrive/constants.h"
 #include "maliput_malidrive/loader/loader.h"
 #include "maliput_malidrive/road_curve/cubic_polynomial.h"
@@ -110,17 +111,13 @@ TEST_F(RoadGeometryTest, DuplicatedRoadId) {
 }
 
 GTEST_TEST(RoadGeometryFigure8Trafficlights, RoundTripPosition) {
-  const builder::RoadGeometryConfiguration road_geometry_configuration{
-      maliput::api::RoadGeometryId("figure8_trafficlights"),
-      utility::FindResource("odr/figure8_trafficlights/figure8_trafficlights.xodr"),
-      constants::kLinearTolerance,
-      constants::kAngularTolerance,
-      constants::kScaleLength,
-      maliput::math::Vector3{0., 0., 0.},
-      InertialToLaneMappingConfig(::malidrive::constants::kExplorationRadius, ::malidrive::constants::kNumIterations),
-  };
-  const builder::RoadNetworkConfiguration road_network_configuration{road_geometry_configuration};
-  auto road_network = ::malidrive::loader::Load<::malidrive::builder::RoadNetworkBuilder>(road_network_configuration);
+  builder::RoadGeometryConfiguration road_geometry_configuration{};
+  road_geometry_configuration.id = maliput::api::RoadGeometryId("figure8_trafficlights");
+  road_geometry_configuration.opendrive_file =
+      utility::FindResource("odr/figure8_trafficlights/figure8_trafficlights.xodr");
+
+  auto road_network =
+      ::malidrive::loader::Load<::malidrive::builder::RoadNetworkBuilder>(road_geometry_configuration.ToStringMap());
 
   const maliput::api::LanePosition position(0., 0., 0.);
   const maliput::api::LaneId lane_id("1_0_-1");
@@ -133,17 +130,14 @@ GTEST_TEST(RoadGeometryFigure8Trafficlights, RoundTripPosition) {
 }
 
 GTEST_TEST(RoadGeometryFigure8Trafficlights, RoundTripPositionWithInertialToBackendFrameTranslation) {
-  const builder::RoadGeometryConfiguration road_geometry_configuration{
-      maliput::api::RoadGeometryId("figure8_trafficlights"),
-      utility::FindResource("odr/figure8_trafficlights/figure8_trafficlights.xodr"),
-      constants::kLinearTolerance,
-      constants::kAngularTolerance,
-      constants::kScaleLength,
-      maliput::math::Vector3{1., 2., 3.},
-      InertialToLaneMappingConfig(::malidrive::constants::kExplorationRadius, ::malidrive::constants::kNumIterations),
-  };
-  const builder::RoadNetworkConfiguration road_network_configuration{road_geometry_configuration};
-  auto road_network = ::malidrive::loader::Load<::malidrive::builder::RoadNetworkBuilder>(road_network_configuration);
+  builder::RoadGeometryConfiguration road_geometry_configuration{};
+  road_geometry_configuration.id = maliput::api::RoadGeometryId("figure8_trafficlights");
+  road_geometry_configuration.opendrive_file =
+      utility::FindResource("odr/figure8_trafficlights/figure8_trafficlights.xodr");
+  road_geometry_configuration.inertial_to_backend_frame_translation = maliput::math::Vector3{1., 2., 3.};
+
+  auto road_network =
+      ::malidrive::loader::Load<::malidrive::builder::RoadNetworkBuilder>(road_geometry_configuration.ToStringMap());
 
   const maliput::api::LanePosition position(0., 0., 0.);
   const maliput::api::LaneId lane_id("1_0_-1");
