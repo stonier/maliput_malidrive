@@ -41,7 +41,9 @@ struct BuildPolicy {
 
 /// RoadGeometry construction parameters.
 struct RoadGeometryConfiguration {
-  /// @{ RoadGeometry parameters.
+  /// @name Road Geometry configuration's keys used in string map.
+  ///
+  /// @{
   static constexpr char const* kStrRoadGeometryId = "road_geometry_id";
   static constexpr char const* kStrOpendriveFile = "opendrive_file";
   static constexpr char const* kStrLinearTolerance = "linear_tolerance";
@@ -143,8 +145,7 @@ struct RoadGeometryConfiguration {
   /// @param omit_nondrivable_lanes True for omitting building non-drivable lanes.
   ///
   /// Note: The validation of parameters like linear_tolerance, angular_tolerance and scale_length are verified by the
-  /// builder.
-  ///       @see malidrive::builder::RoadGeometryBuilder.
+  /// builder. @see malidrive::builder::RoadGeometryBuilder.
   RoadGeometryConfiguration(const maliput::api::RoadGeometryId& road_geometry_id, const std::string& opendrive_file,
                             double linear_tolerance, double angular_tolerance, double scale_length,
                             const maliput::math::Vector3& inertial_to_backend_frame_translation,
@@ -156,12 +157,14 @@ struct RoadGeometryConfiguration {
   /// Creates a RoadGeometryConfiguration out of a string dictionary which contains parameters to be passed to the
   /// RoadGeometryBuilder.
   /// @param road_geometry_configuration A string-string map containing the configuration for the builder.
-  RoadGeometryConfiguration(const std::map<std::string, std::string>& road_geometry_configuration);
+  explicit RoadGeometryConfiguration(const std::map<std::string, std::string>& road_geometry_configuration);
 
   /// @returns A string-string map containing the RoadGeometry configuration.
   std::map<std::string, std::string> ToStringMap() const;
 
-  /// @{ RoadGeometry parameters.
+  /// @name Road Geometry Configuration's parameters.
+  ///
+  /// @{
   maliput::api::RoadGeometryId id{"maliput"};
   std::string opendrive_file{""};
   double linear_tolerance{constants::kLinearTolerance};

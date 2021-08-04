@@ -16,51 +16,68 @@ namespace loader {
 /// Forwards a call to RoadNetworkBuilderT.
 ///
 /// @param road_network_configuration A string-string map containing information about the RoadNetwork configuration
-/// used during the loading process. The parameters that can be set are the following:
-/// - 'road_geometry_id' : A string that works as ID of the RoadGeometry.
-///                        Default: "maliput"
-/// - 'opendrive_file' : Path to the XODR file to be loaded.
-///                      Default: ""
-/// - 'linear_tolerance' : RoadGeometry's linear tolerance.
-///                        Default: "5e-2"
-/// - 'angular_tolerance' : RoadGeometry's angular tolerance.
-///                         Default: "1e-3"
-/// - 'scale_length' : RoadGeometry's scale length.
-///                    Default: "1.0"
-/// - 'inertial_to_backend_frame_translation' : Translation from maliput to malidrive inertial frame.
+/// used during the loading process.
+///
+/// @details The parameters that can be set are the following:
+/// - @b road_geometry_id : A string that works as ID of the RoadGeometry.
+///   - Default: @e "maliput"
+/// - @b opendrive_file : Path to the XODR file to be loaded.
+///   - Default: ""
+/// - @b linear_tolerance : RoadGeometry's linear tolerance.
+///   - Default: @e "5e-2" (#malidrive::constants::kLinearTolerance)
+/// - @b angular_tolerance : RoadGeometry's angular tolerance.
+///   - Default: @e "1e-3" (#malidrive::constants::kAngularTolerance)
+/// - @b scale_length : RoadGeometry's scale length.
+///   - Default: @e "1.0" (#malidrive::constants::kScaleLength)
+/// - @b inertial_to_backend_frame_translation : Translation from maliput to malidrive inertial frame.
 ///                                             The format of the 3-dimensional vector that is expected to be passed
 ///                                             should be {X , Y , Z}. Same format as maliput::math::Vector3 is
-///                                             serialized. Default: "{0., 0., 0.}"
-/// - 'build_policy' : Determines the use of concurrency when building the RoadGeometry.
-///                    Options:
-///                       1. "sequential"
-///                       2. "parallel"
-///                    Default: "sequential"
-/// - 'simplification_policy' : Determines geometries simplification for the XODR's roads.
-///                             Options:
-///                               1. "none"
-///                               2. "simplify"
-///                             Default: "none"
-/// - 'tolerance_selection_policy' : Tolerance selection method used by the builder.
-///                                  Options:
-///                                    1. "manual" : 'linear_tolerance' will be used.
-///                                    2. "automatic" : 'linear_tolerance' is used as base and bigger tolerances are
-///                                    used when the base tolerance make the builder to fail.
-///                                  Default: "automatic"
-/// - 'standard_strictness_policy' : Indicates how permissive builder should be with the XODR description.
-///                                  Options:
-///                                    1. "strict" : Do not permit any errors.
-///                                    2. "allow_schema_errors" : Allow schema syntax errors.
-///                                    3. "allow_semantic_errors" : Allow semantic errors.
-///                                    4. "permissive": Allow all previous violations.
-///                                  Default: "permissive"
-/// - 'omit_nondrivable_lanes' : True for omitting building non-drivable lanes. False otherwise
-///                              Options:
-///                                1. "true", "True", "TRUE", "on", "On", "ON"
-///                                2. "false", "False", "FALSE", "off", "Off", "OFF"
-///                              Default: "true"
+///                                             serialized.
+///   - Default: @e "{0., 0., 0.}"
+/// - @b build_policy : Determines the use of concurrency when building the RoadGeometry.
+///   - Options:
+///     - 1. @e "sequential"
+///     - 2. @e "parallel"
+///   - Default: @e "sequential"
+/// - @b simplification_policy : Determines geometries simplification for the XODR's roads.
+///   - Options:
+///     - 1. @e "none"
+///     - 2. @e "simplify"
+///   - Default: @e "none"
+/// - @b tolerance_selection_policy : Tolerance selection method used by the builder.
+///   - Options:
+///    - 1. "manual" : @e linear_tolerance will be used.
+///    - 2. "automatic" : @e linear_tolerance is used as base and bigger tolerances are used when the base tolerance
+///    make the builder to fail.
+///   - Default: @e "automatic"
+/// - @b standard_strictness_policy : Indicates how permissive builder should be with the XODR description.
+///   - Options:
+///    - 1. @e "strict" : Do not permit any errors.
+///    - 2. @e "allow_schema_errors" : Allow schema syntax errors.
+///    - 3. @e "allow_semantic_errors" : Allow semantic errors.
+///    - 4. @e "permissive": Allow all previous violations.
+///   - Default: @e "permissive"
+/// - @b omit_nondrivable_lanes : True for omitting building non-drivable lanes. False otherwise
+///   - Options:
+///     - 1. <em> "true", "True", "TRUE", "on", "On", "ON" </em>
+///     - 2. <em> "false", "False",  "FALSE", "off", "Off", "OFF" </em>
+///   - Default: @e "true"
+///
 /// When parameters are omitted the default value will be used.
-/// @return A unique_ptr to a RoadNetwork.
+///
+/// Example of use:
+/// @code{cpp}
+/// const std::map<std::string, std::string> road_network_configuration {
+///   {"road_geometry_id", "appian_way_road_geometry"},
+///   {"opendrive_file", "appian_way.xodr"},
+///   {"linear_tolerance", "1e-3"},
+///   {"angular_tolerance", "1e-3"},
+///   {"inertial_to_backend_frame_translation", "{2.0, 2.0, 0.0}"},
+/// };
+/// auto road_network = malidrive::loader::Load<malidrive::builder::RoadNetworkBuilder>(road_network_configuration);
+/// @endcode
+///
+/// @return An unique_ptr to a RoadNetwork.
 /// @tparam RoadNetworkBuilderT One of opendrive::builder::RoadNetworkBuilder or
 ///         builder::RoadNetworkBuilder.
 template <class RoadNetworkBuilderT>

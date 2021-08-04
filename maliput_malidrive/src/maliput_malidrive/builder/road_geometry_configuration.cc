@@ -166,17 +166,17 @@ RoadGeometryConfiguration::RoadGeometryConfiguration(
 
 std::map<std::string, std::string> RoadGeometryConfiguration::ToStringMap() const {
   std::map<std::string, std::string> config_map{
-      {std::string(kStrRoadGeometryId), id.string()},
-      {std::string(kStrOpendriveFile), opendrive_file},
-      {std::string(kStrLinearTolerance), std::to_string(linear_tolerance)},
-      {std::string(kStrAngularTolerance), std::to_string(angular_tolerance)},
-      {std::string(kStrScaleLength), std::to_string(scale_length)},
-      {std::string(kStrInertialToBackendFrameTranslation), inertial_to_backend_frame_translation.to_str()},
-      {std::string(kStrSimplificationPolicy), FromSimplificationPolicyToStr(simplification_policy)},
-      {std::string(kStrToleranceSelectionPolicy), FromToleranceSelectionPolicyToStr(tolerance_selection_policy)},
-      {std::string(kStrStandardStrictnessPolicy), FromStandardStrictnessPolicyToStr(standard_strictness_policy)},
-      {std::string(kStrOmitNonDrivableLanes), omit_nondrivable_lanes ? "true" : "false"},
-      {std::string(kStrBuildPolicy), BuildPolicy::FromTypeToStr(build_policy.type)},
+      {{kStrRoadGeometryId}, id.string()},
+      {{kStrOpendriveFile}, opendrive_file},
+      {{kStrLinearTolerance}, std::to_string(linear_tolerance)},
+      {{kStrAngularTolerance}, std::to_string(angular_tolerance)},
+      {{kStrScaleLength}, std::to_string(scale_length)},
+      {{kStrInertialToBackendFrameTranslation}, inertial_to_backend_frame_translation.to_str()},
+      {{kStrSimplificationPolicy}, FromSimplificationPolicyToStr(simplification_policy)},
+      {{kStrToleranceSelectionPolicy}, FromToleranceSelectionPolicyToStr(tolerance_selection_policy)},
+      {{kStrStandardStrictnessPolicy}, FromStandardStrictnessPolicyToStr(standard_strictness_policy)},
+      {{kStrOmitNonDrivableLanes}, omit_nondrivable_lanes ? "true" : "false"},
+      {{kStrBuildPolicy}, BuildPolicy::FromTypeToStr(build_policy.type)},
   };
   if (build_policy.num_threads.has_value()) {
     config_map.emplace(kStrNumThreads, std::to_string(build_policy.num_threads.value()));

@@ -27,7 +27,7 @@ class RoadGeometryConfigurationTest : public ::testing::Test {
   const double kAngularTolerance{5e-5};
   const double kScaleLength{2.};
 
-  void VerifyEquality(const RoadGeometryConfiguration& lhs, const RoadGeometryConfiguration& rhs) {
+  void ExpectEqual(const RoadGeometryConfiguration& lhs, const RoadGeometryConfiguration& rhs) {
     EXPECT_EQ(lhs.id, rhs.id);
     EXPECT_EQ(lhs.opendrive_file, rhs.opendrive_file);
     EXPECT_EQ(lhs.linear_tolerance, rhs.linear_tolerance);
@@ -74,7 +74,7 @@ TEST_F(RoadGeometryConfigurationTest, Constructor) {
       {RoadGeometryConfiguration::kStrOmitNonDrivableLanes, (kOmitNondrivableLanes ? "true" : "false")},
   }};
 
-  VerifyEquality(dut1, dut2);
+  ExpectEqual(dut1, dut2);
 }
 
 TEST_F(RoadGeometryConfigurationTest, ToStringMap) {
@@ -92,7 +92,7 @@ TEST_F(RoadGeometryConfigurationTest, ToStringMap) {
                                        kOmitNondrivableLanes};
 
   const RoadGeometryConfiguration dut2{dut1.ToStringMap()};
-  VerifyEquality(dut1, dut2);
+  ExpectEqual(dut1, dut2);
 }
 
 GTEST_TEST(BuildPolicyType, StringToTypeConversion) {

@@ -34,7 +34,7 @@ class RoadNetworkConfigurationTest : public ::testing::Test {
   const double kAngularTolerance{5e-5};
   const double kScaleLength{2.};
 
-  void VerifyEquality(const RoadNetworkConfiguration& lhs, const RoadNetworkConfiguration& rhs) {
+  void ExpectEqual(const RoadNetworkConfiguration& lhs, const RoadNetworkConfiguration& rhs) {
     // RoadNetworkConfiguration parameters.
     EXPECT_EQ(lhs.road_rule_book, rhs.road_rule_book);
     EXPECT_EQ(lhs.traffic_light_book, rhs.traffic_light_book);
@@ -97,7 +97,7 @@ TEST_F(RoadNetworkConfigurationTest, Constructor) {
       {RoadNetworkConfiguration::kStrPhaseRingBook, kPhaseRingBook.value()},
       {RoadNetworkConfiguration::kStrIntersectionBook, kIntersectionBook.value()},
   }};
-  VerifyEquality(dut1, dut2);
+  ExpectEqual(dut1, dut2);
 }
 
 TEST_F(RoadNetworkConfigurationTest, ToStringMap) {
@@ -111,7 +111,7 @@ TEST_F(RoadNetworkConfigurationTest, ToStringMap) {
       kIntersectionBook};
 
   const RoadNetworkConfiguration dut2{dut1.ToStringMap()};
-  VerifyEquality(dut1, dut2);
+  ExpectEqual(dut1, dut2);
 }
 
 }  // namespace

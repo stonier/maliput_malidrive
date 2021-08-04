@@ -20,7 +20,7 @@ class RoadNetworkBuilder : public RoadNetworkBuilderBase {
   ///
   /// @param road_network_configuration Holds the information of all the
   ///        RoadNetwork entities.
-  RoadNetworkBuilder(const std::map<std::string, std::string>& road_network_configuration)
+  explicit RoadNetworkBuilder(const std::map<std::string, std::string>& road_network_configuration)
       : RoadNetworkBuilderBase(road_network_configuration) {}
 
   /// TODO(#135): Deprecates this Constructor.
