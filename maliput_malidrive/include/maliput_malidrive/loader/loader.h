@@ -44,12 +44,6 @@ namespace loader {
 ///     - 1. @e "none"
 ///     - 2. @e "simplify"
 ///   - Default: @e "none"
-/// - @b tolerance_selection_policy : Tolerance selection method used by the builder.
-///   - Options:
-///    - 1. "manual" : @e linear_tolerance will be used.
-///    - 2. "automatic" : @e linear_tolerance is used as base and bigger tolerances are used when the base tolerance
-///    make the builder to fail.
-///   - Default: @e "automatic"
 /// - @b standard_strictness_policy : Indicates how permissive builder should be with the XODR description.
 ///   - Options:
 ///    - 1. @e "strict" : Do not permit any errors.

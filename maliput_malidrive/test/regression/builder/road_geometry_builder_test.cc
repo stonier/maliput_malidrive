@@ -499,39 +499,39 @@ INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderParallelBuildPolicyManualThreadsTestG
                         ::testing::ValuesIn(InstantiateBuilderParameters()));
 // @}
 
-// @{ Runs the Builder with a manual tolerance selection.
-class RoadGeometryBuilderManualToleranceSelectionTest : public RoadGeometryBuilderBaseTest {
- protected:
-  void SetUp() override {
-    RoadGeometryBuilderBaseTest::SetUp();
-    road_geometry_configuration_.tolerance_selection_policy =
-        RoadGeometryConfiguration::ToleranceSelectionPolicy::kManualSelection;
-  }
-};
+// // @{ Runs the Builder with a manual tolerance selection.
+// class RoadGeometryBuilderManualToleranceSelectionTest : public RoadGeometryBuilderBaseTest {
+//  protected:
+//   void SetUp() override {
+//     RoadGeometryBuilderBaseTest::SetUp();
+//     road_geometry_configuration_.tolerance_selection_policy =
+//         RoadGeometryConfiguration::ToleranceSelectionPolicy::kManualSelection;
+//   }
+// };
 
-TEST_P(RoadGeometryBuilderManualToleranceSelectionTest, JunctionSegmentLaneTest) { RunTest(); }
+// TEST_P(RoadGeometryBuilderManualToleranceSelectionTest, JunctionSegmentLaneTest) { RunTest(); }
 
-INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderManualToleranceSelectionTestGroup,
-                        RoadGeometryBuilderManualToleranceSelectionTest,
-                        ::testing::ValuesIn(InstantiateBuilderParameters()));
-// @}
+// INSTANTIATE_TEST_CASE_P(RoadGeometryBuilderManualToleranceSelectionTestGroup,
+//                         RoadGeometryBuilderManualToleranceSelectionTest,
+//                         ::testing::ValuesIn(InstantiateBuilderParameters()));
+// // @}
 
-// @{ Runs the Builder with an automatic tolerance selection.
-class AutomaticToleranceSelectionBuilderTest : public RoadGeometryBuilderBaseTest {
- protected:
-  void SetUp() override {
-    RoadGeometryBuilderBaseTest::SetUp();
-    road_geometry_configuration_.tolerance_selection_policy =
-        RoadGeometryConfiguration::ToleranceSelectionPolicy::kAutomaticSelection;
-  }
-};
+// // @{ Runs the Builder with an automatic tolerance selection.
+// class AutomaticToleranceSelectionBuilderTest : public RoadGeometryBuilderBaseTest {
+//  protected:
+//   void SetUp() override {
+//     RoadGeometryBuilderBaseTest::SetUp();
+//     road_geometry_configuration_.tolerance_selection_policy =
+//         RoadGeometryConfiguration::ToleranceSelectionPolicy::kAutomaticSelection;
+//   }
+// };
 
-// Tests that the RoadGeometry is constructed.
-TEST_P(AutomaticToleranceSelectionBuilderTest, BuildProcessTest) { RunTest(); }
+// // Tests that the RoadGeometry is constructed.
+// TEST_P(AutomaticToleranceSelectionBuilderTest, BuildProcessTest) { RunTest(); }
 
-INSTANTIATE_TEST_CASE_P(AutomaticToleranceSelectionBuilderTestGroup, AutomaticToleranceSelectionBuilderTest,
-                        ::testing::ValuesIn(InstantiateBuilderParameters()));
-// @}
+// INSTANTIATE_TEST_CASE_P(AutomaticToleranceSelectionBuilderTestGroup, AutomaticToleranceSelectionBuilderTest,
+//                         ::testing::ValuesIn(InstantiateBuilderParameters()));
+// // @}
 
 // @{ Runs the Builder with the `omit_nondrivable_lanes` flag enabled.
 class RoadGeometryBuilderOmitNonDrivableLanesPolicyTest : public RoadGeometryBuilderBaseTest {
@@ -1079,8 +1079,6 @@ class RoadGeometryOmittingNonDrivableLanesTest
     // Disable simplification, tolerance selection and open drive flexibility.
     road_geometry_configuration_.simplification_policy =
         builder::RoadGeometryConfiguration::SimplificationPolicy::kNone;
-    road_geometry_configuration_.tolerance_selection_policy =
-        builder::RoadGeometryConfiguration::ToleranceSelectionPolicy::kManualSelection;
     road_geometry_configuration_.standard_strictness_policy =
         builder::RoadGeometryConfiguration::StandardStrictnessPolicy::kStrict;
 
@@ -1147,8 +1145,8 @@ INSTANTIATE_TEST_CASE_P(RoadGeometryOmittingNonDrivableLanesTestGroup, RoadGeome
 class RoadGeometryNegativeLaneWidthTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    factory_ = std::make_unique<builder::RoadCurveFactory>(rg_config.linear_tolerance, rg_config.scale_length,
-                                                           rg_config.angular_tolerance);
+    factory_ = std::make_unique<builder::RoadCurveFactory>(rg_config.tolerances.linear_tolerance, rg_config.scale_length,
+                                                           rg_config.tolerances.angular_tolerance);
   }
 
   const std::string kXodrFile{"SingleRoadNegativeWidth.xodr"};
@@ -1160,10 +1158,10 @@ class RoadGeometryNegativeLaneWidthTest : public ::testing::Test {
 // Throws if negative width descriptions are found because of the strictness in the builder.
 TEST_F(RoadGeometryNegativeLaneWidthTest, Strict) {
   rg_config.standard_strictness_policy = builder::RoadGeometryConfiguration::StandardStrictnessPolicy::kStrict;
-  rg_config.linear_tolerance = constants::kStrictLinearTolerance;
+  rg_config.tolerances.linear_tolerance = constants::kStrictLinearTolerance;
 
   EXPECT_THROW(builder::RoadGeometryBuilder(xodr::LoadDataBaseFromFile(utility::FindResource(rg_config.opendrive_file),
-                                                                       {rg_config.linear_tolerance}),
+                                                                       {rg_config.tolerances.linear_tolerance}),
                                             rg_config, std::move(factory_))(),
                maliput::common::assertion_error);
 }
@@ -1176,7 +1174,7 @@ TEST_F(RoadGeometryNegativeLaneWidthTest, AllowNegativeWidthDescriptions) {
 
   ASSERT_NO_THROW(
       dut_ = builder::RoadGeometryBuilder(
-          xodr::LoadDataBaseFromFile(utility::FindResource(rg_config.opendrive_file), {rg_config.linear_tolerance}),
+          xodr::LoadDataBaseFromFile(utility::FindResource(rg_config.opendrive_file), {rg_config.tolerances.linear_tolerance}),
           rg_config, std::move(factory_))());
   ASSERT_NE(dut_, nullptr);
 
@@ -1191,8 +1189,8 @@ TEST_F(RoadGeometryNegativeLaneWidthTest, AllowNegativeWidthDescriptions) {
   EXPECT_EQ(0., bounds.max());
   // Verify that after the negative range we get the correct value.
   bounds = lane->lane_bounds(8.0);
-  EXPECT_NEAR(-0.02839, bounds.min(), rg_config.linear_tolerance);
-  EXPECT_NEAR(0.02839, bounds.max(), rg_config.linear_tolerance);
+  EXPECT_NEAR(-0.02839, bounds.min(), rg_config.tolerances.linear_tolerance);
+  EXPECT_NEAR(0.02839, bounds.max(), rg_config.tolerances.linear_tolerance);
 }
 
 }  // namespace

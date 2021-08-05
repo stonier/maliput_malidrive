@@ -30,7 +30,6 @@ GTEST_TEST(RoadNetworkLoader, VerifyRoadNetworkPlugin) {
       {"scale_length", "1"},
       {"build_policy", "sequential"},
       {"simplification_policy", "none"},
-      {"tolerance_selection_policy", "manual"},
       {"standard_strictness_policy", "strict"},
       {"inertial_to_backend_frame_translation", "{1., 2., 3.}"},
   };
