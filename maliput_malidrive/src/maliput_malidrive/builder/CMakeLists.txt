@@ -13,6 +13,7 @@ add_library(builder
   road_geometry_builder_base.cc
   road_geometry_configuration.cc
   road_network_builder.cc
+  road_network_configuration.cc
   rule_registry_builder.cc
   road_rulebook_builder.cc
   rule_tools.cc

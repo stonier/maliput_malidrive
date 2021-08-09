@@ -1,7 +1,9 @@
 // Copyright 2020 Toyota Research Institute
 #pragma once
 
+#include <map>
 #include <memory>
+#include <string>
 
 #include <maliput/api/road_network.h>
 
@@ -21,14 +23,23 @@ class RoadNetworkBuilderBase {
   ///
   /// @param road_network_configuration Holds the information of all the
   ///        RoadNetwork entities.
-  RoadNetworkBuilderBase(const RoadNetworkConfiguration& road_network_configuration)
+  explicit RoadNetworkBuilderBase(const std::map<std::string, std::string>& road_network_configuration)
       : road_network_configuration_(road_network_configuration) {}
+
+  /// TODO(#135): Deprecates this Constructor.
+  ///
+  /// Constructs a RoadNetworkBuilderBase.
+  ///
+  /// @param road_network_configuration Holds the information of all the
+  ///        RoadNetwork entities.
+  RoadNetworkBuilderBase(const RoadNetworkConfiguration& road_network_configuration)
+      : road_network_configuration_(road_network_configuration.ToStringMap()) {}
 
   /// @return A maliput::api::RoadNetwork.
   virtual std::unique_ptr<maliput::api::RoadNetwork> operator()() const = 0;
 
  protected:
-  const RoadNetworkConfiguration road_network_configuration_;
+  const std::map<std::string, std::string> road_network_configuration_;
 };
 
 }  // namespace builder

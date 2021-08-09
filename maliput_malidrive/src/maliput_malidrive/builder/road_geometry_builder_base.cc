@@ -11,20 +11,6 @@ namespace builder {
 
 using maliput::geometry_base::BranchPoint;
 
-RoadGeometryBuilderBase::RoadGeometryBuilderBase(const RoadGeometryConfiguration& road_geometry_configuration)
-    : inertial_to_lane_mapping_config_(road_geometry_configuration.inertial_to_lane_mapping_config),
-      id_(road_geometry_configuration.id),
-      build_policy_(road_geometry_configuration.build_policy),
-      linear_tolerance_(road_geometry_configuration.linear_tolerance),
-      angular_tolerance_(road_geometry_configuration.angular_tolerance),
-      scale_length_(road_geometry_configuration.scale_length),
-      inertial_to_backend_frame_translation_(road_geometry_configuration.inertial_to_backend_frame_translation),
-      branch_point_indexer_(0 /* base ID */) {
-  MALIDRIVE_THROW_UNLESS(linear_tolerance_ >= 0.);
-  MALIDRIVE_THROW_UNLESS(angular_tolerance_ >= 0.);
-  MALIDRIVE_THROW_UNLESS(scale_length_ >= 0.);
-}
-
 void RoadGeometryBuilderBase::AttachLaneEndToBranchPoint(const maliput::api::LaneEnd& lane_end,
                                                          const std::vector<maliput::api::LaneEnd>& lane_ends) {
   // First, we look for any BranchPoint which already has `lane_end`.
