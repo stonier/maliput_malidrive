@@ -1195,6 +1195,43 @@ TEST_F(RoadGeometryNegativeLaneWidthTest, AllowNegativeWidthDescriptions) {
   EXPECT_NEAR(0.02839, bounds.max(), rg_config.linear_tolerance);
 }
 
+// Verifies G1 contiguity constraint being relaxed when semantic errors are allowed.
+// - Roads with only non-drivable lanes that presents a jump in the elevation description function.
+// - Roads with only non-drivable lanes that presents a jump in the superelevation description function.
+// - Non-drivable lanes that presents a jump in the lane width description function.
+class RoadGeometryNonContiguousInNonDrivableLanesTest : public testing::TestWithParam<const char*> {
+ protected:
+  std::unique_ptr<RoadCurveFactory> GetFactory(const builder::RoadGeometryConfiguration& rg_config) {
+    return std::make_unique<builder::RoadCurveFactory>(rg_config.linear_tolerance, rg_config.scale_length,
+                                                       rg_config.angular_tolerance);
+  }
+};
+
+TEST_P(RoadGeometryNonContiguousInNonDrivableLanesTest, CheckG1ContiguityEnforcement) {
+  builder::RoadGeometryConfiguration rg_config{malidrive::test::GetRoadGeometryConfigurationFor(GetParam()).value()};
+
+  // Gap in non drivable road/lane + strict.
+  rg_config.standard_strictness_policy = builder::RoadGeometryConfiguration::StandardStrictnessPolicy::kStrict;
+
+  EXPECT_THROW(builder::RoadGeometryBuilder(xodr::LoadDataBaseFromFile(utility::FindResource(rg_config.opendrive_file),
+                                                                       {rg_config.linear_tolerance}),
+                                            rg_config, GetFactory(rg_config))(),
+               maliput::common::assertion_error);
+
+  // Gap in non drivable road/lane + allow semantic errors.
+  rg_config.standard_strictness_policy =
+      builder::RoadGeometryConfiguration::StandardStrictnessPolicy::kAllowSemanticErrors;
+
+  EXPECT_NO_THROW(builder::RoadGeometryBuilder(
+      xodr::LoadDataBaseFromFile(utility::FindResource(rg_config.opendrive_file), {rg_config.linear_tolerance}),
+      rg_config, GetFactory(rg_config))());
+}
+
+INSTANTIATE_TEST_CASE_P(CheckG1ContiguityEnforcementGroup, RoadGeometryNonContiguousInNonDrivableLanesTest,
+                        ::testing::Values("GapInElevationNonDrivableRoad.xodr",
+                                          "GapInSuperelevationNonDrivableRoad.xodr",
+                                          "GapInLaneWidthNonDrivableLane.xodr"));
+
 }  // namespace
 }  // namespace test
 }  // namespace builder
