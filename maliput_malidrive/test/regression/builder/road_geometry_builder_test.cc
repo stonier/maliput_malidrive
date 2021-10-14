@@ -1195,6 +1195,28 @@ TEST_F(RoadGeometryNegativeLaneWidthTest, AllowNegativeWidthDescriptions) {
   EXPECT_NEAR(0.02839, bounds.max(), rg_config.linear_tolerance);
 }
 
+// Verifies RoadGeometryBuilder throws when an XODR map with discontinuities in the geometries' Xodr S parameter are
+// present.
+class XodrGeometriesDiscontinuityInS : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    factory_ = std::make_unique<builder::RoadCurveFactory>(rg_config.linear_tolerance, rg_config.scale_length,
+                                                           rg_config.angular_tolerance);
+  }
+
+  const std::string kXodrFile{"SingleRoadWithNonContinuousXodrSInGeometries.xodr"};
+  builder::RoadGeometryConfiguration rg_config{malidrive::test::GetRoadGeometryConfigurationFor(kXodrFile).value()};
+  std::unique_ptr<const maliput::api::RoadGeometry> dut_;
+  std::unique_ptr<builder::RoadCurveFactory> factory_;
+};
+
+TEST_F(XodrGeometriesDiscontinuityInS, DiscontinuosGeometries) {
+  EXPECT_THROW(builder::RoadGeometryBuilder(xodr::LoadDataBaseFromFile(utility::FindResource(rg_config.opendrive_file),
+                                                                       {rg_config.linear_tolerance}),
+                                            rg_config, std::move(factory_))(),
+               maliput::common::assertion_error);
+}
+
 // Verifies G1 contiguity constraint being relaxed when semantic errors are allowed.
 // - Roads with only non-drivable lanes that presents a jump in the elevation description function.
 // - Roads with only non-drivable lanes that presents a jump in the superelevation description function.
