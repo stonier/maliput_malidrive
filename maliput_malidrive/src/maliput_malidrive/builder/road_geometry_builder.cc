@@ -389,11 +389,6 @@ std::unique_ptr<const maliput::api::RoadGeometry> RoadGeometryBuilder::operator(
           i, rg_config_.linear_tolerance, rg_config_.angular_tolerance, rg_config_.scale_length, e.what());
     }
     Reset(linear_tolerances[i + 1], angular_tolerances[i + 1], scale_lengths[i + 1]);
-    // @{ TODO(#12): It goes against dependency injection. Should use a provider instead.
-    maliput::log()->trace("Rebuilding the DBManager");
-    manager_ = xodr::LoadDataBaseFromFile(rg_config_.opendrive_file,
-                                          XodrParserConfigurationFromRoadGeometryConfiguration(rg_config_));
-    // @}
   }
   const std::string file_description = "from " + rg_config_.opendrive_file;
   const std::string linear_tolerance_description =
