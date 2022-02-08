@@ -22,19 +22,21 @@ class RuleRegistryBuilder {
   ///
   /// @param rg A malidrive::RoadGeometry. It is used to extract speed limit
   /// rule ranges. It must not be nullptr.
-  RuleRegistryBuilder(const maliput::api::RoadGeometry* rg) : rg_{rg} { MALIDRIVE_THROW_UNLESS(rg_ != nullptr); }
+  /// @param rule_registry_file_path YAML file path for loading the maliput::api::rules::RuleRegistry.
+  RuleRegistryBuilder(const maliput::api::RoadGeometry* rg, const std::optional<std::string>& rule_registry_file_path);
 
-  /// Builds a RuleRegistry.
+  /// Builds a maliput::api::rules::RuleRegistry.
   ///
-  /// Loads the following list of rule types:
-  /// - maliput::api::rules::DiscreteValueRule types:
-  ///   - @see rules::VehicleExclusiveRuleTypeId().
-  ///   - @see rules::VehicleUsageRuleTypeId().
-  /// - maliput::api::rules::RangeValueRule types:
-  ///   - @see maliput::SpeedLimitRuleTypeId().
-  /// TODO(agalbachicar)   Once the YAML loader for RuleRegistry is enabled in
-  ///                      maliput, change this method to forward a call to
-  ///                      the loader.
+  /// The maliput::api::rules::RuleRegistry is built in two steps:
+  /// 1- Loads maliput::api::rules::RuleRegistry with rule types obtained from the YAML file if it is provided.
+  ///
+  /// 2- Programatically loads the following list of rule types:
+  ///    - maliput::api::rules::DiscreteValueRule types:
+  ///      - @see malidrive::builder::rules::VehicleExclusiveRuleTypeId().
+  ///      - @see malidrive::builder::rules::VehicleUsageRuleTypeId().
+  ///      - @see maliput::DirectionUsageRuleTypeId().
+  ///    - maliput::api::rules::RangeValueRule types:
+  ///      - @see maliput::SpeedLimitRuleTypeId().
   std::unique_ptr<maliput::api::rules::RuleRegistry> operator()();
 
  private:
@@ -75,6 +77,7 @@ class RuleRegistryBuilder {
   void AddSpeedLimitRuleType(maliput::api::rules::RuleRegistry* rule_registry) const;
 
   const maliput::api::RoadGeometry* rg_{};
+  const std::optional<std::string> rule_registry_file_path_{};
 };
 
 }  // namespace builder
