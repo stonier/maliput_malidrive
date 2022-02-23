@@ -5,6 +5,15 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      build_docs:
+        description: 'BUILD_DOCS'
+        required: true
+        default: 'Off'
+        type: choice
+        options:
+        - 'Off'
+        - 'On'
 
 env:
   PACKAGE_NAME: maliput_malidrive
@@ -26,6 +35,9 @@ jobs:
       image: ubuntu:${{ matrix.ubuntu }}
     env:
       ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
+      # If workflow isn't run via workflow_dispatcher the build_docs variable will be empty and in
+      # that case it is expected not to build documentation.
+      BUILD_DOCS: ${{ github.event.inputs.build_docs == '' && 'Off' || github.event.inputs.build_docs}}
     steps:
     # setup-ros first since it installs git, which is needed to fetch all branches from actions/checkout
     - uses: ros-tooling/setup-ros@0.2.1
@@ -82,7 +94,7 @@ jobs:
         . /opt/ros/${ROS_DISTRO}/setup.bash;
         colcon build --packages-up-to ${PACKAGE_NAME} \
             --event-handlers=console_direct+ \
-            --cmake-args -DBUILD_TESTING=OFF;
+            --cmake-args -DBUILD_TESTING=OFF -DBUILD_DOCS=${BUILD_DOCS};
     - name: colcon build tests
       shell: bash
       working-directory: ${{ env.ROS_WS }}
@@ -90,7 +102,7 @@ jobs:
         . /opt/ros/${ROS_DISTRO}/setup.bash;
         colcon build --packages-select ${PACKAGE_NAME} \
             --event-handlers=console_direct+ \
-            --cmake-args -DBUILD_TESTING=ON;
+            --cmake-args -DBUILD_TESTING=ON -DBUILD_DOCS=${BUILD_DOCS};
     - name: colcon test
       shell: bash
       working-directory: ${{ env.ROS_WS }}
