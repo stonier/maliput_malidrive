@@ -1,26 +1,18 @@
 name: gcc
 
 on:
+  push:
   pull_request:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      build_docs:
-        description: 'BUILD_DOCS'
-        required: true
-        default: 'Off'
-        type: choice
-        options:
-        - 'Off'
-        - 'On'
 
 env:
   PACKAGE_NAME: maliput_malidrive
   ROS_WS: maliput_ws
 
 jobs:
-  compile_and_test:
+  set_up_workspace:
     name: Compile and test
     runs-on: ubuntu-latest
     strategy:
@@ -35,9 +27,6 @@ jobs:
       image: ubuntu:${{ matrix.ubuntu }}
     env:
       ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
-      # If workflow isn't run via workflow_dispatcher the build_docs variable will be empty and in
-      # that case it is expected not to build documentation.
-      BUILD_DOCS: ${{ github.event.inputs.build_docs == '' && 'Off' || github.event.inputs.build_docs}}
     steps:
     # setup-ros first since it installs git, which is needed to fetch all branches from actions/checkout
     - uses: ros-tooling/setup-ros@0.2.1
@@ -87,6 +76,11 @@ jobs:
       run: |
         rosdep update --include-eol-distros;
         rosdep install  -i -y --rosdistro ${ROS_DISTRO} --from-paths src
+  build_and_test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    needs: set_up_workspace
+    steps:
     - name: colcon build libraries
       shell: bash
       working-directory: ${{ env.ROS_WS }}
@@ -94,7 +88,7 @@ jobs:
         . /opt/ros/${ROS_DISTRO}/setup.bash;
         colcon build --packages-up-to ${PACKAGE_NAME} \
             --event-handlers=console_direct+ \
-            --cmake-args -DBUILD_TESTING=OFF -DBUILD_DOCS=${BUILD_DOCS};
+            --cmake-args -DBUILD_TESTING=OFF -DBUILD_DOCS=Off;
     - name: colcon build tests
       shell: bash
       working-directory: ${{ env.ROS_WS }}
@@ -102,7 +96,30 @@ jobs:
         . /opt/ros/${ROS_DISTRO}/setup.bash;
         colcon build --packages-select ${PACKAGE_NAME} \
             --event-handlers=console_direct+ \
-            --cmake-args -DBUILD_TESTING=ON -DBUILD_DOCS=${BUILD_DOCS};
+            --cmake-args -DBUILD_TESTING=ON -DBUILD_DOCS=Off;
+    - name: colcon test
+      shell: bash
+      working-directory: ${{ env.ROS_WS }}
+      run: |
+        . /opt/ros/${ROS_DISTRO}/setup.bash;
+        . install/setup.bash;
+        colcon test --packages-select ${PACKAGE_NAME} \
+            --event-handlers=console_direct+;
+        colcon test-result --verbose;
+
+  build_docs:
+    name: Build docs
+    runs-on: ubuntu-latest
+    needs: set_up_workspace
+    steps:
+    - name: colcon build docs
+      shell: bash
+      working-directory: ${{ env.ROS_WS }}
+      run: |
+        . /opt/ros/${ROS_DISTRO}/setup.bash;
+        colcon build --packages-up-to ${PACKAGE_NAME} \
+            --event-handlers=console_direct+ \
+            --cmake-args -DBUILD_TESTING=OFF -DBUILD_DOCS=On;
     - name: colcon test
       shell: bash
       working-directory: ${{ env.ROS_WS }}
