@@ -646,10 +646,10 @@ TEST_P(DirectionUsageTest, DirectionUsageRuleTest) {
     EXPECT_EQ(static_cast<int>(dut.zone().ranges().size()), 1);
     CompareLaneSRange(dut.zone().ranges()[0], LaneSRange{reference_value.lane_id, {reference_value.s_range}},
                       kLinearTolerance);
-    EXPECT_EQ(static_cast<int>(dut.values().size()), 1);
-    EXPECT_EQ(dut.values()[0].severity, reference_value.severity);
-    EXPECT_EQ(reference_value.state_type, dut.values()[0].value);
-    EXPECT_TRUE(dut.values()[0].related_rules.empty());
+    EXPECT_EQ(static_cast<int>(dut.states().size()), 1);
+    EXPECT_EQ(dut.states()[0].severity, reference_value.severity);
+    EXPECT_EQ(reference_value.state_type, dut.states()[0].value);
+    EXPECT_TRUE(dut.states()[0].related_rules.empty());
   }
 }
 
@@ -747,10 +747,10 @@ TEST_P(VehicleRulesTest, VehicleRulesTest) {
 
   auto test_rule = [&](const DiscreteValueRule& rule, const VehicleRulesReferenceValue& reference_value) {
     EXPECT_EQ(rule.type_id(), reference_value.rule_type);
-    EXPECT_EQ(static_cast<int>(rule.values().size()), 1);
-    EXPECT_EQ(rule.values()[0].severity, reference_value.state_severity);
-    EXPECT_EQ(rule.values()[0].related_rules.size(), reference_value.related_rules.size());
-    for (const auto& rule_group_rule_ids : rule.values()[0].related_rules) {
+    EXPECT_EQ(static_cast<int>(rule.states().size()), 1);
+    EXPECT_EQ(rule.states()[0].severity, reference_value.state_severity);
+    EXPECT_EQ(rule.states()[0].related_rules.size(), reference_value.related_rules.size());
+    for (const auto& rule_group_rule_ids : rule.states()[0].related_rules) {
       ASSERT_TRUE(reference_value.related_rules.find(rule_group_rule_ids.first) != reference_value.related_rules.end());
       for (const Rule::Id& rule_id : rule_group_rule_ids.second) {
         EXPECT_TRUE(std::find(reference_value.related_rules.at(rule_group_rule_ids.first).begin(),
@@ -758,7 +758,7 @@ TEST_P(VehicleRulesTest, VehicleRulesTest) {
                               rule_id) != reference_value.related_rules.at(rule_group_rule_ids.first).end());
       }
     }
-    EXPECT_EQ(rule.values()[0].value, reference_value.discrete_value);
+    EXPECT_EQ(rule.states()[0].value, reference_value.discrete_value);
     EXPECT_EQ(static_cast<int>(rule.zone().ranges().size()), 1);
     CompareLaneSRange(rule.zone().ranges()[0], LaneSRange(reference_value.lane_id, reference_value.s_range),
                       rn->road_geometry()->linear_tolerance());
@@ -853,7 +853,7 @@ TEST_P(VehicleRulesStateProviderTest, DiscreteValueRuleStateProviderTest) {
         rn->discrete_value_rule_state_provider()->GetState(rule_id);
     EXPECT_TRUE(state_result.has_value());
     EXPECT_FALSE(state_result->next.has_value());
-    EXPECT_EQ(state_result->state, rule.values().front());
+    EXPECT_EQ(state_result->state, rule.states().front());
   }
 }
 
@@ -1097,11 +1097,11 @@ TEST_P(SpeedLimitRuleBuilderTest, SpeedLimitRulesTest) {
       EXPECT_EQ(static_cast<int>(dut.zone().ranges().size()), 1);
       CompareLaneSRange(dut.zone().ranges()[0], LaneSRange{reference_value.lane_id, index_value_range.second.s_range},
                         kLinearTolerance);
-      EXPECT_EQ(static_cast<int>(dut.ranges().size()), 1);
-      EXPECT_EQ(dut.ranges()[0].severity, reference_value.state_severity);
-      EXPECT_TRUE(dut.ranges()[0].related_rules.empty());
-      EXPECT_DOUBLE_EQ(dut.ranges()[0].min, constants::kDefaultMinSpeedLimit);
-      EXPECT_NEAR(dut.ranges()[0].max, index_value_range.second.max, kSpeedTolerance);
+      EXPECT_EQ(static_cast<int>(dut.states().size()), 1);
+      EXPECT_EQ(dut.states()[0].severity, reference_value.state_severity);
+      EXPECT_TRUE(dut.states()[0].related_rules.empty());
+      EXPECT_DOUBLE_EQ(dut.states()[0].min, constants::kDefaultMinSpeedLimit);
+      EXPECT_NEAR(dut.states()[0].max, index_value_range.second.max, kSpeedTolerance);
     }
   }
 }
@@ -1175,7 +1175,7 @@ TEST_P(RangeValueRuleStateProviderTest, RangeValueRuleStateProviderTest) {
         rn->range_value_rule_state_provider()->GetState(rule_id);
     EXPECT_TRUE(state_result.has_value());
     EXPECT_FALSE(state_result->next.has_value());
-    EXPECT_EQ(state_result->state, rule.ranges().front());
+    EXPECT_EQ(state_result->state, rule.states().front());
   }
 }
 
