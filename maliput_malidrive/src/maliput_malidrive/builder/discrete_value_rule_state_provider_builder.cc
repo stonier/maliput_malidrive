@@ -8,7 +8,7 @@ namespace builder {
 namespace {
 
 // Sets to `state_provider` the first value in each
-// DiscreteValueRule::values() in `discrete_value_rules` as the default
+// DiscreteValueRule::states() in `discrete_value_rules` as the default
 // state.
 // @throws maliput::common::assertion_error When `state_provider` is
 //         nullptr.
@@ -16,7 +16,7 @@ void PopulateDiscreteValueRuleStates(const std::map<Rule::Id, DiscreteValueRule>
                                      maliput::PhaseBasedRightOfWayDiscreteValueRuleStateProvider* state_provider) {
   MALIDRIVE_THROW_UNLESS(state_provider != nullptr);
   for (const auto& rule_id_rule : discrete_value_rules) {
-    state_provider->SetState(rule_id_rule.first, rule_id_rule.second.values().front(), std::nullopt, std::nullopt);
+    state_provider->SetState(rule_id_rule.first, rule_id_rule.second.states().front(), std::nullopt, std::nullopt);
   }
 }
 

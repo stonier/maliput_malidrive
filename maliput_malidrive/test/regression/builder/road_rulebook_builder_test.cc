@@ -75,11 +75,11 @@ inline ::testing::AssertionResult IsEqual(const T& rule_a, const T& rule_b, doub
     }
   }
   if constexpr (std::is_base_of<DiscreteValueRule, T>::value) {
-    if (rule_a.values() != rule_b.values()) {
+    if (rule_a.states() != rule_b.states()) {
       return ::testing::AssertionFailure() << "DiscreteValues of " << rule_a.id().string() << " are different";
     }
   } else {
-    if (rule_a.ranges() != rule_b.ranges()) {
+    if (rule_a.states() != rule_b.states()) {
       return ::testing::AssertionFailure() << "Ranges of " << rule_a.id().string() << " are different";
     }
   }
