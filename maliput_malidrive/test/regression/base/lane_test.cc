@@ -264,6 +264,7 @@ class MalidriveFlatLineLaneFullyInitializedTest : public LaneTest {
   const double kRCenterline{0.};
   const double kRLeft{1.};
   const double kRRight{-2.};
+  const double kRRightBoundary{-kWidth / 2.};
   const double kH{0};
   const Vector3 kInertialToBackendFrameTranslation{0., 0., 0.};
   std::unique_ptr<RoadGeometry> road_geometry_;
@@ -384,6 +385,18 @@ TEST_F(MalidriveFlatLineLaneFullyInitializedTest, ToLanePosition) {
   expected_result.nearest_position = InertialPosition{75.05382386916237, 88.36753236814712, 0.};
   expected_result.distance = 0.;
   IsLanePositionResultClose(expected_result, dut_->ToLanePosition(expected_result.nearest_position), kLinearTolerance);
+  //@}
+
+  // Off the lane.
+  // When the InertialPosition is off the lane, then the closest valid LanePosition is returned.
+  //@{
+  expected_result.lane_position = LanePosition{kSStart, kRRightBoundary, kH};
+  expected_result.nearest_position = InertialPosition{4.696699141100894, 17.303300858899107, 0.};
+  expected_result.distance = 0.5;
+
+  // The inertial position is off the lane. It would be equivalent to have a r-coordinate as -3.
+  const InertialPosition off_lane_inertial_pos{5.050252531694168, 16.949747468305834, 0.};
+  IsLanePositionResultClose(expected_result, dut_->ToLanePosition(off_lane_inertial_pos), kLinearTolerance);
   //@}
 }
 
