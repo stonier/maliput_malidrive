@@ -532,6 +532,9 @@ std::unique_ptr<const maliput::api::RoadGeometry> RoadGeometryBuilder::DoBuild()
   }
 
   maliput::log()->trace("RoadGeometry is built.");
+  rg->SpacialReorganization();
+  maliput::log()->trace("SpacialReorganization is done.");
+
   return rg;
 }
 

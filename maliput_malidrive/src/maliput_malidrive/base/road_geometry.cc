@@ -97,7 +97,7 @@ const road_curve::Function* RoadGeometry::GetReferenceLineOffset(const xodr::Roa
   return road_characteristics_.at(road_id).reference_line_offset.get();
 }
 
-maliput::api::RoadPositionResult RoadGeometry::DoToRoadPosition(
+maliput::api::RoadPositionResult RoadGeometry::DoBruteForceToRoadPosition(
     const maliput::api::InertialPosition& inertial_pos, const std::optional<maliput::api::RoadPosition>& hint) const {
   maliput::api::RoadPositionResult result;
   if (hint.has_value()) {
