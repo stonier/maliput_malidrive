@@ -1,0 +1,223 @@
+# -*- yaml -*-
+#
+# BSD 3-Clause License
+#
+# Copyright (c) 2022, Woven Planet. All rights reserved.
+# Copyright (c) 2022, Toyota Research Institute. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# This file is hand-written.
+---
+
+RuleRegistry:
+  Vehicle-Stop-In-Zone-Behavior Rule Type:
+    - value: "DoNotStop"
+      severity: 0
+      related_rules: [Yield Group]
+      related_unique_ids: [Bulb Group]
+    - value: "UnconstrainedParking"
+      severity: 0
+      related_rules: [Yield Group]
+      related_unique_ids: [Bulb Group]
+  Right-Of-Way Rule Type:
+    - value: "Go"
+      severity: 0
+      related_rules: [Yield Group, Vehicle-Stop-In-Zone-Behavior Rule Type]
+      related_unique_ids: [Bulb Group]
+    - value: "Stop"
+      severity: 0
+      related_rules: [Yield Group, Vehicle-Stop-In-Zone-Behavior Rule Type]
+      related_unique_ids: [Bulb Group]
+    - value: "StopThenGo"
+      severity: 0
+      related_rules: [Yield Group, Vehicle-Stop-In-Zone-Behavior Rule Type]
+      related_unique_ids: [Bulb Group]
+
+# Bear in mind that maliput_malidrive internally adds a couple of more rule types to handle rules that are obtained from the xodr: speed limit, direction usage, vehicle usage, vehicle exclusive.
+
+
+RoadRulebook:
+  # WestToEast
+  - id: "Vehicle-Stop-In-Zone-Behavior Rule Type/WestToEast"
+    type: "Vehicle-Stop-In-Zone-Behavior Rule Type"
+    zone:
+      - lane_id: 1_1_-1
+        # s_range: [0, 10] # It is commented out as I would like to cover the entire lane.
+    values:
+      - value: "DoNotStop"
+        severity: 0
+        related_rules:
+        - Yield Group: []
+        related_unique_ids:
+        - Bulb Group: []
+  - id: "Right-Of-Way Rule Type/WestToEast"
+    type: "Right-Of-Way Rule Type"
+    zone:
+      - lane_id: 1_1_-1
+    values:
+      - value: "Go"
+        severity: 0
+        related_rules:
+        - Yield Group: []
+          Vehicle-Stop-In-Zone-Behavior Rule Type: ["Vehicle-Stop-In-Zone-Behavior Rule Type/WestToEast"]
+        related_unique_ids:
+        - Bulb Group: ["WestFacing-WestFacingBulbs"]
+      - value: "Stop"
+        severity: 0
+        related_rules:
+        - Yield Group: []
+          Vehicle-Stop-In-Zone-Behavior Rule Type: ["Vehicle-Stop-In-Zone-Behavior Rule Type/WestToEast"]
+        related_unique_ids:
+        - Bulb Group: ["WestFacing-WestFacingBulbs"]
+
+  # EastToWest
+  - id: "Vehicle-Stop-In-Zone-Behavior Rule Type/EastToWest"
+    type: "Vehicle-Stop-In-Zone-Behavior Rule Type"
+    zone:
+      - lane_id: 1_2_1
+        # s_range: [0, 10] # It is commented out as I would like to cover the entire lane.
+    values:
+      - value: "DoNotStop"
+        severity: 0
+        related_rules:
+        - Yield Group: []
+        related_unique_ids:
+        - Bulb Group: []
+  - id: "Right-Of-Way Rule Type/EastToWest"
+    type: "Right-Of-Way Rule Type"
+    zone:
+      - lane_id: 1_2_1
+    values:
+      - value: "Go"
+        severity: 0
+        related_rules:
+        - Yield Group: []
+          Vehicle-Stop-In-Zone-Behavior Rule Type: ["Vehicle-Stop-In-Zone-Behavior Rule Type/EastToWest"]
+        related_unique_ids:
+        - Bulb Group: ["EastFacing-EastFacingBulbs"]
+      - value: "Stop"
+        severity: 0
+        related_rules:
+        - Yield Group: []
+          Vehicle-Stop-In-Zone-Behavior Rule Type: ["Vehicle-Stop-In-Zone-Behavior Rule Type/EastToWest"]
+        related_unique_ids:
+        - Bulb Group: ["EastFacing-EastFacingBulbs"]
+
+TrafficLights:
+- ID: WestFacing
+  Pose:
+    orientation_road_network: [0, 0, 0, 1]  # RPY = (0, 0, PI)
+    position_road_network: [30., -3., 7.85]
+  BulbGroups:
+   - ID: WestFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       Color: Green
+       Type: Round
+       States: [On, Off]
+- ID: EastFacing
+  Pose:
+    orientation_road_network: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+    position_road_network: [30., 3., 7.85]
+  BulbGroups:
+   - ID: EastFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       Color: Green
+       Type: Round
+       States: [On, Off]
+
+PhaseRings:
+- ID: PedestrianCrosswalkIntersection
+  Rules: [Right-Of-Way Rule Type/WestToEast, Right-Of-Way Rule Type/EastToWest]
+  Phases:
+  - ID: AllGoPhase
+    RightOfWayRuleStates: {Right-Of-Way Rule Type/WestToEast: Go, Right-Of-Way Rule Type/EastToWest: Go}
+    TrafficLightStates:
+      WestFacing:
+          WestFacingBulbs: {RedBulb: Off, YellowBulb: Off, GreenBulb: On}
+      EastFacing:
+          EastFacingBulbs: {RedBulb: Off, YellowBulb: Off, GreenBulb: On}
+  - ID: AllStopPhase
+    RightOfWayRuleStates: {Right-Of-Way Rule Type/WestToEast: Stop, Right-Of-Way Rule Type/EastToWest: Stop}
+    TrafficLightStates:
+      WestFacing:
+          WestFacingBulbs: {RedBulb: On, YellowBulb: Off, GreenBulb: Off}
+      EastFacing:
+          EastFacingBulbs: {RedBulb: On, YellowBulb: Off, GreenBulb: Off}
+  PhaseTransitionGraph:
+    AllGoPhase:
+    - ID: AllStopPhase
+      duration_until: 30
+    AllStopPhase:
+    - ID: AllGoPhase
+      duration_until: 30
+
+Intersections:
+- ID: PedestrianCrosswalkIntersection
+  PhaseRing: PedestrianCrosswalkIntersection
+  InitialPhase: AllGoPhase

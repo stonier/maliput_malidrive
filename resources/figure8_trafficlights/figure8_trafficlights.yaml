@@ -1,0 +1,367 @@
+# -*- yaml -*-
+#
+# BSD 3-Clause License
+#
+# Copyright (c) 2022, Woven Planet. All rights reserved.
+# Copyright (c) 2020-2022, Toyota Research Institute. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+---
+RoadRulebook:
+  RightOfWayRules:
+    # Straight-through rules have both Go and Stop states and yield to no other
+    # rules.
+    - ID: NorthStraight
+      States:
+        Go: []
+        Stop: []
+      Zone:
+      # In RoadRunner, the LaneID is [road]_[section]_[lane ID].
+      - Lane: 19_0_-1
+      - Lane: 19_1_-1
+      - Lane: 19_2_-1
+      - Lane: 19_3_-1
+      - Lane: 19_4_-1
+      - Lane: 19_5_-1
+      - Lane: 19_6_-1
+      ZoneType: StopExcluded
+    - ID: SouthStraight
+      States:
+        Go: []
+        Stop: []
+      Zone:
+      - Lane: 18_6_1
+      - Lane: 18_5_1
+      - Lane: 18_4_1
+      - Lane: 18_3_1
+      - Lane: 18_2_1
+      - Lane: 18_1_1
+      - Lane: 18_0_1
+    - ID: EastStraight
+      States:
+        Go: []
+        Stop: []
+      Zone:
+      - Lane: 95_6_1
+      - Lane: 95_5_1
+      - Lane: 95_4_1
+      - Lane: 95_3_1
+      - Lane: 95_2_1
+      - Lane: 95_1_1
+      - Lane: 95_0_1
+    - ID: WestStraight
+      States:
+        Go: []
+        Stop: []
+      Zone:
+      - Lane: 96_0_-1
+      - Lane: 96_1_-1
+      - Lane: 96_2_-1
+      - Lane: 96_3_-1
+      - Lane: 96_4_-1
+      - Lane: 96_5_-1
+      - Lane: 96_6_-1
+
+
+    # Right-turn rules only have Go and StopThenGo states to model an
+    # intersection that allows turn-on-red. When in state Go, they yield to
+    # antiparallel left turn rules. When in state StopThenGo, they
+    # yield to both perpendicular straight-through rules and antiparallel
+    # left-turn rules since their original direction of travel will not have
+    # right-of-way.
+    - ID: NorthRightTurn
+      States:
+        Go: [SouthLeftTurn]
+        StopThenGo: [EastStraight, SouthLeftTurn]
+      Zone:
+      - Lane: 39_0_-1
+      - Lane: 39_1_-1
+      - Lane: 39_2_-1
+      - Lane: 39_3_-1
+      - Lane: 39_4_-1
+    - ID: SouthRightTurn
+      States:
+        Go: [NorthLeftTurn]
+        StopThenGo: [WestStraight, NorthLeftTurn]
+      Zone:
+      - Lane: 82_0_-1
+      - Lane: 82_1_-1
+      - Lane: 82_2_-1
+      - Lane: 82_3_-1
+      - Lane: 82_4_-1
+    - ID: EastRightTurn
+      States:
+        Go: [WestLeftTurn]
+        StopThenGo: [SouthStraight, WestLeftTurn]
+      Zone:
+      - Lane: 45_6_1
+      - Lane: 45_5_1
+      - Lane: 45_4_1
+      - Lane: 45_3_1
+      - Lane: 45_2_1
+      - Lane: 45_1_1
+      - Lane: 45_0_1
+    - ID: WestRightTurn
+      States:
+        Go: [EastLeftTurn]
+        StopThenGo: [NorthStraight, EastLeftTurn]
+      Zone:
+      - Lane: 65_6_1
+      - Lane: 65_5_1
+      - Lane: 65_4_1
+      - Lane: 65_3_1
+      - Lane: 65_2_1
+      - Lane: 65_1_1
+      - Lane: 65_0_1
+
+     # Left-turn rules have both Go and Stop states. They yield to antiparallel
+     # straight-through rules.
+    - ID: NorthLeftTurn
+      States:
+        Go: [SouthStraight]
+        Stop: []
+      Zone:
+      - Lane: 52_0_-1
+      - Lane: 52_1_-1
+      - Lane: 52_2_-1
+      - Lane: 52_3_-1
+      - Lane: 52_4_-1
+    - ID: SouthLeftTurn
+      States:
+        Go: [NorthStraight]
+        Stop: []
+      Zone:
+      - Lane: 60_0_-1
+      - Lane: 60_1_-1
+      - Lane: 60_2_-1
+      - Lane: 60_3_-1
+      - Lane: 60_4_-1
+
+    - ID: EastLeftTurn
+      States:
+        Go: [WestStraight]
+        Stop: []
+      Zone:
+      - Lane: 75_6_1
+      - Lane: 75_5_1
+      - Lane: 75_4_1
+      - Lane: 75_3_1
+      - Lane: 75_2_1
+      - Lane: 75_1_1
+      - Lane: 75_0_1
+    - ID: WestLeftTurn
+      States:
+        Go: [EastStraight]
+        Stop: []
+      Zone:
+      - Lane: 32_6_1
+      - Lane: 32_5_1
+      - Lane: 32_4_1
+      - Lane: 32_3_1
+      - Lane: 32_2_1
+      - Lane: 32_1_1
+      - Lane: 32_0_1
+
+  DirectionUsageRules: []  # Blank because this will be obtained from the XODR.
+
+TrafficLights:
+- ID: SouthFacing
+  Pose:
+    orientation_road_network: [0.707107, 0, 0, -0.707107]  # RPY = (0, 0, -PI/2)
+    position_road_network: [1.839, 5.435, 7.85]
+  BulbGroups:
+   - ID: SouthFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       BoundingBox:
+         min: [-0.0889, -0.1778, -0.1778]
+         max: [0.0889, 0.1778, 0.1778]
+       Color: Green
+       Type: Round
+       States: [On, Off]
+- ID: NorthFacing
+  Pose:
+    orientation_road_network: [0.707107, 0, 0, -0.707107]  # RPY = (0, 0, PI/2)
+    position_road_network: [-2.677, -6.516, 7.85]
+  BulbGroups:
+   - ID: NorthFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       Color: Green
+       Type: Round
+- ID: WestFacing
+  Pose:
+    orientation_road_network: [0, 0, 0, 1]  # RPY = (0, 0, PI)
+    position_road_network: [5.678, -1.839, 7.85]
+  BulbGroups:
+   - ID: WestFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       Color: Green
+       Type: Round
+       States: [On, Off]
+- ID: EastFacing
+  Pose:
+    orientation_road_network: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+    position_road_network:  [-6.516, 1.866, 7.85]
+  BulbGroups:
+   - ID: EastFacingBulbs
+     Pose:
+       orientation_traffic_light: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+       position_traffic_light: [0, 0, 0]
+     Bulbs:
+     - ID: RedBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0.3937]
+       Color: Red
+       Type: Round
+       States: [On, Off]
+     - ID: YellowBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, 0]
+       Color: Yellow
+       Type: Round
+       States: [On, Off]
+     - ID: GreenBulb
+       Pose:
+         orientation_bulb_group: [1, 0, 0, 0]  # RPY = (0, 0, 0)
+         position_bulb_group: [0, 0, -0.3937]
+       Color: Green
+       Type: Round
+       States: [On, Off]
+
+PhaseRings:
+- ID: Figure8Intersection
+  Rules: [NorthStraight, SouthStraight, EastStraight, WestStraight,
+          NorthRightTurn, SouthRightTurn, EastRightTurn, WestRightTurn,
+          NorthLeftTurn, SouthLeftTurn, EastLeftTurn, WestLeftTurn]
+  Phases:
+  - ID: NorthSouthPhase
+    RightOfWayRuleStates: {NorthStraight: Go, SouthStraight: Go,
+                           NorthLeftTurn: Go, SouthLeftTurn: Go,
+                           NorthRightTurn: Go, SouthRightTurn: Go,
+                           EastRightTurn: StopThenGo, WestRightTurn: StopThenGo}
+    TrafficLightStates:
+      SouthFacing:
+        SouthFacingBulbs: {GreenBulb: On}
+      NorthFacing:
+        NorthFacingBulbs: {GreenBulb: On}
+      EastFacing:
+        EastFacingBulbs: {RedBulb: On}
+      WestFacing:
+        WestFacingBulbs: {RedBulb: On}
+  - ID: EastWestPhase
+    RightOfWayRuleStates: {EastStraight: Go, WestStraight: Go,
+                           EastLeftTurn: Go, WestLeftTurn: Go,
+                           EastRightTurn: Go, WestRightTurn: Go,
+                           NorthRightTurn: StopThenGo, SouthRightTurn: StopThenGo}
+    TrafficLightStates:
+      SouthFacing:
+        SouthFacingBulbs: {RedBulb: On}
+      NorthFacing:
+        NorthFacingBulbs: {RedBulb: On}
+      EastFacing:
+        EastFacingBulbs: {GreenBulb: On}
+      WestFacing:
+        WestFacingBulbs: {GreenBulb: On}
+  PhaseTransitionGraph:
+   NorthSouthPhase:
+    - ID: EastWestPhase
+      duration_until: 45
+   EastWestPhase:
+    - ID: NorthSouthPhase
+Intersections:
+- ID: Figure8Intersection
+  PhaseRing: Figure8Intersection
+  InitialPhase: NorthSouthPhase

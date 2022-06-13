@@ -1,0 +1,4667 @@
+# -*- yaml -*-
+#
+# BSD 3-Clause License
+#
+# Copyright (c) 2022, Woven Planet. All rights reserved.
+# Copyright (c) 2020-2022, Toyota Research Institute. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Intersections:
+- ID: Intersection_0
+  InitialPhase: Default
+  PhaseRing: PhaseRing_0
+- ID: Intersection_1
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_1
+- ID: Intersection_2
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_2
+- ID: Intersection_3
+  InitialPhase: Default
+  PhaseRing: PhaseRing_3
+- ID: Intersection_4
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_4
+- ID: Intersection_5
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_5
+- ID: Intersection_6
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_6
+- ID: Intersection_7
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_7
+- ID: Intersection_8
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_8
+- ID: Intersection_9
+  InitialPhase: Default
+  PhaseRing: PhaseRing_9
+- ID: Intersection_10
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_10
+- ID: Intersection_11
+  InitialPhase: Phase_0_Green
+  PhaseRing: PhaseRing_11
+- ID: Intersection_12
+  InitialPhase: Default
+  PhaseRing: PhaseRing_12
+PhaseRings:
+- ID: PhaseRing_0
+  PhaseTransitionGraph:
+    Default:
+    - ID: Default
+  Phases:
+  - ID: Default
+    RightOfWayRuleStates:
+      RightOfWay_0: StopThenGo
+      RightOfWay_1: StopThenGo
+      RightOfWay_3: StopThenGo
+      RightOfWay_4: StopThenGo
+      RightOfWay_5: StopThenGo
+      RightOfWay_6: StopThenGo
+      RightOfWay_7: StopThenGo
+      RightOfWay_8: StopThenGo
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_0
+  - RightOfWay_1
+  - RightOfWay_3
+  - RightOfWay_4
+  - RightOfWay_5
+  - RightOfWay_6
+  - RightOfWay_7
+  - RightOfWay_8
+- ID: PhaseRing_1
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_1_Yellow
+      duration_until: 20
+    Phase_1_Yellow:
+    - ID: Phase_2_Red
+      duration_until: 4
+    Phase_2_Red:
+    - ID: Phase_3_Green
+      duration_until: 1
+    Phase_3_Green:
+    - ID: Phase_4_Yellow
+      duration_until: 20
+    Phase_4_Yellow:
+    - ID: Phase_5_Red
+      duration_until: 4
+    Phase_5_Red:
+    - ID: Phase_0_Green
+      duration_until: 1
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_10: Stop
+      RightOfWay_11: Go
+      RightOfWay_12: Go
+      RightOfWay_13: Stop
+      RightOfWay_14: StopThenGo
+      RightOfWay_15: Go
+      RightOfWay_16: Go
+      RightOfWay_17: Go
+      RightOfWay_18: Go
+      RightOfWay_19: Go
+      RightOfWay_20: Stop
+      RightOfWay_9: StopThenGo
+    TrafficLightStates:
+      TrafficLight_0:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_1:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_2:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_3:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_4:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_5:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_6:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_7:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_1_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_10: Stop
+      RightOfWay_11: Go
+      RightOfWay_12: Go
+      RightOfWay_13: Stop
+      RightOfWay_14: StopThenGo
+      RightOfWay_15: Go
+      RightOfWay_16: Go
+      RightOfWay_17: Go
+      RightOfWay_18: Go
+      RightOfWay_19: Go
+      RightOfWay_20: Stop
+      RightOfWay_9: StopThenGo
+    TrafficLightStates:
+      TrafficLight_0:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_1:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_2:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_3:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_4:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_5:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_6:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_7:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_2_Red
+    RightOfWayRuleStates:
+      RightOfWay_10: Stop
+      RightOfWay_11: Stop
+      RightOfWay_12: StopThenGo
+      RightOfWay_13: Stop
+      RightOfWay_14: StopThenGo
+      RightOfWay_15: StopThenGo
+      RightOfWay_16: Stop
+      RightOfWay_17: Stop
+      RightOfWay_18: Stop
+      RightOfWay_19: Stop
+      RightOfWay_20: Stop
+      RightOfWay_9: StopThenGo
+    TrafficLightStates:
+      TrafficLight_0:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_1:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_2:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_3:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_4:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_5:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_6:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_7:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_3_Green
+    RightOfWayRuleStates:
+      RightOfWay_10: Go
+      RightOfWay_11: Stop
+      RightOfWay_12: StopThenGo
+      RightOfWay_13: Go
+      RightOfWay_14: Go
+      RightOfWay_15: StopThenGo
+      RightOfWay_16: Stop
+      RightOfWay_17: Stop
+      RightOfWay_18: Stop
+      RightOfWay_19: Stop
+      RightOfWay_20: Go
+      RightOfWay_9: Go
+    TrafficLightStates:
+      TrafficLight_0:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_1:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_2:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_3:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_4:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_5:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_6:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_7:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+  - ID: Phase_4_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_10: Go
+      RightOfWay_11: Stop
+      RightOfWay_12: StopThenGo
+      RightOfWay_13: Go
+      RightOfWay_14: Go
+      RightOfWay_15: StopThenGo
+      RightOfWay_16: Stop
+      RightOfWay_17: Stop
+      RightOfWay_18: Stop
+      RightOfWay_19: Stop
+      RightOfWay_20: Go
+      RightOfWay_9: Go
+    TrafficLightStates:
+      TrafficLight_0:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_1:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_2:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_3:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_4:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_5:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_6:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_7:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+  - ID: Phase_5_Red
+    RightOfWayRuleStates:
+      RightOfWay_10: Stop
+      RightOfWay_11: Stop
+      RightOfWay_12: StopThenGo
+      RightOfWay_13: Stop
+      RightOfWay_14: StopThenGo
+      RightOfWay_15: StopThenGo
+      RightOfWay_16: Stop
+      RightOfWay_17: Stop
+      RightOfWay_18: Stop
+      RightOfWay_19: Stop
+      RightOfWay_20: Stop
+      RightOfWay_9: StopThenGo
+    TrafficLightStates:
+      TrafficLight_0:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_1:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_2:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_3:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_4:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_5:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_6:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_7:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  Rules:
+  - RightOfWay_9
+  - RightOfWay_10
+  - RightOfWay_11
+  - RightOfWay_12
+  - RightOfWay_13
+  - RightOfWay_14
+  - RightOfWay_15
+  - RightOfWay_16
+  - RightOfWay_17
+  - RightOfWay_18
+  - RightOfWay_19
+  - RightOfWay_20
+- ID: PhaseRing_2
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_0_Green
+      duration_until: 20
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_21: Go
+      RightOfWay_22: Go
+      RightOfWay_23: Go
+      RightOfWay_24: Go
+      RightOfWay_25: Go
+      RightOfWay_26: Go
+      RightOfWay_27: Go
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_21
+  - RightOfWay_22
+  - RightOfWay_23
+  - RightOfWay_24
+  - RightOfWay_25
+  - RightOfWay_26
+  - RightOfWay_27
+- ID: PhaseRing_3
+  PhaseTransitionGraph:
+    Default:
+    - ID: Default
+  Phases:
+  - ID: Default
+    RightOfWayRuleStates:
+      RightOfWay_28: StopThenGo
+      RightOfWay_29: StopThenGo
+      RightOfWay_30: StopThenGo
+      RightOfWay_31: StopThenGo
+      RightOfWay_32: StopThenGo
+      RightOfWay_33: StopThenGo
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_28
+  - RightOfWay_29
+  - RightOfWay_30
+  - RightOfWay_31
+  - RightOfWay_32
+  - RightOfWay_33
+- ID: PhaseRing_4
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_0_Green
+      duration_until: 20
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_34: Go
+      RightOfWay_35: Go
+      RightOfWay_36: Go
+      RightOfWay_37: Go
+      RightOfWay_39: Go
+      RightOfWay_40: Go
+      RightOfWay_41: Go
+      RightOfWay_42: Go
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_34
+  - RightOfWay_35
+  - RightOfWay_36
+  - RightOfWay_37
+  - RightOfWay_39
+  - RightOfWay_40
+  - RightOfWay_41
+  - RightOfWay_42
+- ID: PhaseRing_5
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_1_Yellow
+      duration_until: 20
+    Phase_1_Yellow:
+    - ID: Phase_2_Red
+      duration_until: 4
+    Phase_2_Red:
+    - ID: Phase_3_Green
+      duration_until: 1
+    Phase_3_Green:
+    - ID: Phase_4_Yellow
+      duration_until: 10
+    Phase_4_Yellow:
+    - ID: Phase_5_Red
+      duration_until: 4
+    Phase_5_Red:
+    - ID: Phase_6_Green
+      duration_until: 1
+    Phase_6_Green:
+    - ID: Phase_7_Yellow
+      duration_until: 20
+    Phase_7_Yellow:
+    - ID: Phase_8_Red
+      duration_until: 4
+    Phase_8_Red:
+    - ID: Phase_0_Green
+      duration_until: 1
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_43: Go
+      RightOfWay_44: Go
+      RightOfWay_45: Go
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Go
+      RightOfWay_49: Go
+      RightOfWay_50: Stop
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: Go
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+  - ID: Phase_1_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_43: Go
+      RightOfWay_44: Go
+      RightOfWay_45: Go
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Go
+      RightOfWay_49: Go
+      RightOfWay_50: Stop
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: Go
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+  - ID: Phase_2_Red
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Stop
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_3_Green
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Go
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_4_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Go
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_5_Red
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Stop
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_6_Green
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Go
+      RightOfWay_47: Go
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Stop
+      RightOfWay_51: Go
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_7_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Go
+      RightOfWay_47: Go
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Stop
+      RightOfWay_51: Go
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_8_Red
+    RightOfWayRuleStates:
+      RightOfWay_43: StopThenGo
+      RightOfWay_44: Stop
+      RightOfWay_45: Stop
+      RightOfWay_46: Stop
+      RightOfWay_47: StopThenGo
+      RightOfWay_48: Stop
+      RightOfWay_49: Stop
+      RightOfWay_50: Stop
+      RightOfWay_51: StopThenGo
+      RightOfWay_52: StopThenGo
+    TrafficLightStates:
+      TrafficLight_10:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_11:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_12:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_13:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_14:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_15:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_8:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_9:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  Rules:
+  - RightOfWay_43
+  - RightOfWay_44
+  - RightOfWay_45
+  - RightOfWay_46
+  - RightOfWay_47
+  - RightOfWay_48
+  - RightOfWay_49
+  - RightOfWay_50
+  - RightOfWay_51
+  - RightOfWay_52
+- ID: PhaseRing_6
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_0_Green
+      duration_until: 20
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_53: Go
+      RightOfWay_54: Go
+      RightOfWay_55: Go
+      RightOfWay_56: Go
+      RightOfWay_57: Go
+      RightOfWay_58: Go
+      RightOfWay_59: Go
+      RightOfWay_60: Go
+      RightOfWay_61: Go
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_53
+  - RightOfWay_54
+  - RightOfWay_55
+  - RightOfWay_56
+  - RightOfWay_57
+  - RightOfWay_58
+  - RightOfWay_59
+  - RightOfWay_60
+  - RightOfWay_61
+- ID: PhaseRing_7
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_0_Green
+      duration_until: 20
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_62: Go
+      RightOfWay_63: Go
+      RightOfWay_64: Go
+      RightOfWay_65: Go
+      RightOfWay_66: Go
+      RightOfWay_67: Go
+      RightOfWay_68: Go
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_62
+  - RightOfWay_63
+  - RightOfWay_64
+  - RightOfWay_65
+  - RightOfWay_66
+  - RightOfWay_67
+  - RightOfWay_68
+- ID: PhaseRing_8
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_1_Green
+      duration_until: 20
+    Phase_1_Green:
+    - ID: Phase_0_Green
+      duration_until: 20
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_69: Go
+      RightOfWay_70: Go
+      RightOfWay_71: Stop
+      RightOfWay_72: Stop
+      RightOfWay_73: Stop
+      RightOfWay_74: Go
+      RightOfWay_75: Stop
+      RightOfWay_76: Go
+      RightOfWay_77: Go
+      RightOfWay_78: Stop
+    TrafficLightStates: {}
+  - ID: Phase_1_Green
+    RightOfWayRuleStates:
+      RightOfWay_69: Stop
+      RightOfWay_70: Stop
+      RightOfWay_71: Go
+      RightOfWay_72: Go
+      RightOfWay_73: Go
+      RightOfWay_74: Stop
+      RightOfWay_75: Go
+      RightOfWay_76: Stop
+      RightOfWay_77: Stop
+      RightOfWay_78: Go
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_69
+  - RightOfWay_70
+  - RightOfWay_71
+  - RightOfWay_72
+  - RightOfWay_73
+  - RightOfWay_74
+  - RightOfWay_75
+  - RightOfWay_76
+  - RightOfWay_77
+  - RightOfWay_78
+- ID: PhaseRing_9
+  PhaseTransitionGraph:
+    Default:
+    - ID: Default
+  Phases:
+  - ID: Default
+    RightOfWayRuleStates:
+      RightOfWay_79: StopThenGo
+      RightOfWay_80: StopThenGo
+      RightOfWay_81: StopThenGo
+      RightOfWay_82: StopThenGo
+      RightOfWay_83: StopThenGo
+      RightOfWay_84: StopThenGo
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_79
+  - RightOfWay_80
+  - RightOfWay_81
+  - RightOfWay_82
+  - RightOfWay_83
+  - RightOfWay_84
+- ID: PhaseRing_10
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_1_Yellow
+      duration_until: 20
+    Phase_1_Yellow:
+    - ID: Phase_2_Red
+      duration_until: 4
+    Phase_2_Red:
+    - ID: Phase_3_Green
+      duration_until: 1
+    Phase_3_Green:
+    - ID: Phase_4_Yellow
+      duration_until: 20
+    Phase_4_Yellow:
+    - ID: Phase_5_Red
+      duration_until: 4
+    Phase_5_Red:
+    - ID: Phase_0_Green
+      duration_until: 1
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_85: Go
+      RightOfWay_86: Go
+      RightOfWay_87: StopThenGo
+      RightOfWay_88: Stop
+      RightOfWay_89: Go
+      RightOfWay_90: Go
+      RightOfWay_91: Go
+    TrafficLightStates:
+      TrafficLight_16:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_17:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_18:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_19:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_20:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_21:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+  - ID: Phase_1_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_85: Go
+      RightOfWay_86: Go
+      RightOfWay_87: StopThenGo
+      RightOfWay_88: Stop
+      RightOfWay_89: Go
+      RightOfWay_90: Go
+      RightOfWay_91: Go
+    TrafficLightStates:
+      TrafficLight_16:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_17:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_18:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_19:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_20:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_21:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+  - ID: Phase_2_Red
+    RightOfWayRuleStates:
+      RightOfWay_85: Stop
+      RightOfWay_86: StopThenGo
+      RightOfWay_87: StopThenGo
+      RightOfWay_88: Stop
+      RightOfWay_89: Stop
+      RightOfWay_90: Stop
+      RightOfWay_91: Stop
+    TrafficLightStates:
+      TrafficLight_16:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_17:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_18:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_19:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_20:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_21:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_3_Green
+    RightOfWayRuleStates:
+      RightOfWay_85: Stop
+      RightOfWay_86: StopThenGo
+      RightOfWay_87: Go
+      RightOfWay_88: Go
+      RightOfWay_89: Stop
+      RightOfWay_90: Stop
+      RightOfWay_91: Stop
+    TrafficLightStates:
+      TrafficLight_16:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_17:
+        bulbgroup_0:
+          light_green: 'On'
+          light_red: 'Off'
+          light_yellow: 'Off'
+      TrafficLight_18:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_19:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_20:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_21:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_4_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_85: Stop
+      RightOfWay_86: StopThenGo
+      RightOfWay_87: Go
+      RightOfWay_88: Go
+      RightOfWay_89: Stop
+      RightOfWay_90: Stop
+      RightOfWay_91: Stop
+    TrafficLightStates:
+      TrafficLight_16:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_17:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'Off'
+          light_yellow: 'On'
+      TrafficLight_18:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_19:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_20:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_21:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  - ID: Phase_5_Red
+    RightOfWayRuleStates:
+      RightOfWay_85: Stop
+      RightOfWay_86: StopThenGo
+      RightOfWay_87: StopThenGo
+      RightOfWay_88: Stop
+      RightOfWay_89: Stop
+      RightOfWay_90: Stop
+      RightOfWay_91: Stop
+    TrafficLightStates:
+      TrafficLight_16:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_17:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_18:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_19:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_20:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+      TrafficLight_21:
+        bulbgroup_0:
+          light_green: 'Off'
+          light_red: 'On'
+          light_yellow: 'Off'
+  Rules:
+  - RightOfWay_85
+  - RightOfWay_86
+  - RightOfWay_87
+  - RightOfWay_88
+  - RightOfWay_89
+  - RightOfWay_90
+  - RightOfWay_91
+- ID: PhaseRing_11
+  PhaseTransitionGraph:
+    Phase_0_Green:
+    - ID: Phase_1_Yellow
+      duration_until: 20
+    Phase_10_Yellow:
+    - ID: Phase_11_Red
+      duration_until: 4
+    Phase_11_Red:
+    - ID: Phase_0_Green
+      duration_until: 1
+    Phase_1_Yellow:
+    - ID: Phase_2_Red
+      duration_until: 4
+    Phase_2_Red:
+    - ID: Phase_3_Green
+      duration_until: 1
+    Phase_3_Green:
+    - ID: Phase_4_Yellow
+      duration_until: 20
+    Phase_4_Yellow:
+    - ID: Phase_5_Red
+      duration_until: 4
+    Phase_5_Red:
+    - ID: Phase_6_Green
+      duration_until: 1
+    Phase_6_Green:
+    - ID: Phase_7_Yellow
+      duration_until: 20
+    Phase_7_Yellow:
+    - ID: Phase_8_Red
+      duration_until: 4
+    Phase_8_Red:
+    - ID: Phase_9_Green
+      duration_until: 1
+    Phase_9_Green:
+    - ID: Phase_10_Yellow
+      duration_until: 20
+  Phases:
+  - ID: Phase_0_Green
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: Go
+      RightOfWay_93: Go
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_1_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: Go
+      RightOfWay_93: Go
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_2_Red
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_3_Green
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Go
+      RightOfWay_95: Go
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_4_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Go
+      RightOfWay_95: Go
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_5_Red
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_6_Green
+    RightOfWayRuleStates:
+      RightOfWay_100: Go
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Go
+      RightOfWay_97: Go
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_7_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_100: Go
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Go
+      RightOfWay_97: Go
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_8_Red
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  - ID: Phase_9_Green
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Go
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: Go
+      RightOfWay_99: Go
+    TrafficLightStates: {}
+  - ID: Phase_10_Yellow
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Go
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: Go
+      RightOfWay_99: Go
+    TrafficLightStates: {}
+  - ID: Phase_11_Red
+    RightOfWayRuleStates:
+      RightOfWay_100: Stop
+      RightOfWay_101: Stop
+      RightOfWay_92: StopThenGo
+      RightOfWay_93: Stop
+      RightOfWay_94: Stop
+      RightOfWay_95: StopThenGo
+      RightOfWay_96: Stop
+      RightOfWay_97: StopThenGo
+      RightOfWay_98: StopThenGo
+      RightOfWay_99: Stop
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_92
+  - RightOfWay_93
+  - RightOfWay_94
+  - RightOfWay_95
+  - RightOfWay_96
+  - RightOfWay_97
+  - RightOfWay_98
+  - RightOfWay_99
+  - RightOfWay_100
+  - RightOfWay_101
+- ID: PhaseRing_12
+  PhaseTransitionGraph:
+    Default:
+    - ID: Default
+  Phases:
+  - ID: Default
+    RightOfWayRuleStates:
+      RightOfWay_102: StopThenGo
+      RightOfWay_103: StopThenGo
+      RightOfWay_104: StopThenGo
+      RightOfWay_105: StopThenGo
+      RightOfWay_106: StopThenGo
+      RightOfWay_107: StopThenGo
+      RightOfWay_108: StopThenGo
+      RightOfWay_109: StopThenGo
+      RightOfWay_110: StopThenGo
+    TrafficLightStates: {}
+  Rules:
+  - RightOfWay_102
+  - RightOfWay_103
+  - RightOfWay_104
+  - RightOfWay_105
+  - RightOfWay_106
+  - RightOfWay_107
+  - RightOfWay_108
+  - RightOfWay_109
+  - RightOfWay_110
+RoadRulebook:
+  DirectionUsageRules: []
+  RightOfWayRules:
+  - ID: RightOfWay_0
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 65_0_-7
+    ZoneType: StopExcluded
+  - ID: RightOfWay_1
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '64_0_4'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_3
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 65_0_-6
+    ZoneType: StopExcluded
+  - ID: RightOfWay_4
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '64_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_5
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 65_0_-5
+    ZoneType: StopExcluded
+  - ID: RightOfWay_6
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 65_0_-4
+    ZoneType: StopExcluded
+  - ID: RightOfWay_7
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '64_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_8
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '64_0_3'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_9
+    RelatedBulbGroups:
+      TrafficLight_6:
+      - bulbgroup_0
+      TrafficLight_7:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '135_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_10
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '151_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_11
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 125_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_12
+    RelatedBulbGroups:
+      TrafficLight_0:
+      - bulbgroup_0
+      TrafficLight_1:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 123_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_13
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '115_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_14
+    RelatedBulbGroups:
+      TrafficLight_4:
+      - bulbgroup_0
+      TrafficLight_5:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '144_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_15
+    RelatedBulbGroups:
+      TrafficLight_2:
+      - bulbgroup_0
+      TrafficLight_3:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 158_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_16
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 139_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_17
+    RelatedBulbGroups:
+      TrafficLight_0:
+      - bulbgroup_0
+      TrafficLight_1:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 98_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_18
+    RelatedBulbGroups:
+      TrafficLight_2:
+      - bulbgroup_0
+      TrafficLight_3:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '97_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_19
+    RelatedBulbGroups:
+      TrafficLight_0:
+      - bulbgroup_0
+      TrafficLight_1:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 98_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_20
+    RelatedBulbGroups:
+      TrafficLight_4:
+      - bulbgroup_0
+      TrafficLight_5:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 174_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_21
+    States:
+      Go: []
+    Zone:
+    - Lane: 217_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_22
+    States:
+      Go: []
+    Zone:
+    - Lane: '178_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_23
+    States:
+      Go: []
+    Zone:
+    - Lane: '218_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_24
+    States:
+      Go: []
+    Zone:
+    - Lane: 183_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_25
+    States:
+      Go: []
+    Zone:
+    - Lane: 198_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_26
+    States:
+      Go: []
+    Zone:
+    - Lane: 198_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_27
+    States:
+      Go: []
+    Zone:
+    - Lane: '197_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_28
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 227_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_29
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 227_0_-3
+    ZoneType: StopExcluded
+  - ID: RightOfWay_30
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 227_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_31
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '230_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_32
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '230_0_3'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_33
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '230_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_34
+    States:
+      Go: []
+    Zone:
+    - Lane: 254_0_-4
+    ZoneType: StopExcluded
+  - ID: RightOfWay_35
+    States:
+      Go: []
+    Zone:
+    - Lane: 254_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_36
+    States:
+      Go: []
+    Zone:
+    - Lane: '253_0_7'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_37
+    States:
+      Go: []
+    Zone:
+    - Lane: 254_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_39
+    States:
+      Go: []
+    Zone:
+    - Lane: 254_0_-3
+    ZoneType: StopExcluded
+  - ID: RightOfWay_40
+    States:
+      Go: []
+    Zone:
+    - Lane: '253_0_5'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_41
+    States:
+      Go: []
+    Zone:
+    - Lane: '253_0_6'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_42
+    States:
+      Go: []
+    Zone:
+    - Lane: '253_0_4'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_43
+    RelatedBulbGroups:
+      TrafficLight_11:
+      - bulbgroup_0
+      TrafficLight_12:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '319_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_44
+    RelatedBulbGroups:
+      TrafficLight_11:
+      - bulbgroup_0
+      TrafficLight_12:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '300_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_45
+    RelatedBulbGroups:
+      TrafficLight_11:
+      - bulbgroup_0
+      TrafficLight_12:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '294_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_46
+    RelatedBulbGroups:
+      TrafficLight_13:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 325_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_47
+    RelatedBulbGroups:
+      TrafficLight_14:
+      - bulbgroup_0
+      TrafficLight_15:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '264_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_48
+    RelatedBulbGroups:
+      TrafficLight_10:
+      - bulbgroup_0
+      TrafficLight_9:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 313_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_49
+    RelatedBulbGroups:
+      TrafficLight_10:
+      - bulbgroup_0
+      TrafficLight_9:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 306_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_50
+    RelatedBulbGroups:
+      TrafficLight_8:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 273_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_51
+    RelatedBulbGroups:
+      TrafficLight_14:
+      - bulbgroup_0
+      TrafficLight_15:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '267_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_52
+    RelatedBulbGroups:
+      TrafficLight_11:
+      - bulbgroup_0
+      TrafficLight_12:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '331_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_53
+    States:
+      Go: []
+    Zone:
+    - Lane: '348_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_54
+    States:
+      Go: []
+    Zone:
+    - Lane: '348_0_4'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_55
+    States:
+      Go: []
+    Zone:
+    - Lane: 349_0_-4
+    ZoneType: StopExcluded
+  - ID: RightOfWay_56
+    States:
+      Go: []
+    Zone:
+    - Lane: '348_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_57
+    States:
+      Go: []
+    Zone:
+    - Lane: 349_0_-6
+    ZoneType: StopExcluded
+  - ID: RightOfWay_58
+    States:
+      Go: []
+    Zone:
+    - Lane: 349_0_-5
+    ZoneType: StopExcluded
+  - ID: RightOfWay_59
+    States:
+      Go: []
+    Zone:
+    - Lane: '348_0_3'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_60
+    States:
+      Go: []
+    Zone:
+    - Lane: 349_0_-7
+    ZoneType: StopExcluded
+  - ID: RightOfWay_61
+    States:
+      Go: []
+    Zone:
+    - Lane: '360_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_62
+    States:
+      Go: []
+    Zone:
+    - Lane: 384_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_63
+    States:
+      Go: []
+    Zone:
+    - Lane: 375_0_-3
+    ZoneType: StopExcluded
+  - ID: RightOfWay_64
+    States:
+      Go: []
+    Zone:
+    - Lane: '374_0_5'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_65
+    States:
+      Go: []
+    Zone:
+    - Lane: '374_0_4'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_66
+    States:
+      Go: []
+    Zone:
+    - Lane: 375_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_67
+    States:
+      Go: []
+    Zone:
+    - Lane: 375_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_68
+    States:
+      Go: []
+    Zone:
+    - Lane: '378_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_69
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '533_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_70
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 395_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_71
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 934_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_72
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '1033_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_73
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 821_0_-3
+    ZoneType: StopExcluded
+  - ID: RightOfWay_74
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 821_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_75
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '820_0_6'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_76
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '820_0_5'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_77
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 821_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_78
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '820_0_4'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_79
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1071_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_80
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1076_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_81
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1096_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_82
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1096_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_83
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1095_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_84
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1095_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_85
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 1136_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_86
+    RelatedBulbGroups:
+      TrafficLight_20:
+      - bulbgroup_0
+      TrafficLight_21:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 1128_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_87
+    RelatedBulbGroups:
+      TrafficLight_16:
+      - bulbgroup_0
+      TrafficLight_17:
+      - bulbgroup_0
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 1141_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_88
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '1132_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_89
+    RelatedBulbGroups:
+      TrafficLight_18:
+      - bulbgroup_0
+      TrafficLight_19:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '1123_0_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_90
+    RelatedBulbGroups:
+      TrafficLight_20:
+      - bulbgroup_0
+      TrafficLight_21:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 1124_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_91
+    RelatedBulbGroups:
+      TrafficLight_20:
+      - bulbgroup_0
+      TrafficLight_21:
+      - bulbgroup_0
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 1124_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_92
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 1217_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_93
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '1191_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_94
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '1219_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_95
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: '1182_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_96
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 1177_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_97
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 1144_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_98
+    States:
+      Go: []
+      StopThenGo: []
+    Zone:
+    - Lane: 1188_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_99
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: '1145_0_1'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_100
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 1173_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_101
+    States:
+      Go: []
+      Stop: []
+    Zone:
+    - Lane: 1210_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_102
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1227_1_2'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_103
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1244_0_-3
+    ZoneType: StopExcluded
+  - ID: RightOfWay_104
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1243_0_7'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_105
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1244_0_-4
+    ZoneType: StopExcluded
+  - ID: RightOfWay_106
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1243_0_4'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_107
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1244_0_-1
+    ZoneType: StopExcluded
+  - ID: RightOfWay_108
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: 1244_0_-2
+    ZoneType: StopExcluded
+  - ID: RightOfWay_109
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1243_0_6'
+    ZoneType: StopExcluded
+  - ID: RightOfWay_110
+    States:
+      StopThenGo: []
+    Zone:
+    - Lane: '1243_0_5'
+    ZoneType: StopExcluded
+TrafficLights:
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_0
+  Pose:
+    orientation_road_network:
+    - 0.34758134259392814
+    - 0.0
+    - 0.0
+    - 0.9376498335096116
+    position_road_network:
+    - -374.5472900228559
+    - -76.55574740867469
+    - 18.139093067528812
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_1
+  Pose:
+    orientation_road_network:
+    - 0.49968761757337804
+    - 0.0
+    - 0.0
+    - 0.866205682758917
+    position_road_network:
+    - -378.28663428404246
+    - -80.31693475360528
+    - 14.640688615153277
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_2
+  Pose:
+    orientation_road_network:
+    - 0.9433762626857983
+    - -0.0
+    - -0.0
+    - -0.33172462525561125
+    position_road_network:
+    - -378.03845680965406
+    - -62.18863036279181
+    - 18.194112657429464
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_3
+  Pose:
+    orientation_road_network:
+    - 0.8662138356474162
+    - -0.0
+    - -0.0
+    - -0.4996734843205021
+    position_road_network:
+    - -373.9285612170242
+    - -58.055084127087085
+    - 14.641187495464838
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_4
+  Pose:
+    orientation_road_network:
+    - 0.3679059213567822
+    - -0.0
+    - -0.0
+    - -0.9298630184229381
+    position_road_network:
+    - -366.7541317902651
+    - -63.19649932745071
+    - 17.24796872791661
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_5
+  Pose:
+    orientation_road_network:
+    - 0.295056628781319
+    - -0.0
+    - -0.0
+    - -0.9554797673484263
+    position_road_network:
+    - -364.4937705186827
+    - -66.15268417015442
+    - 14.36826452892754
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_6
+  Pose:
+    orientation_road_network:
+    - 0.9254417804085464
+    - 0.0
+    - 0.0
+    - 0.3788898402890472
+    position_road_network:
+    - -385.2849099456317
+    - -75.80038306785939
+    - 17.24673890579514
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_7
+  Pose:
+    orientation_road_network:
+    - 0.9527950171387571
+    - 0.0
+    - 0.0
+    - 0.3036143200106929
+    position_road_network:
+    - -387.7795594282201
+    - -73.03927310749846
+    - 14.366816677595907
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_8
+  Pose:
+    orientation_road_network:
+    - 0.35178740461028896
+    - 0.0
+    - 0.0
+    - 0.9360799228471663
+    position_road_network:
+    - -272.39340900379506
+    - -170.8501216038088
+    - 18.244967626744803
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_9
+  Pose:
+    orientation_road_network:
+    - 0.3961727875967745
+    - 0.0
+    - 0.0
+    - 0.9181759757082523
+    position_road_network:
+    - -274.94247207406386
+    - -173.39918900337847
+    - 17.972288426812746
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_10
+  Pose:
+    orientation_road_network:
+    - 0.44597099547946495
+    - 0.0
+    - 0.0
+    - 0.895047412817363
+    position_road_network:
+    - -277.88750892628656
+    - -176.34427847029824
+    - 14.643909715058506
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_11
+  Pose:
+    orientation_road_network:
+    - 0.9328633053392067
+    - -0.0
+    - -0.0
+    - -0.3602305561048508
+    position_road_network:
+    - -295.56224182447903
+    - -142.63169177908003
+    - 18.225889343194364
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_12
+  Pose:
+    orientation_road_network:
+    - 0.8997455984419332
+    - -0.0
+    - -0.0
+    - -0.4364147775733167
+    position_road_network:
+    - -290.75863174422017
+    - -138.51508923697503
+    - 14.642457401332297
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_13
+  Pose:
+    orientation_road_network:
+    - 0.9311773676874364
+    - 0.0
+    - 0.0
+    - 0.364566468434354
+    position_road_network:
+    - -295.28171708707055
+    - -161.54621530211472
+    - 18.244193487016183
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_14
+  Pose:
+    orientation_road_network:
+    - 0.907433251809807
+    - 0.0
+    - 0.0
+    - 0.4201962559446232
+    position_road_network:
+    - -297.86348680479534
+    - -159.03026635046274
+    - 17.971636040701764
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_15
+  Pose:
+    orientation_road_network:
+    - 0.9364033824624614
+    - 0.0
+    - 0.0
+    - 0.35092549823696395
+    position_road_network:
+    - -300.8463018827584
+    - -156.12328418862347
+    - 14.643398005372202
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_16
+  Pose:
+    orientation_road_network:
+    - 0.9349494568761981
+    - 0.0
+    - 0.0
+    - 0.35478093675802547
+    position_road_network:
+    - -517.3255116737649
+    - -203.2125446583588
+    - 17.234613257538484
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_17
+  Pose:
+    orientation_road_network:
+    - 0.9627560910567695
+    - 0.0
+    - 0.0
+    - 0.2703714281004732
+    position_road_network:
+    - -519.707284996499
+    - -200.35347948591004
+    - 14.354707038137292
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_18
+  Pose:
+    orientation_road_network:
+    - 0.368006589607097
+    - 0.0
+    - 0.0
+    - 0.9298231821189197
+    position_road_network:
+    - -508.1975621649708
+    - -206.70698136630537
+    - 17.23523354641179
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_19
+  Pose:
+    orientation_road_network:
+    - 0.49329235868646115
+    - 0.0
+    - 0.0
+    - 0.8698635806041932
+    position_road_network:
+    - -511.2268582257086
+    - -208.86782715304489
+    - 14.35511759633021
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_20
+  Pose:
+    orientation_road_network:
+    - 0.9104250807005022
+    - -0.0
+    - -0.0
+    - -0.41367399293584317
+    position_road_network:
+    - -509.771793054058
+    - -190.1888492347413
+    - 17.23562261057846
+- BulbGroups:
+  - Bulbs:
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Green
+      ID: light_green
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Red
+      ID: light_red
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    - BoundingBox:
+        max:
+        - 0.5
+        - 0.5
+        - 0.5
+        min:
+        - -0.5
+        - -0.5
+        - -0.5
+      Color: Yellow
+      ID: light_yellow
+      Pose:
+        orientation_bulb_group:
+        - 0
+        - 0
+        - 0
+        - 1
+        position_bulb_group:
+        - 0
+        - 0
+        - 0
+      States:
+      - 'On'
+      - 'Off'
+      Type: Round
+    ID: bulbgroup_0
+    Pose:
+      orientation_traffic_light:
+      - 0
+      - 0
+      - 0
+      - 1
+      position_traffic_light:
+      - 0
+      - 0
+      - 0
+  ID: TrafficLight_21
+  Pose:
+    orientation_road_network:
+    - 0.855722655018206
+    - -0.0
+    - -0.0
+    - -0.5174347666021218
+    position_road_network:
+    - -506.90015741617884
+    - -187.82175868492584
+    - 14.356117998670939

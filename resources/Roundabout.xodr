@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ BSD 3-Clause License
+
+ Copyright (c) 2022, Woven Planet. All rights reserved.
+ Copyright (c) 2020-2022, Toyota Research Institute. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<OpenDRIVE>
+    <header revMajor="1" revMinor="4" name="roundabout" version="1" date="2018-11-15T13:17:33" north="1.2000000000000000e+2" south="-2.0000000000000007e+1" east="1.2000000000000000e+2" west="-2.0000000000000007e+1" vendor="VectorZero"/>
+    <road name="Road 0" length="3.1415729403670798e+2" id="1" junction="-1">
+        <link/>
+        <planView>
+            <geometry s="0.0000000000000000e+0" x="5.0000000000000000e+1" y="0.0000000000000000e+0" hdg="0.0000000000000000e+0" length="7.8539816339744831e+1">
+                <arc curvature="1.9999999999999997e-2"/>
+            </geometry>
+            <geometry s="7.8539817810058594e+1" x="1.0000000000000000e+2" y="5.0000000000000000e+1" hdg="1.5707963267948966e+0" length="7.8539816339744846e+1">
+                <arc curvature="1.9999999999999997e-2"/>
+            </geometry>
+            <geometry s="1.5707963562011719e+2" x="5.0000000000000000e+1" y="1.0000000000000000e+2" hdg="3.1415926535897931e+0" length="7.8539816339744846e+1">
+                <arc curvature="1.9999999999999997e-2"/>
+            </geometry>
+            <geometry s="2.3561944580078125e+2" x="0.0000000000000000e+0" y="5.0000000000000000e+1" hdg="-1.5707963267948966e+0" length="7.8537848235926731e+1">
+                <arc curvature="1.9999999999999997e-2"/>
+            </geometry>
+        </planView>
+        <elevationProfile>
+            <elevation s="0.0000000000000000e+0" a="0.0000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+        </elevationProfile>
+        <lanes>
+            <laneOffset s="0.0000000000000000e+0" a="0.0000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+            <laneSection s="0.0000000000000000e+0">
+                <left>
+                    <lane id="4" type="sidewalk" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="2.0000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="" color="white" width="0.0000000000000000e+0"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                    <lane id="3" type="sidewalk" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="6.3499999999999979e-1" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="" color="white" width="0.0000000000000000e+0"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                    <lane id="2" type="shoulder" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="5.0000000000000000e-1" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="" color="white" width="0.0000000000000000e+0"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                    <lane id="1" type="driving" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="3.5000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="solid" material="" color="white" width="1.2500000000000000e-1"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                </left>
+                <center>
+                    <lane id="0" type="none" level="false">
+                        <roadMark sOffset="0.0000000000000000e+0" type="solid solid" material="" color="yellow" width="1.2500000000000000e-1"/>
+                    </lane>
+                </center>
+                <right>
+                    <lane id="-1" type="driving" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="3.5000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="solid" material="" color="white" width="1.2500000000000000e-1"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                    <lane id="-2" type="shoulder" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="5.0000000000000000e-1" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="" color="white" width="0.0000000000000000e+0"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                    <lane id="-3" type="sidewalk" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="6.3499999999999979e-1" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="" color="white" width="0.0000000000000000e+0"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                    <lane id="-4" type="sidewalk" level="false">
+                        <width sOffset="0.0000000000000000e+0" a="2.0000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="" color="white" width="0.0000000000000000e+0"/>
+                        <speed sOffset="0.0000000000000000e+0" max="1.7881599664688110e+1" unit="m/s"/>
+                    </lane>
+                </right>
+            </laneSection>
+        </lanes>
+    </road>
+</OpenDRIVE>
