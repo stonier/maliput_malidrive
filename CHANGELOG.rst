@@ -2,8 +2,8 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.0 (2022-06-13)
+------------------
 * Use <doc_depend> for ament_cmake_doxygen dependency (`#217 <https://github.com/maliput/maliput_malidrive/issues/217>`_)
 * Uses ros-action-ci in build.yaml workflow. (`#218 <https://github.com/maliput/maliput_malidrive/issues/218>`_)
 * Moves package to root (`#216 <https://github.com/maliput/maliput_malidrive/issues/216>`_)
