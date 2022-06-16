@@ -2,8 +2,8 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.1 (2022-06-16)
+------------------
 * Standardizes CFlags configuration. (`#222 <https://github.com/ToyotaResearchInstitute/maliput_malidrive/issues/222>`_)
 * Suppresses old-rule-api-related deprecation warnings.
 * Fixes include folder installation.
