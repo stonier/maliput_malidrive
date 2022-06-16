@@ -2,6 +2,13 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Standardizes CFlags configuration. (`#222 <https://github.com/ToyotaResearchInstitute/maliput_malidrive/issues/222>`_)
+* Suppresses old-rule-api-related deprecation warnings.
+* Fixes include folder installation.
+* Contributors: Franco Cipollone
+
 0.1.0 (2022-06-13)
 ------------------
 * Use <doc_depend> for ament_cmake_doxygen dependency (`#217 <https://github.com/maliput/maliput_malidrive/issues/217>`_)
