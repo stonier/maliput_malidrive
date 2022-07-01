@@ -2,6 +2,11 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes environment hooks. (`#223 <https://github.com/maliput/maliput_malidrive/issues/223>`_)
+* Contributors: Franco Cipollone
+
 0.1.1 (2022-06-16)
 ------------------
 * Standardizes CFlags configuration. (`#222 <https://github.com/ToyotaResearchInstitute/maliput_malidrive/issues/222>`_)
