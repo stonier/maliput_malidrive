@@ -2,8 +2,8 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2022-07-01)
+------------------
 * Fixes environment hooks. (`#223 <https://github.com/maliput/maliput_malidrive/issues/223>`_)
 * Contributors: Franco Cipollone
 
