@@ -103,9 +103,9 @@ class RoadGeometry final : public maliput::geometry_base::RoadGeometry {
     std::unique_ptr<road_curve::Function> reference_line_offset;
   };
 
-  maliput::api::RoadPositionResult DoToRoadPosition(
-      const maliput::api::InertialPosition& inertial_pos,
-      const std::optional<maliput::api::RoadPosition>& hint) const override;
+  // maliput::api::RoadPositionResult DoToRoadPosition(
+  //     const maliput::api::InertialPosition& inertial_pos,
+  //     const std::optional<maliput::api::RoadPosition>& hint) const override;
 
   std::vector<maliput::api::RoadPositionResult> DoFindRoadPositions(
       const maliput::api::InertialPosition& inertial_position, double radius) const override;
