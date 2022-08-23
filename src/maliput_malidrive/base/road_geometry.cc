@@ -49,6 +49,7 @@ namespace {
 // - When the new position falls within `lane`'s lane bounds and
 //   `road_position_result.road_position.pos` doesn't.
 //
+/*
 bool IsNewRoadPositionResultCloser(const maliput::api::RoadPositionResult& new_road_position_result,
                                    const maliput::api::RoadPositionResult& road_position_result) {
   const double delta = new_road_position_result.distance - road_position_result.distance;
@@ -94,7 +95,7 @@ bool IsNewRoadPositionResultCloser(const maliput::api::RoadPositionResult& new_r
     return true;
   }
   return false;
-}
+}*/
 
 }  // namespace
 
