@@ -38,7 +38,6 @@
 #include <maliput/common/maliput_unused.h>
 #include <maliput/geometry_base/branch_point.h>
 #include <maliput/geometry_base/junction.h>
-#include <maliput/geometry_base/spacial_reorganization.h>
 #include <maliput/utility/thread_pool.h>
 
 #include "maliput_malidrive/builder/determine_tolerance.h"
@@ -561,7 +560,7 @@ std::unique_ptr<const maliput::api::RoadGeometry> RoadGeometryBuilder::DoBuild()
   }
 
   maliput::log()->trace("Using kdtree for spacial reorganization.");
-  rg->SpacialReorganization(maliput::geometry_base::SpacialReorganization::Type::kKDTree);
+  rg->InitializeStrategy<maliput::geometry_base::KDTreeStrategy>();
   maliput::log()->trace("RoadGeometry is built.");
   return rg;
 }
