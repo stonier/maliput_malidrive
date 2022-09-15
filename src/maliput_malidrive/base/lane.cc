@@ -39,6 +39,15 @@
 #include "maliput_malidrive/road_curve/open_range_validator.h"
 
 namespace malidrive {
+namespace {
+
+// Values used for the InertialToLaneSegmentPositionBackend method.
+// @{
+static constexpr bool kUseLaneBoundaries = true;
+static constexpr bool kUseSegmentBoundaries = !kUseLaneBoundaries;
+// @}
+
+}  // namespace
 
 using maliput::math::Vector3;
 
@@ -189,11 +198,24 @@ Vector3 Lane::BackendFrameToLaneFrame(const Vector3& xyz) const {
 
 void Lane::DoToLanePositionBackend(const maliput::math::Vector3& backend_pos, maliput::api::LanePosition* lane_position,
                                    maliput::math::Vector3* nearest_backend_pos, double* distance) const {
+  InertialToLaneSegmentPositionBackend(kUseLaneBoundaries, backend_pos, lane_position, nearest_backend_pos, distance);
+}
+
+void Lane::DoToSegmentPositionBackend(const maliput::math::Vector3& backend_pos,
+                                      maliput::api::LanePosition* lane_position,
+                                      maliput::math::Vector3* nearest_backend_pos, double* distance) const {
+  InertialToLaneSegmentPositionBackend(kUseSegmentBoundaries, backend_pos, lane_position, nearest_backend_pos,
+                                       distance);
+}
+
+void Lane::InertialToLaneSegmentPositionBackend(bool use_lane_boundaries, const maliput::math::Vector3& backend_pos,
+                                                maliput::api::LanePosition* lane_position,
+                                                maliput::math::Vector3* nearest_backend_pos, double* distance) const {
   const maliput::math::Vector3 unconstrained_prh{BackendFrameToLaneFrame(backend_pos)};
   MALIDRIVE_IS_IN_RANGE(unconstrained_prh[0], p0_, p1_);
   const double s = s_from_p_(unconstrained_prh[0]);
-  const maliput::api::RBounds segment_boundaries = segment_bounds(s);
-  const double r = maliput::math::saturate(unconstrained_prh[1], segment_boundaries.min(), segment_boundaries.max());
+  const maliput::api::RBounds r_bounds = use_lane_boundaries ? lane_bounds(s) : segment_bounds(s);
+  const double r = maliput::math::saturate(unconstrained_prh[1], r_bounds.min(), r_bounds.max());
   const maliput::api::HBounds elevation_boundaries = elevation_bounds(s, r);
   const double h =
       maliput::math::saturate(unconstrained_prh[2], elevation_boundaries.min(), elevation_boundaries.max());
