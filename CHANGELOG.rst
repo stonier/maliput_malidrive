@@ -2,8 +2,8 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2022-09-14)
+------------------
 * Matches with changes in Maliput: Lane::ToLanePosition. (`#227 <https://github.com/maliput/maliput_malidrive/issues/227>`_)
 * Adds triage workflow. (`#225 <https://github.com/maliput/maliput_malidrive/issues/225>`_)
 * Improves README. (`#224 <https://github.com/maliput/maliput_malidrive/issues/224>`_)
