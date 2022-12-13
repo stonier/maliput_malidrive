@@ -2,8 +2,8 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.4 (2022-12-13)
+------------------
 * Provides default parameters for the RoadNetworkLoader. (`#231 <https://github.com/maliput/maliput_malidrive/issues/231>`_)
 * Uses default ManualPhaseProvider implementation. (`#230 <https://github.com/maliput/maliput_malidrive/issues/230>`_)
 * Removes OpenRangeValidator and use maliput's instead. (`#229 <https://github.com/maliput/maliput_malidrive/issues/229>`_)
