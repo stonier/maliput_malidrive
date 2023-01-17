@@ -562,7 +562,7 @@ std::unique_ptr<const maliput::api::RoadGeometry> RoadGeometryBuilder::DoBuild()
   maliput::log()->trace(
       "Initializing maliput::geometry_base::KDTreeStrategy for improving RoadGeometry::ToRoadPosition and "
       "RoadGeometry::FindRoadPosition methods.");
-  rg->InitializeStrategy<maliput::geometry_base::KDTreeStrategy>(0.1);
+  rg->InitializeStrategy<maliput::geometry_base::KDTreeStrategy>(0.5);
   maliput::log()->trace("RoadGeometry is built.");
   return rg;
 }
