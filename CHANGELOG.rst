@@ -2,6 +2,21 @@
 Changelog for package maliput_malidrive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.4 (2022-12-13)
+------------------
+* Provides default parameters for the RoadNetworkLoader. (`#231 <https://github.com/maliput/maliput_malidrive/issues/231>`_)
+* Uses default ManualPhaseProvider implementation. (`#230 <https://github.com/maliput/maliput_malidrive/issues/230>`_)
+* Removes OpenRangeValidator and use maliput's instead. (`#229 <https://github.com/maliput/maliput_malidrive/issues/229>`_)
+* Updates triage workflow. (`#228 <https://github.com/maliput/maliput_malidrive/issues/228>`_)
+* Contributors: Franco Cipollone
+
+0.1.3 (2022-09-14)
+------------------
+* Matches with changes in Maliput: Lane::ToLanePosition. (`#227 <https://github.com/maliput/maliput_malidrive/issues/227>`_)
+* Adds triage workflow. (`#225 <https://github.com/maliput/maliput_malidrive/issues/225>`_)
+* Improves README. (`#224 <https://github.com/maliput/maliput_malidrive/issues/224>`_)
+* Contributors: Franco Cipollone
+
 0.1.2 (2022-07-01)
 ------------------
 * Fixes environment hooks. (`#223 <https://github.com/maliput/maliput_malidrive/issues/223>`_)

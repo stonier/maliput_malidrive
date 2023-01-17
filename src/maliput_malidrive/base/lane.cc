@@ -33,12 +33,21 @@
 #include <cmath>
 
 #include <maliput/common/logger.h>
+#include <maliput/common/range_validator.h>
 #include <maliput/math/saturate.h>
 
 #include "maliput_malidrive/base/road_geometry.h"
-#include "maliput_malidrive/road_curve/open_range_validator.h"
 
 namespace malidrive {
+namespace {
+
+// Values used for the InertialToLaneSegmentPositionBackend method.
+// @{
+static constexpr bool kUseLaneBoundaries = true;
+static constexpr bool kUseSegmentBoundaries = !kUseLaneBoundaries;
+// @}
+
+}  // namespace
 
 using maliput::math::Vector3;
 
@@ -81,11 +90,11 @@ Lane::Lane(const maliput::api::LaneId& id, int xodr_track, int xodr_lane_id,
     // Numerical integration might lead to errors in length up to linear_tolerance.
     // However, p <--> s functors above do not tolerate working with values that
     // go beyond the strict range of [p0, p1] and [0, length_]. Consequently, we
-    // use road_curve::OpenRangeValidator() to a) validate that s arguments in
+    // use maliput::common::RangeValidator() to a) validate that s arguments in
     // functions of this class are in range with linear_tolerance and b) values
     // are adjusted to be in the open range (0, length_) with a quarter of
     // linear_tolerance as the distance between closed and open range extrema.
-    s_range_validation_ = road_curve::OpenRangeValidator::GetAbsoluteEpsilonValidator(
+    s_range_validation_ = maliput::common::RangeValidator::GetAbsoluteEpsilonValidator(
         0., length_, road_curve_->linear_tolerance(), road_curve_->linear_tolerance() / 4.);
   } else {
     maliput::log()->trace("Lane {} is shorter than linear tolerance. Will not construct the RoadCurveOffset for it.",
@@ -100,7 +109,7 @@ Lane::Lane(const maliput::api::LaneId& id, int xodr_track, int xodr_lane_id,
     // There are no numerical integrations involved in p_from_s_ and s_from_p_
     // but to mimic the behavior, we will tolerate up to linear tolerance excess
     // in s range. Then, the s value will be saturated.
-    s_range_validation_ = road_curve::OpenRangeValidator::GetAbsoluteEpsilonValidator(
+    s_range_validation_ = maliput::common::RangeValidator::GetAbsoluteEpsilonValidator(
         0., length_, road_curve_->linear_tolerance(), /*epsilon*/ 0.);
   }
   // @}
@@ -189,11 +198,24 @@ Vector3 Lane::BackendFrameToLaneFrame(const Vector3& xyz) const {
 
 void Lane::DoToLanePositionBackend(const maliput::math::Vector3& backend_pos, maliput::api::LanePosition* lane_position,
                                    maliput::math::Vector3* nearest_backend_pos, double* distance) const {
+  InertialToLaneSegmentPositionBackend(kUseLaneBoundaries, backend_pos, lane_position, nearest_backend_pos, distance);
+}
+
+void Lane::DoToSegmentPositionBackend(const maliput::math::Vector3& backend_pos,
+                                      maliput::api::LanePosition* lane_position,
+                                      maliput::math::Vector3* nearest_backend_pos, double* distance) const {
+  InertialToLaneSegmentPositionBackend(kUseSegmentBoundaries, backend_pos, lane_position, nearest_backend_pos,
+                                       distance);
+}
+
+void Lane::InertialToLaneSegmentPositionBackend(bool use_lane_boundaries, const maliput::math::Vector3& backend_pos,
+                                                maliput::api::LanePosition* lane_position,
+                                                maliput::math::Vector3* nearest_backend_pos, double* distance) const {
   const maliput::math::Vector3 unconstrained_prh{BackendFrameToLaneFrame(backend_pos)};
   MALIDRIVE_IS_IN_RANGE(unconstrained_prh[0], p0_, p1_);
   const double s = s_from_p_(unconstrained_prh[0]);
-  const maliput::api::RBounds segment_boundaries = segment_bounds(s);
-  const double r = maliput::math::saturate(unconstrained_prh[1], segment_boundaries.min(), segment_boundaries.max());
+  const maliput::api::RBounds r_bounds = use_lane_boundaries ? lane_bounds(s) : segment_bounds(s);
+  const double r = maliput::math::saturate(unconstrained_prh[1], r_bounds.min(), r_bounds.max());
   const maliput::api::HBounds elevation_boundaries = elevation_bounds(s, r);
   const double h =
       maliput::math::saturate(unconstrained_prh[2], elevation_boundaries.min(), elevation_boundaries.max());
